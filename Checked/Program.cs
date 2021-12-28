@@ -2,19 +2,27 @@ using Checked.Data;
 using Microsoft.EntityFrameworkCore;
 using Checked.Servicos;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Authorization;
+using Checked.Models.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(config =>
+{
+    var policy = new AuthorizationPolicyBuilder()
+    .RequireAuthenticatedUser()
+    .Build();
+    config.Filters.Add(new AuthorizeFilter(policy));
+});
+
 
 //Context
 var connectionString = builder.Configuration.GetConnectionString("CheckedDbContext");
 builder.Services.AddDbContext<CheckedDbContext>(options => options.UseSqlServer(connectionString));
 
-/*builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<CheckedDbContext>();*/
-builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<CheckedDbContext>();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<CheckedDbContext>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -43,8 +51,9 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.HttpOnly = true;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
 
-    options.LoginPath = "/Identity/Account/Login";
-    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    //options.LoginPath = "/Identity/Account/Login";
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
     options.SlidingExpiration = true;
 });
 

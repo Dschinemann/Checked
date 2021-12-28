@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Checked.Models.Models
 {
-    public class User: IdentityUser
+    public class ApplicationUser: IdentityUser
     {
         
         [PersonalData]
@@ -17,5 +17,8 @@ namespace Checked.Models.Models
         public string PostalCode { get; set; }
         [PersonalData]
         public string Country { get; set; } 
+
+        public Organizacao Organizacao { get; set;}
+        
     }
 }
