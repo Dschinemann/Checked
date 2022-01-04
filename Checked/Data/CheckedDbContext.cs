@@ -11,6 +11,15 @@ namespace Checked.Data
         {
 
         }
+        public DbSet<Organization> Organizations{ get; set; }
+        public DbSet<Occurrence> Occurrences { get; set;}
+
+        /*protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<ApplicationUser>()
+                .HasMany(u => u.Occurrences)
+        }*/
 
     }
 }

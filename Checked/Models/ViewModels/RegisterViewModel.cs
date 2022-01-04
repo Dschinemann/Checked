@@ -16,6 +16,8 @@ namespace Checked.Models.ViewModels
         [Required]
         public string Region { get; set; }
         [Required]
+        public string City{ get; set; }
+        [Required]
         [Display(Name ="Postal Code")]
         [DataType(DataType.PostalCode)]
         public string PostalCode { get; set; }

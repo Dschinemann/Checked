@@ -1,10 +1,13 @@
-using Checked.Data;
-using Microsoft.EntityFrameworkCore;
-using Checked.Servicos;
+ using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Checked.Models.Models;
+using Checked.Models.Email;
+using Checked.Data;
+using Checked.Servicos.Email;
+using Checked.Servicos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,10 +25,17 @@ builder.Services.AddControllersWithViews(config =>
 var connectionString = builder.Configuration.GetConnectionString("CheckedDbContext");
 builder.Services.AddDbContext<CheckedDbContext>(options => options.UseSqlServer(connectionString));
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<CheckedDbContext>();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<CheckedDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddTransient<IMailService,EmailSender>();
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
+    options.SignIn.RequireConfirmedEmail = true;
     // Password settings.
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
@@ -41,7 +51,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 
     // User settings.
     options.User.AllowedUserNameCharacters =
-    " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
     options.User.RequireUniqueEmail = false;
 });
 
@@ -52,9 +62,14 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
 
     //options.LoginPath = "/Identity/Account/Login";
-    options.LoginPath = "/Account/Login";
+    options.LoginPath = "/Home/Index";
     options.AccessDeniedPath = "/Account/AccessDenied";
     options.SlidingExpiration = true;
+});
+
+builder.Services.Configure<DataProtectionTokenProviderOptions>(o =>
+{
+    o.TokenLifespan = TimeSpan.FromHours(5);
 });
 
 var app = builder.Build();

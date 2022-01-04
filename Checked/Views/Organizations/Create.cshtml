@@ -1,0 +1,50 @@
+﻿@model Checked.Models.Models.Organization
+
+@{
+    ViewData["Title"] = "Create";
+    bool showButtons;
+    bool.TryParse(@ViewBag.ShowButtons, out showButtons);
+}
+<link rel="stylesheet" href="~/css/Organization.css" />
+<div class="cntr">
+    <div>
+        <h4>Organization</h4>
+        <hr />
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+        @if (showButtons)
+        {
+            <div>
+                <a asp-action="Index">Back to List</a>
+            </div>
+        }
+    </div>
+    <div class="info">
+        <h4>why?</h4>
+        <span>
+            A organização determina quem são os outros colabores que partilham as informações das ocorrencias inseridas, sem ela, não é possivel determinar um grupo de pessoas.
+        </span>
+        <span>-> Caso você seja um usuário individual sugerimos que colque seu próprio nome como organização.</span>
+        <span>-> Caso você esteja criando uma conta para gerir dados de sua empresa, sugerimos colocar o nome da empresa.</span>
+        <span>O nome pode ser alterado futuramente caso você julgue necessário.</span>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}
