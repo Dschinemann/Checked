@@ -77,7 +77,7 @@ namespace Checked.Controllers
                 {
 
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), "Occurrences");
             }
             return View(organization);
         }
