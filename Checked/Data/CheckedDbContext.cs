@@ -13,6 +13,7 @@ namespace Checked.Data
         }
         public DbSet<Organization> Organizations{ get; set; }
         public DbSet<Occurrence> Occurrences { get; set;}
+        public DbSet<Models.Models.Action> Actions { get; set; }
 
         /*protected override void OnModelCreating(ModelBuilder builder)
         {
