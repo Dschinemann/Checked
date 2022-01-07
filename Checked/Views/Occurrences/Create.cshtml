@@ -1,4 +1,4 @@
-﻿@model Checked.Models.Models.Occurrence
+﻿@model Checked.Models.ViewModels.CreateOccurrenceModel;
 
 @{
     ViewData["Title"] = "Create";
@@ -44,8 +44,8 @@
                     <span asp-validation-for="Cost" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label asp-for="AppraiserId" class="control-label"></label>
-                    <select asp-for="AppraiserId" class="form-control" asp-items="ViewBag.AppraiserId"></select>
+                    <label asp-for="Appraiser" class="control-label"></label>
+                    <select asp-for="Appraiser" class="form-control" asp-items="ViewBag.AppraiserId"></select>
                 </div>
                 <div class="form-group">
                     <input type="submit" value="Create" class="btn btn-primary" />

@@ -4,6 +4,7 @@ using Checked.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Checked.Migrations
 {
     [DbContext(typeof(CheckedDbContext))]
-    partial class CheckedDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220107184638_adicionado ocorrencia na action")]
+    partial class adicionadoocorrencianaaction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,17 +48,11 @@ namespace Checked.Migrations
                     b.Property<string>("How")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("HowMuch")
-                        .HasColumnType("float");
+                    b.Property<string>("HowMuch")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Init")
                         .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("NewFinish")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("OccurrenceId")
-                        .HasColumnType("int");
 
                     b.Property<int>("OrganizationId")
                         .HasColumnType("int");
@@ -86,13 +82,16 @@ namespace Checked.Migrations
                     b.Property<string>("Why")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("occurrenceId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.HasIndex("OccurrenceId");
-
                     b.HasIndex("OrganizationId");
+
+                    b.HasIndex("occurrenceId");
 
                     b.ToTable("Actions");
                 });
@@ -409,21 +408,23 @@ namespace Checked.Migrations
                         .WithMany()
                         .HasForeignKey("ApplicationUserId");
 
-                    b.HasOne("Checked.Models.Models.Occurrence", "Occurrence")
-                        .WithMany()
-                        .HasForeignKey("OccurrenceId");
-
                     b.HasOne("Checked.Models.Models.Organization", "Organization")
                         .WithMany()
                         .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Checked.Models.Models.Occurrence", "occurrence")
+                        .WithMany()
+                        .HasForeignKey("occurrenceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("ApplicationUser");
 
-                    b.Navigation("Occurrence");
-
                     b.Navigation("Organization");
+
+                    b.Navigation("occurrence");
                 });
 
             modelBuilder.Entity("Checked.Models.Models.ApplicationUser", b =>

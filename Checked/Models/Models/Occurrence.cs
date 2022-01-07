@@ -4,7 +4,6 @@ namespace Checked.Models.Models
 {
     public class Occurrence
     {
-
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -33,5 +32,24 @@ namespace Checked.Models.Models
         public int OrganizationId { get; set; }
         public virtual Organization Organization { get; set; }
 
+        public Occurrence()
+        {
+        }
+
+        public Occurrence(string name, string description, string harmed, string? document, double cost, DateTime createdAt, DateTime updatedAt, ApplicationUser? appraiser, string origin, ApplicationUser applicationUser,int organization)
+        {
+            Name = name;
+            Description = description;
+            Harmed = harmed;
+            Document = document;
+            Cost = cost;
+            CreatedAt = createdAt;
+            UpdatedAt = updatedAt;
+            Appraiser = appraiser;
+            Origin = origin;
+            ApplicationUser = applicationUser;
+            OrganizationId = organization;
+        }
     }
+       
 }

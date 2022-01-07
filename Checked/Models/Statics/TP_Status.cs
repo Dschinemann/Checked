@@ -5,6 +5,6 @@
         Cadastrado = 1,
         Cancelado = 2,
         Encerrado = 3,
-        Modificacao = 4
+        Modificacao = 4,        
     }
 }

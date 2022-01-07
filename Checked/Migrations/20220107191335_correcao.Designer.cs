@@ -4,6 +4,7 @@ using Checked.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Checked.Migrations
 {
     [DbContext(typeof(CheckedDbContext))]
-    partial class CheckedDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220107191335_correcao")]
+    partial class correcao
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,13 +48,10 @@ namespace Checked.Migrations
                     b.Property<string>("How")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("HowMuch")
-                        .HasColumnType("float");
+                    b.Property<string>("HowMuch")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Init")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("NewFinish")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("OccurrenceId")

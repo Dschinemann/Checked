@@ -1,18 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNet.Identity;
 using Checked.Data;
 using Checked.Models.Models;
+using Checked.Models.ViewModels;
 
 namespace Checked.Controllers
 {
     public class OccurrencesController : Controller
     {
         private readonly CheckedDbContext _context;
+        private readonly Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> _userManager;
 
-        public OccurrencesController(CheckedDbContext context)
+        public OccurrencesController(CheckedDbContext context, Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Occurrences
@@ -55,8 +60,26 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,Harmed,Document,Cost,AppraiserId,Origin")] Occurrence occurrence)
+        public async Task<IActionResult> Create([Bind("Name,Description,Harmed,Document,Cost,Appraiser,Origin")] CreateOccurrenceModel model)
         {
+            var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
+            var appraiser = await _userManager.FindByIdAsync(model.Appraiser.ToString());
+            if (user.OrganizationId == null) return NotFound();
+
+            Occurrence occurrence = new Occurrence(
+                model.Name,
+                model.Description,
+                model.Harmed,
+                model.Document,
+                model.Cost,
+                DateTime.Now,
+                DateTime.Now,
+                appraiser,
+                model.Origin,
+                user,
+                user.OrganizationId ?? 0
+                ); ;
+
             if (ModelState.IsValid)
             {
                 _context.Add(occurrence);
