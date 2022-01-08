@@ -1,82 +1,85 @@
 ﻿@model Checked.Models.ViewModels.CreateActionModel;
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create";    
 }
+<div style="padding:16px">
+    <h1>Create</h1>
 
-<h1>Create</h1>
+    <h4>Action</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="OccurrenceId"/>
+                <div class="form-group">
+                    <label asp-for="Subject" class="control-label"></label>
+                    <input asp-for="Subject" class="form-control" />
+                    <span asp-validation-for="Subject" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Accountable" class="control-label"></label>
+                    <input asp-for="Accountable" class="form-control" />
+                    <span asp-validation-for="Accountable" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Init" class="control-label"></label>
+                    <input asp-for="Init" class="form-control" />
+                    <span asp-validation-for="Init" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Finish" class="control-label"></label>
+                    <input asp-for="Finish" class="form-control" />
+                    <span asp-validation-for="Finish" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="What" class="control-label"></label>
+                    <input asp-for="What" class="form-control" />
+                    <span asp-validation-for="What" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Why" class="control-label"></label>
+                    <input asp-for="Why" class="form-control" />
+                    <span asp-validation-for="Why" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Where" class="control-label"></label>
+                    <input asp-for="Where" class="form-control" />
+                    <span asp-validation-for="Where" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Who" class="control-label"></label>
+                    <input asp-for="Who" class="form-control" />
+                    <span asp-validation-for="Who" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="When" class="control-label"></label>
+                    <input asp-for="When" class="form-control" />
+                    <span asp-validation-for="When" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="How" class="control-label"></label>
+                    <input asp-for="How" class="form-control" />
+                    <span asp-validation-for="How" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="HowMuch" class="control-label"></label>
+                    <input asp-for="HowMuch" class="form-control" />
+                    <span asp-validation-for="HowMuch" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
 
-<h4>Action</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Subject" class="control-label"></label>
-                <input asp-for="Subject" class="form-control" />
-                <span asp-validation-for="Subject" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Accountable" class="control-label"></label>
-                <input asp-for="Accountable" class="form-control" />
-                <span asp-validation-for="Accountable" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Init" class="control-label"></label>
-                <input asp-for="Init" class="form-control" />
-                <span asp-validation-for="Init" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Finish" class="control-label"></label>
-                <input asp-for="Finish" class="form-control" />
-                <span asp-validation-for="Finish" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="What" class="control-label"></label>
-                <input asp-for="What" class="form-control" />
-                <span asp-validation-for="What" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Why" class="control-label"></label>
-                <input asp-for="Why" class="form-control" />
-                <span asp-validation-for="Why" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Where" class="control-label"></label>
-                <input asp-for="Where" class="form-control" />
-                <span asp-validation-for="Where" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Who" class="control-label"></label>
-                <input asp-for="Who" class="form-control" />
-                <span asp-validation-for="Who" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="When" class="control-label"></label>
-                <input asp-for="When" class="form-control" />
-                <span asp-validation-for="When" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="How" class="control-label"></label>
-                <input asp-for="How" class="form-control" />
-                <span asp-validation-for="How" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="HowMuch" class="control-label"></label>
-                <input asp-for="HowMuch" class="form-control" />
-                <span asp-validation-for="HowMuch" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+    <div>
+        <a asp-action="Index">Back to List</a>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
 }

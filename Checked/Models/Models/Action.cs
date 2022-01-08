@@ -21,7 +21,9 @@ namespace Checked.Models.Models
         public double? HowMuch { get; set; }
         public TP_Status TP_Status { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
+        public virtual string ApplicationUserId { get; set; }
         public Organization Organization { get; set; }
+        public virtual int OrganizationId { get; set; }
         public Occurrence Occurrence { get; set; }
         public virtual int? OccurrenceId { get; set; }
 

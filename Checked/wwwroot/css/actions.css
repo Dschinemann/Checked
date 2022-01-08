@@ -1,0 +1,16 @@
+﻿.header-action
+{
+    display:flex;
+    justify-content:space-between;
+    align-content:center;
+}
+.detail {   
+    display:flex;
+    flex-direction:column;
+    width:20vw;
+}
+.detail div{
+    display:flex;
+    justify-content:space-between;
+    padding: 0 16px 0 16px;
+}

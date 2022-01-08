@@ -1,35 +1,32 @@
-﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Checked.Data;
 using Checked.Models.Models;
 using Checked.Models.ViewModels;
+using Microsoft.AspNet.Identity;
 
 namespace Checked.Controllers
 {
     public class ActionsController : Controller
     {
         private readonly CheckedDbContext _context;
+        private readonly Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> _userManager;
 
-        public ActionsController(CheckedDbContext context)
+        public ActionsController(CheckedDbContext context, Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;           
         }
 
         // GET: Actions
-        public async Task<IActionResult> Index(int id)
+        public async Task<IActionResult> Index(int? id)
         {
             var result = await _context.Actions
                 .Where(x => x.OccurrenceId == id)
-                .FirstOrDefaultAsync();
+                .ToListAsync();
             if(result == null)
             {
-                return RedirectToAction(nameof(Create));
+                return RedirectToAction(nameof(Create), new {id = id});
             }
 
             return View(result);
@@ -54,9 +51,11 @@ namespace Checked.Controllers
         }
 
         // GET: Actions/Create
-        public IActionResult Create()
+        public IActionResult Create(int id)
         {
-            return View();
+            CreateActionModel model = new CreateActionModel();
+            model.OccurrenceId = id;
+            return View(model);
         }
 
         // POST: Actions/Create
@@ -64,10 +63,11 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Subject,Accountable,Init,Finish,What,Why,Where,Who,When,How,HowMuch")] CreateActionModel model)
+        public async Task<IActionResult> Create([Bind("Subject,Accountable,Init,Finish,What,Why,Where,Who,When,How,HowMuch")] CreateActionModel model, int id)
         {
             Models.Models.Action action = new Models.Models.Action();
-            if (ModelState.IsValid)     
+            ApplicationUser user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
+            if (ModelState.IsValid)
             {
                 action.Subject = model.Subject;
                 action.Accountable = model.Accountable;
@@ -80,6 +80,9 @@ namespace Checked.Controllers
                 action.When = model.When;
                 action.How = model.How;
                 action.HowMuch = model.HowMuch;
+                action.OrganizationId = user.OrganizationId ?? 0;
+                action.ApplicationUserId = user.Id;
+                action.OccurrenceId = id;
                 _context.Add(action);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

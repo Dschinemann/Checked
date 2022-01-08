@@ -13,5 +13,6 @@
         public string When { get; set; }
         public string How { get; set; }
         public double HowMuch { get; set; }
+        public int OccurrenceId { get; set; }
     }
 }
