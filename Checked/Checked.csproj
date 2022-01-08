@@ -34,7 +34,6 @@
 
   <ItemGroup>
     <Folder Include="Models\Interfaces\" />
-    <Folder Include="Servicos\ControllerServices\" />
   </ItemGroup>
 
 </Project>

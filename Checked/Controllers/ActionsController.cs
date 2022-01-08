@@ -4,6 +4,7 @@ using Checked.Data;
 using Checked.Models.Models;
 using Checked.Models.ViewModels;
 using Microsoft.AspNet.Identity;
+using Checked.Servicos.ControllerServices;
 
 namespace Checked.Controllers
 {
@@ -11,25 +12,33 @@ namespace Checked.Controllers
     {
         private readonly CheckedDbContext _context;
         private readonly Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> _userManager;
+        private readonly ActionsService _actionsService;
 
-        public ActionsController(CheckedDbContext context, Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager)
+        public ActionsController(CheckedDbContext context,
+            Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager,
+            ActionsService service)
         {
             _context = context;
-            _userManager = userManager;           
+            _userManager = userManager;
+            _actionsService = service;
         }
 
         // GET: Actions
         public async Task<IActionResult> Index(int? id)
         {
-            var result = await _context.Actions
-                .Where(x => x.OccurrenceId == id)
-                .ToListAsync();
-            if(result == null)
+            if (id == null)
             {
-                return RedirectToAction(nameof(Create), new {id = id});
+                return NotFound();
             }
+            var result = await _actionsService.ListActionAsync(id);
+            IndexModelAction viewModel = new IndexModelAction();
+            viewModel.Actions = result;        
 
-            return View(result);
+            if (result == null)
+            {
+                return RedirectToAction(nameof(Create), new { id = id });
+            }
+            return View(viewModel);
         }
 
         // GET: Actions/Details/5

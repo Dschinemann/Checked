@@ -8,6 +8,7 @@ using Checked.Models.Email;
 using Checked.Data;
 using Checked.Servicos.Email;
 using Checked.Servicos;
+using Checked.Servicos.ControllerServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,7 @@ builder.Services.AddControllersWithViews(config =>
     config.Filters.Add(new AuthorizeFilter(policy));
 });
 
+builder.Services.AddScoped<ActionsService>();
 
 //Context
 var connectionString = builder.Configuration.GetConnectionString("CheckedDbContext");
