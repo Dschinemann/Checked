@@ -1,0 +1,63 @@
+﻿using Checked.Models.Enums;
+using Checked.Models.Models;
+using System.ComponentModel.DataAnnotations;
+
+namespace Checked.Models.ViewModels
+{
+    public class EditOccurrenceViewModel
+    {
+        public int Id { get; set; }
+        [Display(Name = "Nome")]
+        public string Name { get; set; }
+        [Display(Name = "Descrição")]
+        public string Description { get; set; }
+        [Display(Name = "Prejudicado")]
+        public string Harmed { get; set; }
+        [Display(Name = "Documento/NF")]
+        public string? Document { get; set; }
+        [Display(Name = "Custo")]
+        public double Cost { get; set; }
+
+        [Display(Name ="Avaliador")]
+        public string? AppraiserId { get; set; }
+
+        public string ApplicationUserId { get; set; }
+        [Display(Name = "Origem")]
+        public string Origin { get; set; }
+        public TP_StatusOccurence  Status { get; set; }
+        public string? CorretiveActions { get; set; }
+
+        public int OrganizationId { get; set; }
+
+        public EditOccurrenceViewModel(int id, 
+            string name, 
+            string description,
+            string harmed, 
+            string? document, 
+            double cost, 
+            string? appraiserId, 
+            string applicationUserId,
+            string origin, 
+            int organizationId,
+            TP_StatusOccurence  status,
+            string? corretiveActions
+            )
+        {
+            Id = id;
+            Name = name;
+            Description = description;
+            Harmed = harmed;
+            Document = document;
+            Cost = cost;
+            AppraiserId = appraiserId;
+            ApplicationUserId = applicationUserId;
+            Origin = origin;
+            OrganizationId = organizationId;
+            CorretiveActions = corretiveActions;
+            Status = status;
+        }
+
+        public EditOccurrenceViewModel() { }
+
+    }
+}

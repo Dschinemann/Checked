@@ -1,9 +1,18 @@
-﻿@model LoginViewModel
+﻿@model LoginViewModel;
+@using Microsoft.AspNetCore.Identity;
+@using Checked.Models.Models;
+@inject SignInManager<ApplicationUser> SignInManager;
 @{
     ViewData["Title"] = "Home Page";
     ViewBag.Title = "Login";
     string display = ViewBag.Message ?? "none";
 }
+<style>
+    label{
+        color:white;
+    }
+</style>
+@if(!SignInManager.IsSignedIn(User)){
 <div class="img-background">
     <div class="home">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -62,4 +71,5 @@
         </div>
     </div>
 </div>
+}
 

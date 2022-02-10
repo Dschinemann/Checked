@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Checked.Migrations
 {
     [DbContext(typeof(CheckedDbContext))]
-    [Migration("20220104001918_modificação tabela occurrence")]
-    partial class modificaçãotabelaoccurrence
+    [Migration("20220210160717_Add columns occurrences")]
+    partial class Addcolumnsoccurrences
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,6 +23,63 @@ namespace Checked.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("Checked.Models.Models.Action", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Finish")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("How")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("HowMuch")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("Init")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("NewFinish")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PlanId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TP_Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("What")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("When")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Where")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Who")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Why")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlanId");
+
+                    b.ToTable("Actions");
+                });
 
             modelBuilder.Entity("Checked.Models.Models.ApplicationUser", b =>
                 {
@@ -117,6 +174,28 @@ namespace Checked.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Checked.Models.Models.Invite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizationId");
+
+                    b.ToTable("Invites");
+                });
+
             modelBuilder.Entity("Checked.Models.Models.Occurrence", b =>
                 {
                     b.Property<int>("Id")
@@ -131,6 +210,9 @@ namespace Checked.Migrations
 
                     b.Property<string>("AppraiserId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CorrectiveAction")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Cost")
                         .HasColumnType("float");
@@ -153,12 +235,24 @@ namespace Checked.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("OccurrenceId")
+                        .HasColumnType("int");
+
                     b.Property<int>("OrganizationId")
                         .HasColumnType("int");
 
                     b.Property<string>("Origin")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PlanId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("StatusAction")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -168,6 +262,10 @@ namespace Checked.Migrations
                     b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("AppraiserId");
+
+                    b.HasIndex("OccurrenceId")
+                        .IsUnique()
+                        .HasFilter("[OccurrenceId] IS NOT NULL");
 
                     b.HasIndex("OrganizationId");
 
@@ -195,6 +293,48 @@ namespace Checked.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Organizations");
+                });
+
+            modelBuilder.Entity("Checked.Models.Models.Plan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Accountable")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("CostTotal")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("Forecast")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Goal")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Objective")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OccurrenceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("organizationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("organizationId");
+
+                    b.ToTable("Plans");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -330,11 +470,33 @@ namespace Checked.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Checked.Models.Models.Action", b =>
+                {
+                    b.HasOne("Checked.Models.Models.Plan", "Plan")
+                        .WithMany("Actions")
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Plan");
+                });
+
             modelBuilder.Entity("Checked.Models.Models.ApplicationUser", b =>
                 {
                     b.HasOne("Checked.Models.Models.Organization", "Organization")
                         .WithMany("Users")
                         .HasForeignKey("OrganizationId");
+
+                    b.Navigation("Organization");
+                });
+
+            modelBuilder.Entity("Checked.Models.Models.Invite", b =>
+                {
+                    b.HasOne("Checked.Models.Models.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Organization");
                 });
@@ -351,6 +513,10 @@ namespace Checked.Migrations
                         .WithMany()
                         .HasForeignKey("AppraiserId");
 
+                    b.HasOne("Checked.Models.Models.Plan", "Plan")
+                        .WithOne("Occurrence")
+                        .HasForeignKey("Checked.Models.Models.Occurrence", "OccurrenceId");
+
                     b.HasOne("Checked.Models.Models.Organization", "Organization")
                         .WithMany("Occurrences")
                         .HasForeignKey("OrganizationId")
@@ -362,6 +528,19 @@ namespace Checked.Migrations
                     b.Navigation("Appraiser");
 
                     b.Navigation("Organization");
+
+                    b.Navigation("Plan");
+                });
+
+            modelBuilder.Entity("Checked.Models.Models.Plan", b =>
+                {
+                    b.HasOne("Checked.Models.Models.Organization", "organization")
+                        .WithMany()
+                        .HasForeignKey("organizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("organization");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -425,6 +604,14 @@ namespace Checked.Migrations
                     b.Navigation("Occurrences");
 
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Checked.Models.Models.Plan", b =>
+                {
+                    b.Navigation("Actions");
+
+                    b.Navigation("Occurrence")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

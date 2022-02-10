@@ -11,13 +11,12 @@ namespace Checked.Servicos.ControllerServices
         {
             _context = context;
         }
-        public async Task<List<Models.Models.Action>> ListActionAsync(int? id)
+        /*public async Task<List<Models.Models.Action>> ListActionAsync(int? id)
         {
-            var result = await _context.Actions
-                .Where(x => x.OccurrenceId == id)
-                .ToListAsync();
+            var //.Where(x => x.OccurrenceId == id)
+                //.ToListAsync();
 
             return result;
-        }
+        }*/
     }
 }

@@ -4,6 +4,7 @@ using Checked.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Checked.Migrations
 {
     [DbContext(typeof(CheckedDbContext))]
-    partial class CheckedDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220114144118_add column objective in Plan")]
+    partial class addcolumnobjectiveinPlan
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,7 +47,7 @@ namespace Checked.Migrations
                     b.Property<DateTime>("Init")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("NewFinish")
+                    b.Property<DateTime?>("NewFinish")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("PlanId")
@@ -60,8 +62,8 @@ namespace Checked.Migrations
                     b.Property<string>("What")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("When")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("When")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Where")
                         .HasColumnType("nvarchar(max)");
@@ -172,28 +174,6 @@ namespace Checked.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Checked.Models.Models.Invite", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("OrganizationId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrganizationId");
-
-                    b.ToTable("Invites");
-                });
-
             modelBuilder.Entity("Checked.Models.Models.Occurrence", b =>
                 {
                     b.Property<int>("Id")
@@ -208,9 +188,6 @@ namespace Checked.Migrations
 
                     b.Property<string>("AppraiserId")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CorrectiveAction")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Cost")
                         .HasColumnType("float");
@@ -244,9 +221,6 @@ namespace Checked.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("PlanId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -308,8 +282,9 @@ namespace Checked.Migrations
                     b.Property<DateTime>("Forecast")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("Goal")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Goal")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Objective")
                         .IsRequired()
@@ -322,12 +297,7 @@ namespace Checked.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("organizationId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("organizationId");
 
                     b.ToTable("Plans");
                 });
@@ -485,17 +455,6 @@ namespace Checked.Migrations
                     b.Navigation("Organization");
                 });
 
-            modelBuilder.Entity("Checked.Models.Models.Invite", b =>
-                {
-                    b.HasOne("Checked.Models.Models.Organization", "Organization")
-                        .WithMany()
-                        .HasForeignKey("OrganizationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Organization");
-                });
-
             modelBuilder.Entity("Checked.Models.Models.Occurrence", b =>
                 {
                     b.HasOne("Checked.Models.Models.ApplicationUser", "ApplicationUser")
@@ -525,17 +484,6 @@ namespace Checked.Migrations
                     b.Navigation("Organization");
 
                     b.Navigation("Plan");
-                });
-
-            modelBuilder.Entity("Checked.Models.Models.Plan", b =>
-                {
-                    b.HasOne("Checked.Models.Models.Organization", "organization")
-                        .WithMany()
-                        .HasForeignKey("organizationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("organization");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

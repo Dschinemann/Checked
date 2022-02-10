@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNet.Identity;
 using Checked.Data;
 using Checked.Models.Models;
 using Checked.Models.ViewModels;
-using Microsoft.AspNet.Identity;
-using Checked.Servicos.ControllerServices;
 
 namespace Checked.Controllers
 {
@@ -12,33 +12,17 @@ namespace Checked.Controllers
     {
         private readonly CheckedDbContext _context;
         private readonly Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> _userManager;
-        private readonly ActionsService _actionsService;
-
-        public ActionsController(CheckedDbContext context,
-            Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager,
-            ActionsService service)
+        public ActionsController(CheckedDbContext context, Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
-            _actionsService = service;
         }
 
         // GET: Actions
-        public async Task<IActionResult> Index(int? id)
+        public async Task<IActionResult> Index()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            var result = await _actionsService.ListActionAsync(id);
-            IndexModelAction viewModel = new IndexModelAction();
-            viewModel.Actions = result;        
-
-            if (result == null)
-            {
-                return RedirectToAction(nameof(Create), new { id = id });
-            }
-            return View(viewModel);
+            var checkedDbContext = _context.Actions.Include(a => a.Plan);
+            return View(await checkedDbContext.ToListAsync());
         }
 
         // GET: Actions/Details/5
@@ -50,6 +34,7 @@ namespace Checked.Controllers
             }
 
             var action = await _context.Actions
+                .Include(a => a.Plan)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (action == null)
             {
@@ -62,8 +47,8 @@ namespace Checked.Controllers
         // GET: Actions/Create
         public IActionResult Create(int id)
         {
-            CreateActionModel model = new CreateActionModel();
-            model.OccurrenceId = id;
+            CreateActionViewModel model = new CreateActionViewModel();
+            model.PlanId = id;
             return View(model);
         }
 
@@ -72,30 +57,38 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Subject,Accountable,Init,Finish,What,Why,Where,Who,When,How,HowMuch")] CreateActionModel model, int id)
+        public async Task<IActionResult> Create([Bind("What,Why,Where,Who,Init,Finish,How,HowMuch, PlanId")] CreateActionViewModel model, int id)
         {
-            Models.Models.Action action = new Models.Models.Action();
-            ApplicationUser user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
+            var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
+            var plan = await _context.Plans.Where(c => c.Id == id).FirstOrDefaultAsync();
+            if(plan.organizationId != user.OrganizationId)
+            {
+                ModelState.AddModelError(string.Empty,"Id da Empresa difere do Id do Usuário");
+            }
+
+            if (id == 0) return NotFound();
             if (ModelState.IsValid)
             {
-                action.Subject = model.Subject;
-                action.Accountable = model.Accountable;
+                Models.Models.Action action = new Models.Models.Action();
+                action.CreatedAt = DateTime.Now;
+                action.UpdatedAt = DateTime.Now;
+                action.How = model.How;
+                action.Where = model.Where;
+                action.PlanId = id;
                 action.Init = model.Init;
                 action.Finish = model.Finish;
-                action.What = model.What;
-                action.Why = model.Why;
-                action.Where = model.Where;
-                action.Who = model.Who;
-                action.When = model.When;
-                action.How = model.How;
+                action.NewFinish = model.Finish;
                 action.HowMuch = model.HowMuch;
-                action.OrganizationId = user.OrganizationId ?? 0;
-                action.ApplicationUserId = user.Id;
-                action.OccurrenceId = id;
+                action.What = model.What;
+                action.Who = model.Who;
+                action.Why = model.Why;
+                action.TP_Status = Models.Enums.TP_Status.Aberto;
+
+
                 _context.Add(action);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+                return RedirectToAction("Index","Plans",new { planId = model.PlanId});
+            }            
             return View(model);
         }
 
@@ -112,7 +105,21 @@ namespace Checked.Controllers
             {
                 return NotFound();
             }
-            return View(action);
+            CreateActionViewModel model = new CreateActionViewModel()
+            {
+                Id = action.Id,
+                How = action.How,
+                HowMuch = action.HowMuch,
+                PlanId = action.PlanId,
+                What = action.What,
+                Init = action.Init,
+                Finish = action.Finish,
+                NewFinish = action.NewFinish,
+                Where = action.Where,
+                Who = action.Who,
+                Why = action.Why
+            };            
+            return View(model);
         }
 
         // POST: Actions/Edit/5
@@ -120,9 +127,9 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Subject,Accountable,Init,Finish,CreatedAt,UpdatedAt,What,Why,Where,Who,When,How,HowMuch,TP_Status")] Models.Models.Action action)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,What,Why,Where,Who,Init,Finish,NewFinish,How,HowMuch,PlanId,status")] CreateActionViewModel model)
         {
-            if (id != action.Id)
+            if (id != model.Id)
             {
                 return NotFound();
             }
@@ -131,12 +138,28 @@ namespace Checked.Controllers
             {
                 try
                 {
+                    Models.Models.Action action = new Models.Models.Action()
+                    {
+                        Id = (int)model.Id,
+                        What = model.What,
+                        Why =model.Why,
+                        Where = model.Where,
+                        Who = model.Who,
+                        Init = model.Init,
+                        Finish = model.Finish,
+                        NewFinish = model.NewFinish,
+                        How = model.How,
+                        HowMuch = model.HowMuch,
+                        UpdatedAt = DateTime.Now,
+                        PlanId = model.PlanId,
+                        TP_Status = model.status
+                    };
                     _context.Update(action);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ActionExists(action.Id))
+                    if (!ActionExists((int)model.Id))
                     {
                         return NotFound();
                     }
@@ -145,9 +168,9 @@ namespace Checked.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(action);
+                return RedirectToAction("Index", "Plans", new { planId = model.PlanId});
+            }            
+            return View(model);
         }
 
         // GET: Actions/Delete/5
@@ -159,6 +182,7 @@ namespace Checked.Controllers
             }
 
             var action = await _context.Actions
+                .Include(a => a.Plan)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (action == null)
             {
@@ -176,7 +200,7 @@ namespace Checked.Controllers
             var action = await _context.Actions.FindAsync(id);
             _context.Actions.Remove(action);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Plans", new { planId = action.PlanId });
         }
 
         private bool ActionExists(int id)

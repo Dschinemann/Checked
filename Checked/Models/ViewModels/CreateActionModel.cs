@@ -4,8 +4,8 @@
     {
         public string Subject { get; set; }
         public string Accountable { get; set; }
-        public DateTime Init { get; set; }
-        public DateTime Finish { get; set; }
+        public DateTime Init { get; set; } = DateTime.Now;
+        public DateTime Finish { get; set; } = DateTime.Now;
         public string What { get; set; }
         public string Why { get; set; }
         public string Where { get; set; }

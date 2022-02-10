@@ -3,14 +3,39 @@
     display:flex;
     justify-content:space-between;
     align-content:center;
+    color:white;
 }
-.detail {   
-    display:flex;
-    flex-direction:column;
-    width:20vw;
+.cntr-table-actions{
+    margin-top:16px;
+    width:100%;
 }
-.detail div{
+.btn-add{
+    background-color:green;
+    font-weight: bold;
+    color:white
+}
+.header{
+    color:white;
+}
+form label{
+    color:white;
+}
+.create-action div {
+    color: white
+}
+.create-box {
     display:flex;
+    padding:16px;
+    width:100%;
     justify-content:space-between;
-    padding: 0 16px 0 16px;
 }
+.create-box div{
+    width:70%;
+}
+.create-box:last-child{
+    display:flex;
+    align-content:space-between;
+}
+    .create-box div div {
+        padding-top:6px;
+    }

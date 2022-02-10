@@ -1,0 +1,91 @@
+﻿@model Checked.Models.ViewModels.DashViewModel;
+
+<link rel="stylesheet" href="~/css/dashboard.css" />
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<div class="cntr">
+    <div class="welcome">
+        <h2 class="hEmpresa">Olá, @Model.OrganizationName</h2>
+        <div style="display:flex;justify-content:space-between">
+            <p>Aqui esta um resumo das suas ocorrencias</p>
+            <!-- <p>Filtro</p>-->
+        </div>
+    </div>
+    <div class="dashboard">
+        <div class="box" style="grid-area: A">
+            <div class="info-box">
+                <h5>Total de Ocorrencias</h5>
+            </div>
+            <div class="info-box">
+                <span>Occurrences</span>
+                <span>@Model.OccurrenceResume.Count</span>                
+            </div>
+            <div class="info-box">
+                <span>Custos</span>
+                <span>@String.Format("{0:C}",@Model.OccurrenceResume.TotalCost)</span>
+            </div>
+        </div>
+        <div class="box" style="grid-area: B">
+            <div>
+                <h5>Planos criados</h5>
+            </div>
+            <div>
+                <div class="info-box">
+                    <span>Planos</span>
+                    <span>@Model.PlanResume.PlanCriados</span>                    
+                </div>
+                <div class="info-box">
+                    <span>Encerrados</span>
+                    <span>@Model.PlanResume.QuantEncerrados</span>                    
+                </div>
+                <div class="info-box">
+                    <span>Custo Total</span>
+                    <span>@String.Format("{0:C}",@Model.PlanResume.CustoTotal)</span>
+                </div>
+            </div>
+        </div>
+        <div class="box" style="grid-area: C">
+            <div>
+                <h5>Ações criadas</h5>
+            </div>
+            <div>
+                <div class="info-box">
+                    <span>Total</span>
+                    <span>@Model.resume.Count()</span>
+                </div>
+                @foreach (var item in @Model.resume)
+                {
+                    <div class="info-box">
+                        <span>@item.Tipo</span>
+                        <span>@item.Quantidade</span>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="box" style="grid-area: D">
+            <div>
+                <h5>DeadLine</h5>
+            </div>
+            <div>
+                <div class="info-box">                    
+                    <span>@Model.DeadLineActions.Name</span>
+                </div>
+                <div>
+                    <span>DeadLine</span>
+                    <span>em @String.Format("{0:dd MMM yyyy}",@Model.DeadLineActions.DeadLine)</span>
+                </div>
+            </div>
+        </div>
+        <div class="graph graphPie" style="grid-area: E">
+            <div style="width:100%; height:100%" id="piechart"></div>
+        </div>
+        <div class="graph" style="grid-area: F">
+            <div style="width:100%; height:100%" id="chartArea"></div>
+        </div>
+        <div class="graph" style="grid-area: G">
+            <div style="width:100%; height:100%" id="comboChart"></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="~/js/charts.js" />
+

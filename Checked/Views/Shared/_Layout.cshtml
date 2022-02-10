@@ -1,64 +1,197 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@using Checked.Data
+@using Microsoft.AspNetCore.Identity
 @using Checked.Models.Models
+@using Microsoft.EntityFrameworkCore
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
+@inject CheckedDbContext Context
+@{
+    var user = await UserManager.GetUserAsync(User);
+    Organization org = null;
+    string name = String.Empty;
+    string OrganizationName = String.Empty;
+    if (user != null)
+    {
+        name = user.Name;
+        if (user.OrganizationId != null)
+        {
+            org = await Context.Organizations.Where(c => c.Id == user.OrganizationId).FirstOrDefaultAsync();
+            OrganizationName = org.Name;
+        }
+
+    }
+}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-us">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Checked</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Checked.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/menu.css" asp-append-version="true" />
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    <!-- Created by CodingLab |www.youtube.com/CodingLabYT-->
 </head>
 <body>
-    <header>
-        <!--<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Checked</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        @if (SignInManager.IsSignedIn(User))
-                        {
-                            <li class="nav-item">
-                                <form method="post" asp-controller="account" asp-action="logout">
-                                    <button type="submit" style="width:auto"
-                                        class="nav-link btn btn-link py-0">
-                                        Logout @User.Identity.Name
-                                    </button>
-                                </form>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="account" asp-action="register">
-                                    Registrar
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="account" asp-action="login">
-                                    Login
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
-        </nav>-->
-    </header>
     <div>
         <main role="main">
-            @RenderBody()
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <div class="sidebar close">
+                    <div class="logo-details">
+                        <i class='bx bxl-c-plus-plus'></i>
+                        <span class="logo_name">CodingLab</span>
+                    </div>
+                    <ul class="nav-links">
+                        <li>
+                            <a asp-action="Index" asp-controller="Dashboard">
+                                <i class='bx bx-line-chart'></i>
+                                <span class="link_name">Dashboard</span>
+                            </a>
+                            <ul class="sub-menu blank">
+                                <li><a class="link_name" asp-action="Index" asp-controller="Dashboard">Dashboard</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <div class="iocn-link">
+                                <a href="#">
+                                    <i class='bx bx-collection'></i>
+                                    <span class="link_name">Category</span>
+                                </a>
+                                <i class='bx bxs-chevron-down arrow'></i>
+                            </div>
+                            <ul class="sub-menu">
+                                <li><a class="link_name" href="#">Category</a></li>
+                                <li><a asp-action="Index" asp-controller="Occurrences">Occurrences</a></li>
+                                <li><a href="#">Plans</a></li>
+                                <li><a href="#">Actions</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a asp-action="InviteUser" asp-controller="Account">
+                                <i class='bx bx-user-plus'></i>
+                                <span class="link_name">Convites</span>
+                            </a>
+                            <ul class="sub-menu blank">
+                                <li><a class="link_name" asp-action="InviteUser" asp-controller="Account">Convites</a></li>
+                            </ul>
+                        </li>
+                        <!--<li>
+                            <div class="iocn-link">
+                                <a href="#">
+                                    <i class='bx bx-book-alt'></i>
+                                    <span class="link_name">Posts</span>
+                                </a>
+                                <i class='bx bxs-chevron-down arrow'></i>
+                            </div>
+                            <ul class="sub-menu">
+                                <li><a class="link_name" href="#">Posts</a></li>
+                                <li><a href="#">Web Design</a></li>
+                                <li><a href="#">Login Form</a></li>
+                                <li><a href="#">Card Design</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class='bx bx-pie-chart-alt-2'></i>
+                                <span class="link_name">Analytics</span>
+                            </a>
+                            <ul class="sub-menu blank">
+                                <li><a class="link_name" href="#">Analytics</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class='bx bx-line-chart'></i>
+                                <span class="link_name">Chart</span>
+                            </a>
+                            <ul class="sub-menu blank">
+                                <li><a class="link_name" href="#">Chart</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <div class="iocn-link">
+                                <a href="#">
+                                    <i class='bx bx-plug'></i>
+                                    <span class="link_name">Plugins</span>
+                                </a>
+                                <i class='bx bxs-chevron-down arrow'></i>
+                            </div>
+                            <ul class="sub-menu">
+                                <li><a class="link_name" href="#">Plugins</a></li>
+                                <li><a href="#">UI Face</a></li>
+                                <li><a href="#">Pigments</a></li>
+                                <li><a href="#">Box Icons</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class='bx bx-compass'></i>
+                                <span class="link_name">Explore</span>
+                            </a>
+                            <ul class="sub-menu blank">
+                                <li><a class="link_name" href="#">Explore</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class='bx bx-history'></i>
+                                <span class="link_name">History</span>
+                            </a>
+                            <ul class="sub-menu blank">
+                                <li><a class="link_name" href="#">History</a></li>
+                            </ul>
+                        </li>-->
+                    <li>
+                            <a href="#">
+                                <i class='bx bx-cog'></i>
+                                <span class="link_name">Setting</span>
+                            </a>
+                            <ul class="sub-menu blank">
+                                <li><a class="link_name" href="#">Setting</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <div class="profile-details">
+                                <div class="profile-content">
+                                    <!--<img src="image/profile.jpg" alt="profileImg">-->
+                            </div>
+                                <div class="name-job">
+                                    <div class="profile_name">@name</div>
+                                    <div class="job">@OrganizationName</div>
+                                </div>
+                                <i class='bx bx-log-out'></i>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <section class="home-section">
+                    <div class="home-content">
+                        <i class='bx bx-menu'></i>
+                    </div>
+                    @RenderBody()
+                </section>
+                <script>
+                        let arrow = document.querySelectorAll(".arrow");
+                    for (var i = 0; i < arrow.length; i++) {
+                      arrow[i].addEventListener("click", (e)=>{
+                     let arrowParent = e.target.parentElement.parentElement;//selecting main parent of arrow
+                     arrowParent.classList.toggle("showMenu");
+                      });
+                    }
+                    let sidebar = document.querySelector(".sidebar");
+                    let sidebarBtn = document.querySelector(".bx-menu");
+                    console.log(sidebarBtn);
+                    sidebarBtn.addEventListener("click", ()=>{
+                      sidebar.classList.toggle("close");
+                    });
+                </script>
+            }
         </main>
     </div>
-
+    @RenderBody()
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

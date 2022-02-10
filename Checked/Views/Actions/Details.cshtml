@@ -3,100 +3,93 @@
 @{
     ViewData["Title"] = "Details";
 }
+<div class="cntr" style="color:white">
+    <h1>Details</h1>
 
-<h1>Details</h1>
-
-<div>
-    <h4>Action</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Subject)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Subject)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Accountable)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Accountable)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Init)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Init)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Finish)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Finish)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UpdatedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.What)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.What)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Why)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Why)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Where)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Where)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Who)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Who)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.When)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.When)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.How)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.How)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.HowMuch)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.HowMuch)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TP_Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TP_Status)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div style="width:40%">
+        <h4>Action</h4>
+        <hr />
+        <dl class="row">            
+            <dt class="col-sm-2" style="width: max-content;">
+                @Html.DisplayNameFor(model => model.UpdatedAt)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.UpdatedAt)
+            </dd>
+            <div style="border-bottom:1px solid white"></div>
+            <dt class="col-sm-2" style="width: max-content;">
+                @Html.DisplayNameFor(model => model.What)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.What)
+            </dd>
+            <div style="border-bottom:1px solid white"></div>
+            <dt class="col-sm-2" style="width: max-content;">
+                @Html.DisplayNameFor(model => model.Why)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Why)
+            </dd>
+            <div style="border-bottom:1px solid white"></div>
+            <dt class="col-sm-2" style="width: max-content;">
+                @Html.DisplayNameFor(model => model.Where)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Where)
+            </dd>
+            <div style="border-bottom:1px solid white"></div>
+            <dt class="col-sm-2" style="width: max-content;">
+                @Html.DisplayNameFor(model => model.Who)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Who)
+            </dd>
+            <div style="border-bottom:1px solid white"></div>
+            <dt class="col-sm-2" style="width: max-content;">
+                @Html.DisplayNameFor(model => model.Init)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Init)
+            </dd>
+            <div style="border-bottom:1px solid white"></div>
+            <dt class="col-sm-2" style="width: max-content;">
+                @Html.DisplayNameFor(model => model.Finish)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Finish)
+            </dd>
+            <div style="border-bottom:1px solid white"></div>
+            <dt class="col-sm-2" style="width: max-content;">
+                @Html.DisplayNameFor(model => model.NewFinish)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.NewFinish)
+            </dd>
+            <div style="border-bottom:1px solid white"></div>
+            <dt class="col-sm-2" style="width: max-content;">
+                @Html.DisplayNameFor(model => model.How)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.How)
+            </dd>
+            <div style="border-bottom:1px solid white"></div>
+            <dt class="col-sm-2" style="width: max-content;">
+                @Html.DisplayNameFor(model => model.HowMuch)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.HowMuch)
+            </dd>
+            <div style="border-bottom:1px solid white"></div>
+            <dt class="col-sm-2" style="width: max-content;">
+                @Html.DisplayNameFor(model => model.TP_Status)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.TP_Status)
+            </dd>
+        </dl>
+    </div>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+        <a asp-controller="Plans" asp-route-planId=@Model.PlanId asp-action="Index">Back to List</a>
+    </div>
 </div>

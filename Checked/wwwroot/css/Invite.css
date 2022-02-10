@@ -1,0 +1,9 @@
+﻿.cntr-invite {
+    padding: 26px;
+    display: flex;
+    flex-direction: row;
+    justify-content:space-between;
+    width:100%;
+    color:white;
+}
+

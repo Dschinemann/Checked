@@ -1,5 +1,21 @@
-﻿.cntr {
-    padding:16px;
-    padding-right:60px
+﻿.delete {
+    color: white;
 }
 
+.create-box-occurrence {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+    .create-box-occurrence div div {
+        width: 40vw;
+    }
+
+.cntr-occurrence {
+    color: white;
+    height: 85vh;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}

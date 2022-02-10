@@ -6,6 +6,7 @@ using Microsoft.AspNet.Identity;
 using Checked.Data;
 using Checked.Models.Models;
 using Checked.Models.ViewModels;
+using Checked.Models.Enums;
 
 namespace Checked.Controllers
 {
@@ -23,7 +24,16 @@ namespace Checked.Controllers
         // GET: Occurrences
         public async Task<IActionResult> Index()
         {
-            var checkedDbContext = _context.Occurrences.Include(o => o.ApplicationUser).Include(o => o.Appraiser).Include(o => o.Organization);
+            var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
+            if (user.OrganizationId == null)
+            {
+                return RedirectToAction("Create", "Organizations");
+            }
+            var checkedDbContext = _context.Occurrences
+                .Where(c => c.OrganizationId == user.OrganizationId)
+                .Include(o => o.ApplicationUser)
+                .Include(o => o.Appraiser)
+                .Include(o => o.Organization);
             return View(await checkedDbContext.ToListAsync());
         }
 
@@ -34,8 +44,9 @@ namespace Checked.Controllers
             {
                 return NotFound();
             }
-
+            var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
             var occurrence = await _context.Occurrences
+                .Where(c => c.OrganizationId == user.OrganizationId)
                 .Include(o => o.ApplicationUser)
                 .Include(o => o.Appraiser)
                 .Include(o => o.Organization)
@@ -51,7 +62,7 @@ namespace Checked.Controllers
         // GET: Occurrences/Create
         public IActionResult Create()
         {
-            ViewData["AppraiserId"] = new SelectList(_context.Users, "Id", "Name");
+            ViewData["AppraiserId"] = new SelectList(_context.Users, "Id", "Name");            
             return View();
         }
 
@@ -62,32 +73,33 @@ namespace Checked.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Description,Harmed,Document,Cost,Appraiser,Origin")] CreateOccurrenceModel model)
         {
-            var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
-            var appraiser = await _userManager.FindByIdAsync(model.Appraiser.ToString());
-            if (user.OrganizationId == null) return NotFound();
-
-            Occurrence occurrence = new Occurrence(
-                model.Name,
-                model.Description,
-                model.Harmed,
-                model.Document,
-                model.Cost,
-                DateTime.Now,
-                DateTime.Now,
-                appraiser,
-                model.Origin,
-                user,
-                user.OrganizationId ?? 0
-                ); ;
-
             if (ModelState.IsValid)
             {
+                var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
+                var appraiser = await _userManager.FindByIdAsync(model.Appraiser.ToString());
+                if (user.OrganizationId == null) return NotFound();
+
+                Occurrence occurrence = new Occurrence(
+                    model.Name,
+                    model.Description,
+                    model.Harmed,
+                    model.Document,
+                    model.Cost,
+                    DateTime.Now,
+                    DateTime.Now,
+                    appraiser,
+                    model.Origin,
+                    user,
+                    user.OrganizationId ?? 0,
+                    Models.Enums.TP_StatusOccurence.EmAnalise              
+                    );
+
                 _context.Add(occurrence);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AppraiserId"] = new SelectList(_context.Users, "Id", "Name", occurrence.AppraiserId);
-            return View(occurrence);
+            ViewData["AppraiserId"] = new SelectList(_context.Users, "Id", "Name", model.Appraiser);
+            return View(model);
         }
 
         // GET: Occurrences/Edit/5
@@ -103,10 +115,11 @@ namespace Checked.Controllers
             {
                 return NotFound();
             }
+            EditOccurrenceViewModel model = new EditOccurrenceViewModel(occurrence.Id,occurrence.Name,occurrence.Description,occurrence.Harmed,occurrence.Document,occurrence.Cost,occurrence.AppraiserId,occurrence.ApplicationUserId,occurrence.Origin, occurrence.OrganizationId,occurrence.Status, occurrence.CorrectiveAction);
             //ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "Id", occurrence.ApplicationUserId);
-            ViewData["AppraiserId"] = new SelectList(_context.Users, "Id", "Name", occurrence.AppraiserId);
+            ViewData["AppraiserId"] = new SelectList(_context.Users, "Id", "Name");
             //ViewData["OrganizationId"] = new SelectList(_context.Organizations, "Id", "Name", occurrence.OrganizationId);
-            return View(occurrence);
+            return View(model);
         }
 
         // POST: Occurrences/Edit/5
@@ -114,15 +127,28 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Description,Harmed,Document,Cost,AppraiserId,Origin")] Occurrence occurrence)
+        public async Task<IActionResult> Edit(int id, [Bind("Name,Description,Harmed,Document,Cost,AppraiserId,Origin,Id,Appraiser,ApplicationUserId,OrganizationId")] EditOccurrenceViewModel model)
         {
-            if (id != occurrence.Id)
+            if (id != model.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                Occurrence occurrence = new Occurrence()
+                {
+                    Name = model.Name,
+                    Description = model.Description,
+                    Harmed = model.Harmed,
+                    Document = model.Document,
+                    Cost = model.Cost,
+                    AppraiserId = model.AppraiserId,
+                    Origin = model.Origin,
+                    Id = model.Id,
+                    ApplicationUserId = model.ApplicationUserId,
+                    OrganizationId = model.OrganizationId
+                };
                 try
                 {
                     _context.Update(occurrence);
@@ -130,7 +156,7 @@ namespace Checked.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!OccurrenceExists(occurrence.Id))
+                    if (!OccurrenceExists(model.Id))
                     {
                         return NotFound();
                     }
@@ -141,8 +167,8 @@ namespace Checked.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AppraiserId"] = new SelectList(_context.Users, "Id", "Name", occurrence.AppraiserId);
-            return View(occurrence);
+            ViewData["AppraiserId"] = new SelectList(_context.Users, "Id", "Name", model.AppraiserId);
+            return View(model);
         }
 
         // GET: Occurrences/Delete/5

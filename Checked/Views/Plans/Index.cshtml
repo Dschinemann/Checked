@@ -1,0 +1,90 @@
+﻿@model Checked.Models.ViewModels.PlanViewModel;
+@{
+    DateTime date = new DateTime();
+    string goal = "";//@Model.DeadLine.ToString().Equals("01/01/0001 00:00:00") ? "" : @Model.DeadLine;
+    foreach(var item in Model.Actions)
+    {
+        if(item.NewFinish.CompareTo(date) > 0)
+        {
+            date = item.NewFinish;
+            goal = @$"Ultimo prazo para conclusão do Plano:  {String.Format("{0:dd MMM yyyy}",date)}";
+        } 
+    }    
+}
+
+<link rel="stylesheet" asp-append-version="true" href="~/css/actions.css" />
+<div class="cntr" style="padding:16px;">
+    <div class="header-action">
+        <div>
+            <div>
+                <span>Assunto:</span>
+                <span>@Model.Subject</span>
+            </div>
+            <div>                
+                <span>@goal</span>
+            </div>
+            <div>
+                <span>Responsável:</span>
+                <span>@Model.Accountable</span>
+            </div>
+            <div>
+                <span>Objetivo:</span>
+                <span>@Model.Objective</span>
+            </div>
+        </div>
+    </div>
+    <div class="cntr-table-actions">
+        <table style="color:white;" class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <td>What? (O que?)</td>
+                    <td>Why? (Porquê?)</td>
+                    <td>Where? (Onde?)</td>
+                    <td>Who? (Quem?)</td>
+                    <td></td>
+                    <td>When? (Quando?)</td>                    
+                    <td></td>
+                    <td>How? (Como?)</td>
+                    <td>How Much? (Quanto Custa?)</td>
+                    <td>Status</td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Actions)
+                {
+                    <tr>
+                        <td>@item.What</td>
+                        <td>@item.Why</td>
+                        <td>@item.Where</td>
+                        <td>@item.Who</td>
+                        <td>Início @string.Format("{0:d}",@item.Init)</td>
+                        <td>Prazo @string.Format("{0:d}",@item.Finish)</td>
+                        <td>Novo prazo @string.Format("{0:d}",@item.NewFinish)</td>
+                        <td>@item.How</td>
+                        <td>@string.Format("{0:C2}",@item.HowMuch)</td>
+                        <td>@item.TP_Status.ToString()</td>
+                        <td>
+                            <a asp-controller="Actions" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a asp-controller="Actions" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                            <a asp-controller="Actions" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td><a class="btn btn-add" asp-route-Id="@Model.PlanId" asp-controller="Actions" asp-action="Create">+</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

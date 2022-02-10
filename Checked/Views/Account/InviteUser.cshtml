@@ -1,0 +1,21 @@
+﻿@model Checked.Models.ViewModels.InviteViewModel;
+<link rel="stylesheet" href="~/css/Invite.css" />
+<div class="cntr-invite">
+    <div style="width:40%;">
+        <form method="post">
+            <input type="hidden" asp-for="OrganizationId" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div>
+                <input type="submit" value="Convidar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+    <div style="width: 50%;">
+        <h5>lista de usuario da empresa</h5>
+    </div>
+</div>

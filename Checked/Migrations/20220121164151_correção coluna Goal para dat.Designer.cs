@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Checked.Migrations
 {
     [DbContext(typeof(CheckedDbContext))]
-    [Migration("20220107205635_correcao Action")]
-    partial class correcaoAction
+    [Migration("20220121164151_correção coluna Goal para dat")]
+    partial class correçãocolunaGoalparadat
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -31,13 +31,6 @@ namespace Checked.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Accountable")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -57,15 +50,8 @@ namespace Checked.Migrations
                     b.Property<DateTime?>("NewFinish")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("OccurrenceId")
+                    b.Property<int>("PlanId")
                         .HasColumnType("int");
-
-                    b.Property<int>("OrganizationId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Subject")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TP_Status")
                         .HasColumnType("int");
@@ -90,11 +76,7 @@ namespace Checked.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
-
-                    b.HasIndex("OccurrenceId");
-
-                    b.HasIndex("OrganizationId");
+                    b.HasIndex("PlanId");
 
                     b.ToTable("Actions");
                 });
@@ -228,12 +210,18 @@ namespace Checked.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("OccurrenceId")
+                        .HasColumnType("int");
+
                     b.Property<int>("OrganizationId")
                         .HasColumnType("int");
 
                     b.Property<string>("Origin")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PlanId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -243,6 +231,10 @@ namespace Checked.Migrations
                     b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("AppraiserId");
+
+                    b.HasIndex("OccurrenceId")
+                        .IsUnique()
+                        .HasFilter("[OccurrenceId] IS NOT NULL");
 
                     b.HasIndex("OrganizationId");
 
@@ -270,6 +262,43 @@ namespace Checked.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Organizations");
+                });
+
+            modelBuilder.Entity("Checked.Models.Models.Plan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Accountable")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("CostTotal")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("Forecast")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Goal")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Objective")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OccurrenceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Plans");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -407,25 +436,13 @@ namespace Checked.Migrations
 
             modelBuilder.Entity("Checked.Models.Models.Action", b =>
                 {
-                    b.HasOne("Checked.Models.Models.ApplicationUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("ApplicationUserId");
-
-                    b.HasOne("Checked.Models.Models.Occurrence", "Occurrence")
-                        .WithMany()
-                        .HasForeignKey("OccurrenceId");
-
-                    b.HasOne("Checked.Models.Models.Organization", "Organization")
-                        .WithMany()
-                        .HasForeignKey("OrganizationId")
+                    b.HasOne("Checked.Models.Models.Plan", "Plan")
+                        .WithMany("Actions")
+                        .HasForeignKey("PlanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ApplicationUser");
-
-                    b.Navigation("Occurrence");
-
-                    b.Navigation("Organization");
+                    b.Navigation("Plan");
                 });
 
             modelBuilder.Entity("Checked.Models.Models.ApplicationUser", b =>
@@ -449,6 +466,10 @@ namespace Checked.Migrations
                         .WithMany()
                         .HasForeignKey("AppraiserId");
 
+                    b.HasOne("Checked.Models.Models.Plan", "Plan")
+                        .WithOne("Occurrence")
+                        .HasForeignKey("Checked.Models.Models.Occurrence", "OccurrenceId");
+
                     b.HasOne("Checked.Models.Models.Organization", "Organization")
                         .WithMany("Occurrences")
                         .HasForeignKey("OrganizationId")
@@ -460,6 +481,8 @@ namespace Checked.Migrations
                     b.Navigation("Appraiser");
 
                     b.Navigation("Organization");
+
+                    b.Navigation("Plan");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -523,6 +546,14 @@ namespace Checked.Migrations
                     b.Navigation("Occurrences");
 
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Checked.Models.Models.Plan", b =>
+                {
+                    b.Navigation("Actions");
+
+                    b.Navigation("Occurrence")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

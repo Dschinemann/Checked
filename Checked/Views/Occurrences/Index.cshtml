@@ -3,67 +3,85 @@
 @{
     ViewData["Title"] = "Index";
 }
-<div style="padding:20px">
-    <h1>Index</h1>
-
+<div class="cntr">
     <p>
         <a asp-action="Create">Create New</a>
     </p>
-    <table class="table">
-        <thead>
+    <table style="color:white;font-size:13px" class="table table-hover table-sm align-middle">
+        <thead class="table-dark">
             <tr>
-                <th>
+                <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                     @Html.DisplayNameFor(model => model.Name)
                 </th>
-                <th>
+                <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                     @Html.DisplayNameFor(model => model.Description)
                 </th>
-                <th>
+                <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                     @Html.DisplayNameFor(model => model.Harmed)
                 </th>
-                <th>
+                <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                     @Html.DisplayNameFor(model => model.Document)
                 </th>
-                <th>
+                <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                     @Html.DisplayNameFor(model => model.Cost)
                 </th>
-                <th>
+                <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                     @Html.DisplayNameFor(model => model.Appraiser)
                 </th>
-                <th>
+                <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                     @Html.DisplayNameFor(model => model.Origin)
                 </th>
-                <th>Action</th>
-                <th></th>
+                <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                    Plano de Ação
+                </th>
+                <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                    Status das ações
+                </th>
+                <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                    @Html.DisplayNameFor(model => model.Status)
+                </th>
+                <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                    @Html.DisplayNameFor(model => model.CorrectiveAction)
+                </th>
+                <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); "></th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>
+                    <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                         @Html.DisplayFor(modelItem => item.Name)
                     </td>
-                    <td>
+                    <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                         @Html.DisplayFor(modelItem => item.Description)
                     </td>
-                    <td>
+                    <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                         @Html.DisplayFor(modelItem => item.Harmed)
                     </td>
-                    <td>
+                    <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                         @Html.DisplayFor(modelItem => item.Document)
                     </td>
-                    <td>
+                    <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                         @Html.DisplayFor(modelItem => item.Cost)
                     </td>
-                    <td>
+                    <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                         @Html.DisplayFor(modelItem => item.Appraiser.Name)
                     </td>
-                    <td>
+                    <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                         @Html.DisplayFor(modelItem => item.Origin)
                     </td>
-                    <td>
-                        <a asp-action="Index" asp-controller="Actions" asp-route-id="@item.Id">Action Plan</a>
+                    <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                        <a asp-action="Index" asp-controller="Plans" asp-route-id="@item.Id">Action Plan</a>
+                    </td>
+                    <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                        Existe Ações em aberto
+                    </td>
+                    <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                        @Html.DisplayFor(modelItem => item.Status)
+                    </td>
+                    <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                        @Html.DisplayFor(modelItem => item.CorrectiveAction)
                     </td>
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

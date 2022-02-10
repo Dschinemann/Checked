@@ -1,5 +1,4 @@
- using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +8,7 @@ using Checked.Data;
 using Checked.Servicos.Email;
 using Checked.Servicos;
 using Checked.Servicos.ControllerServices;
+using Checked.Servicos.InviteService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,10 +22,12 @@ builder.Services.AddControllersWithViews(config =>
 });
 
 builder.Services.AddScoped<ActionsService>();
+builder.Services.AddScoped<DashService>();
+builder.Services.AddScoped<InviteService>();
 
 //Context
 var connectionString = builder.Configuration.GetConnectionString("CheckedDbContext");
-builder.Services.AddDbContext<CheckedDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<CheckedDbContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<CheckedDbContext>()
@@ -61,7 +63,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     // Cookie settings
     options.Cookie.HttpOnly = true;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
 
     //options.LoginPath = "/Identity/Account/Login";
     options.LoginPath = "/Home/Index";
@@ -95,5 +97,6 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 
 app.Run();

@@ -1,17 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Checked.Migrations
 {
-    public partial class correcaoAction : Migration
+    public partial class ajustedatabelaactionnafieldwhen : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<double>(
-                name: "HowMuch",
+            migrationBuilder.AlterColumn<DateTime>(
+                name: "When",
                 table: "Actions",
-                type: "float",
+                type: "datetime2",
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)",
@@ -21,12 +22,12 @@ namespace Checked.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "HowMuch",
+                name: "When",
                 table: "Actions",
                 type: "nvarchar(max)",
                 nullable: true,
-                oldClrType: typeof(double),
-                oldType: "float",
+                oldClrType: typeof(DateTime),
+                oldType: "datetime2",
                 oldNullable: true);
         }
     }

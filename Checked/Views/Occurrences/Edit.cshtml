@@ -1,64 +1,81 @@
-﻿@model Checked.Models.Models.Occurrence
+﻿@model Checked.Models.ViewModels.EditOccurrenceViewModel;
 
 @{
     ViewData["Title"] = "Edit";
 }
+<style>
+    .col-md-4 form div {
+        padding-top: 6px;
+    }
+</style>
+<div class="cntr" style="color:white">
+    <div class="row">
+        <hr />
+        <div class="col-md-4">
+            <form asp-action="Edit">
+                <div>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="ApplicationUserId" />
+                    <input type="hidden" asp-for="OrganizationId" />
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <input asp-for="Description" class="form-control" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Harmed" class="control-label"></label>
+                        <input asp-for="Harmed" class="form-control" />
+                        <span asp-validation-for="Harmed" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Document" class="control-label"></label>
+                        <input asp-for="Document" class="form-control" />
+                        <span asp-validation-for="Document" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Cost" class="control-label"></label>
+                        <input asp-for="Cost" class="form-control" />
+                        <span asp-validation-for="Cost" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Origin" class="control-label"></label>
+                        <input asp-for="Origin" class="form-control" />
+                        <span asp-validation-for="Origin" class="text-danger"></span>
+                    </div>
+                </div>
+                <div>
+                    <div class="form-group" style="display:flex; justify-content:space-between">
+                        <label asp-for="AppraiserId" class="control-label"></label>
+                        @Html.DropDownList("AppraiserId",(ViewData["AppraiserId"] as SelectList))
+                        <span asp-validation-for="AppraiserId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" style="display: flex;justify-content: space-between;">
+                        <label asp-for="Status" class="control-label"></label>
+                        @Html.DropDownList("status",Html.GetEnumSelectList<Checked.Models.Enums.TP_StatusOccurence>(),"Status",Model.Status )
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
 
-<h1>Edit</h1>
+                    <div class="form-group">
+                        <input type="submit" value="Save" class="btn btn-primary" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
-<h4>Occurrence</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Harmed" class="control-label"></label>
-                <input asp-for="Harmed" class="form-control" />
-                <span asp-validation-for="Harmed" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Document" class="control-label"></label>
-                <input asp-for="Document" class="form-control" />
-                <span asp-validation-for="Document" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cost" class="control-label"></label>
-                <input asp-for="Cost" class="form-control" />
-                <span asp-validation-for="Cost" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AppraiserId" class="control-label"></label>
-                <select asp-for="AppraiserId" class="form-control" asp-items="ViewBag.AppraiserId"></select>
-                <span asp-validation-for="AppraiserId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Origin" class="control-label"></label>
-                <input asp-for="Origin" class="form-control" />
-                <span asp-validation-for="Origin" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+    <div>
+        <a asp-action="Index">Back to List</a>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
 }

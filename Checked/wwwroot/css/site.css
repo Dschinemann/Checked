@@ -1,3 +1,7 @@
+body {
+    background-color: #2F4F4F;
+}
+
 html {
     font-size: 14px;
 }
@@ -13,9 +17,6 @@ html {
     min-height: 100%;
 }
 
-body {
-    margin-bottom: 60px;
-}
 
 .img-background {
     position: absolute;
@@ -92,4 +93,16 @@ body {
 .btn-primary {
     margin-top: 16px;
     width: 100%;
+}
+
+.cntr {
+    padding:20px;
+}
+
+.cntr a{
+    color:white;
+}
+
+.table {
+    --bs-table-hover-color: #d4d7d9;
 }
