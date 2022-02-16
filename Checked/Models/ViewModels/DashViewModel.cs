@@ -1,4 +1,5 @@
 ﻿using Checked.Models.Enums;
+using Checked.Models.Types;
 
 namespace Checked.Models.ViewModels
 {
@@ -12,7 +13,7 @@ namespace Checked.Models.ViewModels
     }
     public class ActionsResume
     {
-        public TP_Status Tipo { get; set; }
+        public string Tipo { get; set; }
         public int Quantidade { get; set; }
     }
     public class PlansResume

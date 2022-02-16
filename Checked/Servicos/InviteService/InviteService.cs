@@ -38,5 +38,10 @@ namespace Checked.Servicos.InviteService
 
         }
 
+        public async Task<List<ApplicationUser>> GetUsersAsync(string organization)
+        {
+           return await _context.Users.Where(c => c.OrganizationId == organization).ToListAsync();
+        }
+
     }
 }

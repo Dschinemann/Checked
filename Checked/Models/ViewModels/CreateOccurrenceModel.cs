@@ -4,6 +4,8 @@ namespace Checked.Models.ViewModels
 {
     public class CreateOccurrenceModel
     {
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+
         [Display(Name = "Nome")]
         public string Name { get; set; }
         [Display(Name = "Descrição")]
@@ -16,7 +18,7 @@ namespace Checked.Models.ViewModels
         public string Origin { get; set; }
         [Display(Name = "Custo da Ocorrência")]
         public double Cost { get; set; }
-        [Display(Name = "Avaliado")]
+        [Display(Name = "Avaliador")]
         public string Appraiser { get; set; }
     }
 }

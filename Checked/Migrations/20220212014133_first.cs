@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Checked.Migrations
 {
-    public partial class First : Migration
+    public partial class first : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -27,8 +27,7 @@ namespace Checked.Migrations
                 name: "Organizations",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -39,21 +38,42 @@ namespace Checked.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Plans",
+                name: "TP_Ocorrencias",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Subject = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Accountable = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Forecast = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Goal = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CostTotal = table.Column<double>(type: "float", nullable: false),
-                    OccurrenceId = table.Column<int>(type: "int", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Plans", x => x.Id);
+                    table.PrimaryKey("PK_TP_Ocorrencias", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TP_Status",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TP_Status", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TP_StatusOccurences",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TP_StatusOccurences", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -88,7 +108,7 @@ namespace Checked.Migrations
                     Region = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PostalCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Country = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OrganizationId = table.Column<int>(type: "int", nullable: true),
+                    OrganizationId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -115,33 +135,45 @@ namespace Checked.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Actions",
+                name: "Invites",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Init = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Finish = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    NewFinish = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    What = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Why = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Where = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Who = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    When = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    How = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    HowMuch = table.Column<double>(type: "float", nullable: true),
-                    TP_Status = table.Column<int>(type: "int", nullable: false),
-                    PlanId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    OrganizationId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Actions", x => x.Id);
+                    table.PrimaryKey("PK_Invites", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Actions_Plans_PlanId",
-                        column: x => x.PlanId,
-                        principalTable: "Plans",
+                        name: "FK_Invites_Organizations_OrganizationId",
+                        column: x => x.OrganizationId,
+                        principalTable: "Organizations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Plans",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Subject = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Accountable = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Forecast = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Goal = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CostTotal = table.Column<double>(type: "float", nullable: false),
+                    Objective = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OccurrenceId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    organizationId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Plans", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Plans_Organizations_organizationId",
+                        column: x => x.organizationId,
+                        principalTable: "Organizations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -235,8 +267,7 @@ namespace Checked.Migrations
                 name: "Occurrences",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Harmed = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -247,9 +278,12 @@ namespace Checked.Migrations
                     AppraiserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Origin = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    OrganizationId = table.Column<int>(type: "int", nullable: false),
-                    OccurrenceId = table.Column<int>(type: "int", nullable: true),
-                    PlanId = table.Column<int>(type: "int", nullable: true)
+                    OrganizationId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    OccurrenceId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    PlanId = table.Column<int>(type: "int", nullable: true),
+                    StatusId = table.Column<int>(type: "int", nullable: false),
+                    CorrectiveAction = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StatusActions = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -259,7 +293,7 @@ namespace Checked.Migrations
                         column: x => x.ApplicationUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Occurrences_AspNetUsers_AppraiserId",
                         column: x => x.AppraiserId,
@@ -270,18 +304,78 @@ namespace Checked.Migrations
                         column: x => x.OrganizationId,
                         principalTable: "Organizations",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Occurrences_Plans_OccurrenceId",
                         column: x => x.OccurrenceId,
                         principalTable: "Plans",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Occurrences_TP_StatusOccurences_StatusId",
+                        column: x => x.StatusId,
+                        principalTable: "TP_StatusOccurences",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "Actions",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Init = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Finish = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    NewFinish = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    What = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Why = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Where = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Who = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    When = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    How = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HowMuch = table.Column<double>(type: "float", nullable: true),
+                    TP_StatusId = table.Column<int>(type: "int", nullable: false),
+                    OccurrenceId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    PlanId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Actions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Actions_Occurrences_OccurrenceId",
+                        column: x => x.OccurrenceId,
+                        principalTable: "Occurrences",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Actions_Plans_PlanId",
+                        column: x => x.PlanId,
+                        principalTable: "Plans",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_Actions_TP_Status_TP_StatusId",
+                        column: x => x.TP_StatusId,
+                        principalTable: "TP_Status",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Actions_OccurrenceId",
+                table: "Actions",
+                column: "OccurrenceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Actions_PlanId",
                 table: "Actions",
                 column: "PlanId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Actions_TP_StatusId",
+                table: "Actions",
+                column: "TP_StatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -328,6 +422,11 @@ namespace Checked.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Invites_OrganizationId",
+                table: "Invites",
+                column: "OrganizationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Occurrences_ApplicationUserId",
                 table: "Occurrences",
                 column: "ApplicationUserId");
@@ -348,6 +447,16 @@ namespace Checked.Migrations
                 name: "IX_Occurrences_OrganizationId",
                 table: "Occurrences",
                 column: "OrganizationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Occurrences_StatusId",
+                table: "Occurrences",
+                column: "StatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Plans_organizationId",
+                table: "Plans",
+                column: "organizationId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -371,7 +480,16 @@ namespace Checked.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Invites");
+
+            migrationBuilder.DropTable(
+                name: "TP_Ocorrencias");
+
+            migrationBuilder.DropTable(
                 name: "Occurrences");
+
+            migrationBuilder.DropTable(
+                name: "TP_Status");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -381,6 +499,9 @@ namespace Checked.Migrations
 
             migrationBuilder.DropTable(
                 name: "Plans");
+
+            migrationBuilder.DropTable(
+                name: "TP_StatusOccurences");
 
             migrationBuilder.DropTable(
                 name: "Organizations");

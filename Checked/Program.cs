@@ -24,6 +24,7 @@ builder.Services.AddControllersWithViews(config =>
 builder.Services.AddScoped<ActionsService>();
 builder.Services.AddScoped<DashService>();
 builder.Services.AddScoped<InviteService>();
+builder.Services.AddScoped<PlansService>();
 
 //Context
 var connectionString = builder.Configuration.GetConnectionString("CheckedDbContext");
@@ -96,7 +97,5 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-
+    pattern: "{controller=Dashboard}/{action=Index}/{id?}");
 app.Run();

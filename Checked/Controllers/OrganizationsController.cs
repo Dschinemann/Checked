@@ -38,7 +38,8 @@ namespace Checked.Controllers
             }
 
             var organization = await _context.Organizations
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync();
+                //.FirstOrDefaultAsync(m => m.Id == id);
             if (organization == null)
             {
                 return NotFound();
@@ -58,7 +59,7 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name")] Organization organization)
+        public async Task<IActionResult> Create([Bind("Name,Id")] Organization organization)
         {
             string userId = User.Identity.GetUserId();
             if (ModelState.IsValid)
@@ -103,7 +104,7 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name","Id")] Organization organization)
+        public async Task<IActionResult> Edit(string id, [Bind("Name","Id")] Organization organization)
         {
             if (id != organization.Id)
             {
@@ -142,7 +143,8 @@ namespace Checked.Controllers
             }
 
             var organization = await _context.Organizations
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync();
+                //.FirstOrDefaultAsync(m => m.Id == id);
             if (organization == null)
             {
                 return NotFound();
@@ -162,7 +164,7 @@ namespace Checked.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool OrganizationExists(int id)
+        private bool OrganizationExists(string id)
         {
             return _context.Organizations.Any(e => e.Id == id);
         }

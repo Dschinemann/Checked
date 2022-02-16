@@ -29,11 +29,11 @@ namespace Checked.Controllers
             }
             if(user.OrganizationId != null)
             {
-                ocResume = await _service.GetOccurrenceAsync((int)user.OrganizationId);
-                organization = await _service.GetOrganizationAsync((int)user.OrganizationId);
-                var resume = await _service.GetCountActionsAsync((int)user.OrganizationId);
-                var plansResume = await _service.GetCountPlansAsync((int)user.OrganizationId);
-                var deadLine = await _service.GetDeadlineAsync((int)user.OrganizationId);
+                ocResume = await _service.GetOccurrenceAsync(user.OrganizationId);
+                organization = await _service.GetOrganizationAsync(user.OrganizationId); 
+                var resume = await _service.GetCountActionsAsync(user.OrganizationId);
+                var plansResume = await _service.GetCountPlansAsync(user.OrganizationId);
+                var deadLine = await _service.GetDeadlineAsync(user.OrganizationId);
                 model = new DashViewModel()
                 {
                     OccurrenceResume = ocResume,

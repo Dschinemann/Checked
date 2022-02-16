@@ -1,6 +1,7 @@
 ﻿using Checked.Data;
 using Checked.Models.Enums;
 using Checked.Models.Models;
+using Checked.Models.Types;
 using Checked.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace Checked.Servicos
         {
             _context = context;
         }
-        public async Task<OccurrenceResume> GetOccurrenceAsync(int id)
+        public async Task<OccurrenceResume> GetOccurrenceAsync(string id)
         {
             var resume = await _context.Occurrences
                 .Where(c => c.OrganizationId == id)
@@ -37,14 +38,14 @@ namespace Checked.Servicos
             };
             return ocResume;
         }
-        public async Task<Organization> GetOrganizationAsync(int id)
+        public async Task<Organization> GetOrganizationAsync(string id)
         {
             Organization org = await _context.Organizations
                 .Where(c => c.Id == id)
                 .FirstAsync();
             return org;
         }
-        public async Task<List<ActionsResume>> GetCountActionsAsync(int id)
+        public async Task<List<ActionsResume>> GetCountActionsAsync(string id)
         {
             var ids = await _context.Plans
               .Where(c => c.organizationId == id)
@@ -53,7 +54,8 @@ namespace Checked.Servicos
 
             var actions = await _context.Actions
                 .Where(c => ids.Contains(c.PlanId))
-                .GroupBy(c => c.TP_Status)
+                .Include(o => o.TP_Status)
+                .GroupBy(c => c.TP_Status.Id)
                 .Select(c => new { status = c.Key, total = c.Count() })
                 .ToListAsync();
 
@@ -64,20 +66,17 @@ namespace Checked.Servicos
                 list.Add(new ActionsResume
                 {
                     Quantidade = action.total,
-                    Tipo = action.status
+                    Tipo = Enum.GetName(typeof(TP_StatusEnum), action.status)
                 });
             }
             return list;
         }
 
-        public async Task<PlansResume> GetCountPlansAsync(int id)
+        public async Task<PlansResume> GetCountPlansAsync(string id)
         {
             var plansEncerradas = await _context.Plans
-                .Where(c => c.organizationId == id && !_context.Actions.Any(b => b.TP_Status != TP_Status.Encerrado && b.PlanId == c.Id))
+                .Where(c => c.organizationId == id && !_context.Actions.Any(b => b.TP_StatusId != ((int)TP_StatusEnum.Encerrado) && b.PlanId == c.Id))
                 .CountAsync(c => c.organizationId == id);
-            //.GroupBy(c => c.Id)
-            //.Select(c => new { Quant = c.Count() })                
-            //.ToListAsync();
 
             var countPlans = await _context.Plans
                 .Where(c => c.organizationId == id)
@@ -101,7 +100,7 @@ namespace Checked.Servicos
             return plansResume;
         }
 
-        public async Task<DeadLineActions> GetDeadlineAsync(int id)
+        public async Task<DeadLineActions> GetDeadlineAsync(string id)
         {
             var idPlans = await _context.Plans
                 .Where(c => c.organizationId == id)
@@ -122,7 +121,7 @@ namespace Checked.Servicos
                 }
                 else
                 {
-                    if(deadLineActions.DeadLine.CompareTo(item.NewFinish) < 0 && item.TP_Status != TP_Status.Encerrado)
+                    if(deadLineActions.DeadLine.CompareTo(item.NewFinish) < 0 && item.TP_StatusId != 3)
                     {
                         deadLineActions.DeadLine = item.NewFinish;
                         deadLineActions.Name = item.What;

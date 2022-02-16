@@ -3,7 +3,8 @@ namespace Checked.Models.ViewModels
 {
     public class PlanViewModel
     {
-        public int PlanId { get; set; }
+        public string PlanId { get; set; }
+        public string OccurrenceId { get; set; }
         public string Subject { get; set; }
         public string DeadLine { get; set; }
         public string Accountable { get; set; }

@@ -29,28 +29,31 @@ namespace Checked.Controllers
             {
                 return RedirectToAction("Create", "Organizations");
             }
-            var checkedDbContext = _context.Occurrences
+            var occurrences = await _context.Occurrences
                 .Where(c => c.OrganizationId == user.OrganizationId)
                 .Include(o => o.ApplicationUser)
-                .Include(o => o.Appraiser)
-                .Include(o => o.Organization);
-            return View(await checkedDbContext.ToListAsync());
+                .Include(o => o.Status)
+                .ToListAsync();
+
+            return View(occurrences);
         }
 
         // GET: Occurrences/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(string? idOccurrence)
         {
-            if (id == null)
+            if (idOccurrence == null || idOccurrence.Equals(""))
             {
                 return NotFound();
             }
             var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
             var occurrence = await _context.Occurrences
-                .Where(c => c.OrganizationId == user.OrganizationId)
+                .Where(c => c.OrganizationId == user.OrganizationId && c.Id == idOccurrence)
                 .Include(o => o.ApplicationUser)
                 .Include(o => o.Appraiser)
                 .Include(o => o.Organization)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(o => o.Status)
+                .FirstOrDefaultAsync();
+            
             if (occurrence == null)
             {
                 return NotFound();
@@ -60,10 +63,12 @@ namespace Checked.Controllers
         }
 
         // GET: Occurrences/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["AppraiserId"] = new SelectList(_context.Users, "Id", "Name");            
-            return View();
+            var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
+            var users = await _context.Users.Where(c => c.OrganizationId == user.OrganizationId).ToListAsync();
+            ViewBag.AppraiserId = new SelectList(users,"Id", "Name",user);
+            return View(new CreateOccurrenceModel());
         }
 
         // POST: Occurrences/Create
@@ -71,7 +76,7 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,Harmed,Document,Cost,Appraiser,Origin")] CreateOccurrenceModel model)
+        public async Task<IActionResult> Create([Bind("Name,Description,Harmed,Document,Cost,Appraiser,Origin,Id")] CreateOccurrenceModel model)
         {
             if (ModelState.IsValid)
             {
@@ -87,38 +92,52 @@ namespace Checked.Controllers
                     model.Cost,
                     DateTime.Now,
                     DateTime.Now,
-                    appraiser,
+                    appraiser.Id,
                     model.Origin,
-                    user,
-                    user.OrganizationId ?? 0,
-                    Models.Enums.TP_StatusOccurence.EmAnalise              
+                    user.Id,
+                    user.OrganizationId,
+                    4  // em analise                  
                     );
-
-                _context.Add(occurrence);
+                occurrence.StatusActions = "Não há ação cadastrada ";
+                occurrence.Id = model.Id;
+                _context.Occurrences.Add(occurrence);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AppraiserId"] = new SelectList(_context.Users, "Id", "Name", model.Appraiser);
+            ViewBag.AppraiserId = new SelectList(_context.Users, "Id", "Name", model.Appraiser);
             return View(model);
         }
 
         // GET: Occurrences/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string? idOccurrence)
         {
-            if (id == null)
+            if (idOccurrence.Equals("") || idOccurrence == null)
             {
                 return NotFound();
             }
 
-            var occurrence = await _context.Occurrences.FindAsync(id);
+            var occurrence = await _context.Occurrences
+                .Include(o => o.Appraiser)
+                .Include(o => o.Status)
+                .Where(x => x.Id.Equals(idOccurrence))
+                .FirstOrDefaultAsync();
             if (occurrence == null)
             {
                 return NotFound();
             }
-            EditOccurrenceViewModel model = new EditOccurrenceViewModel(occurrence.Id,occurrence.Name,occurrence.Description,occurrence.Harmed,occurrence.Document,occurrence.Cost,occurrence.AppraiserId,occurrence.ApplicationUserId,occurrence.Origin, occurrence.OrganizationId,occurrence.Status, occurrence.CorrectiveAction);
-            //ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "Id", occurrence.ApplicationUserId);
-            ViewData["AppraiserId"] = new SelectList(_context.Users, "Id", "Name");
-            //ViewData["OrganizationId"] = new SelectList(_context.Organizations, "Id", "Name", occurrence.OrganizationId);
+            EditOccurrenceViewModel model = new EditOccurrenceViewModel(occurrence.Id, occurrence.Name, occurrence.Description, occurrence.Harmed, occurrence.Document, occurrence.Cost, occurrence.AppraiserId, occurrence.ApplicationUserId, occurrence.Origin, occurrence.OrganizationId, occurrence.Status, occurrence.CorrectiveAction);
+            ViewBag.AppraiserId = new SelectList(
+                         _context.Users.Where(x => x.OrganizationId == occurrence.OrganizationId),
+                         "Id",
+                         "Name",
+                         occurrence.ApplicationUserId
+                         );
+            ViewBag.Status = new SelectList(
+                         _context.TP_StatusOccurences,
+                         "Id",
+                         "Name",
+                         occurrence.Status
+                         );
             return View(model);
         }
 
@@ -127,7 +146,7 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Description,Harmed,Document,Cost,AppraiserId,Origin,Id,Appraiser,ApplicationUserId,OrganizationId")] EditOccurrenceViewModel model)
+        public async Task<IActionResult> Edit(string id, [Bind("Name,Description,Harmed,Document,Cost,AppraiserId,Origin,Id,Appraiser,ApplicationUserId,OrganizationId,CorretiveActions,Status,Status.Name")] EditOccurrenceViewModel model)
         {
             if (id != model.Id)
             {
@@ -147,7 +166,9 @@ namespace Checked.Controllers
                     Origin = model.Origin,
                     Id = model.Id,
                     ApplicationUserId = model.ApplicationUserId,
-                    OrganizationId = model.OrganizationId
+                    OrganizationId = model.OrganizationId,
+                    StatusId = model.Status.Id,
+                    CorrectiveAction = model.CorretiveActions
                 };
                 try
                 {
@@ -167,14 +188,25 @@ namespace Checked.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AppraiserId"] = new SelectList(_context.Users, "Id", "Name", model.AppraiserId);
+            ViewBag.AppraiserId = new SelectList(
+                         _context.Users.Where(x => x.OrganizationId == model.OrganizationId),
+                         "Id",
+                         "Name",
+                         model.ApplicationUserId
+                         );
+            ViewBag.Status = new SelectList(
+                        _context.TP_StatusOccurences,
+                        "Id",
+                        "Name",
+                        model.Status
+                        );
             return View(model);
         }
 
         // GET: Occurrences/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(string? idOccurrence)
         {
-            if (id == null)
+            if (idOccurrence == null || idOccurrence.Equals(""))
             {
                 return NotFound();
             }
@@ -183,7 +215,8 @@ namespace Checked.Controllers
                 .Include(o => o.ApplicationUser)
                 .Include(o => o.Appraiser)
                 .Include(o => o.Organization)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(c => c.Id.Equals(idOccurrence));
+                
             if (occurrence == null)
             {
                 return NotFound();
@@ -195,15 +228,15 @@ namespace Checked.Controllers
         // POST: Occurrences/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed( Occurrence occurrence)
         {
-            var occurrence = await _context.Occurrences.FindAsync(id);
+            //var occurrence = await _context.Occurrences.FindAsync(idOccurrence);
             _context.Occurrences.Remove(occurrence);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool OccurrenceExists(int id)
+        private bool OccurrenceExists(string id)
         {
             return _context.Occurrences.Any(e => e.Id == id);
         }

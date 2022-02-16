@@ -5,6 +5,8 @@ using Microsoft.AspNet.Identity;
 using Checked.Data;
 using Checked.Models.Models;
 using Checked.Models.ViewModels;
+using Checked.Models.Types;
+using Checked.Servicos.ControllerServices;
 
 namespace Checked.Controllers
 {
@@ -12,30 +14,38 @@ namespace Checked.Controllers
     {
         private readonly CheckedDbContext _context;
         private readonly Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> _userManager;
-        public ActionsController(CheckedDbContext context, Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager)
+        private readonly ActionsService _service;
+        public ActionsController(
+            CheckedDbContext context,
+            Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager,
+            ActionsService service
+            )
         {
             _context = context;
             _userManager = userManager;
+            _service = service;
         }
 
-        // GET: Actions
         public async Task<IActionResult> Index()
         {
-            var checkedDbContext = _context.Actions.Include(a => a.Plan);
-            return View(await checkedDbContext.ToListAsync());
+            var user = await _userManager
+                .FindByIdAsync(User.Identity.GetUserId());
+            var actions = await _service.GetAllAsync(user.OrganizationId);
+            return View(actions);
         }
 
+
         // GET: Actions/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(string? actionId)
         {
-            if (id == null)
+            if (actionId == null || actionId == "")
             {
                 return NotFound();
             }
 
             var action = await _context.Actions
                 .Include(a => a.Plan)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == actionId);
             if (action == null)
             {
                 return NotFound();
@@ -45,10 +55,13 @@ namespace Checked.Controllers
         }
 
         // GET: Actions/Create
-        public IActionResult Create(int id)
+        public IActionResult Create(string planId, string occurrenceId)
         {
             CreateActionViewModel model = new CreateActionViewModel();
-            model.PlanId = id;
+            model.PlanId = planId;
+            model.OccurrenceId = occurrenceId;
+            model.Id = Guid.NewGuid().ToString();
+            model.StatusId = (int)TP_StatusEnum.Aberto;
             return View(model);
         }
 
@@ -57,16 +70,22 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("What,Why,Where,Who,Init,Finish,How,HowMuch, PlanId")] CreateActionViewModel model, int id)
+        public async Task<IActionResult> Create([Bind("What,Why,Where,Who,Init,Finish,How,HowMuch, PlanId, OccurrenceId, Id,StatusId")] CreateActionViewModel model, string planId)
         {
-            var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
-            var plan = await _context.Plans.Where(c => c.Id == id).FirstOrDefaultAsync();
-            if(plan.organizationId != user.OrganizationId)
+            if (model.PlanId != planId) return NotFound();
+
+            var user = await _userManager
+                .FindByIdAsync(User.Identity.GetUserId());
+            var plan = await _context.Plans
+                .FirstOrDefaultAsync(c => c.Id == model.PlanId);
+            var occurrence = await _context.Occurrences
+                .FirstOrDefaultAsync(c => c.Id == model.OccurrenceId);
+
+            if (plan.organizationId != user.OrganizationId)
             {
-                ModelState.AddModelError(string.Empty,"Id da Empresa difere do Id do Usuário");
+                ModelState.AddModelError(string.Empty, "Id da Empresa difere do Id da empresa do Usuário");
             }
 
-            if (id == 0) return NotFound();
             if (ModelState.IsValid)
             {
                 Models.Models.Action action = new Models.Models.Action();
@@ -74,7 +93,7 @@ namespace Checked.Controllers
                 action.UpdatedAt = DateTime.Now;
                 action.How = model.How;
                 action.Where = model.Where;
-                action.PlanId = id;
+                action.PlanId = model.PlanId;
                 action.Init = model.Init;
                 action.Finish = model.Finish;
                 action.NewFinish = model.Finish;
@@ -82,29 +101,48 @@ namespace Checked.Controllers
                 action.What = model.What;
                 action.Who = model.Who;
                 action.Why = model.Why;
-                action.TP_Status = Models.Enums.TP_Status.Aberto;
-
-
+                action.TP_StatusId = ((int)TP_StatusEnum.Aberto);
+                action.OccurrenceId = model.OccurrenceId;
+                action.OrganizationId = user.OrganizationId;
                 _context.Add(action);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index","Plans",new { planId = model.PlanId});
-            }            
+
+                var existsActionOpen = await _context.Actions
+                    .Where(c => c.OccurrenceId == model.OccurrenceId && c.TP_StatusId != ((int)TP_StatusEnum.Encerrado))
+                    .AnyAsync();
+
+                if (existsActionOpen)
+                {
+                    occurrence.StatusActions = "Existe Ações em Aberto";
+                }
+                else
+                {
+                    occurrence.StatusActions = "Todas as ações estão encerradas";
+                }
+                _context.Update(occurrence);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Plans", new { planId = model.PlanId });
+            }
             return View(model);
         }
 
         // GET: Actions/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string actionId, string OccurrenceId)
         {
-            if (id == null)
+            if (actionId == null)
             {
                 return NotFound();
             }
 
-            var action = await _context.Actions.FindAsync(id);
+            var action = await _context.Actions
+                .Include(c => c.TP_Status)
+                .FirstOrDefaultAsync(c => c.Id == actionId);
+
             if (action == null)
             {
                 return NotFound();
             }
+
             CreateActionViewModel model = new CreateActionViewModel()
             {
                 Id = action.Id,
@@ -117,8 +155,12 @@ namespace Checked.Controllers
                 NewFinish = action.NewFinish,
                 Where = action.Where,
                 Who = action.Who,
-                Why = action.Why
-            };            
+                Why = action.Why,
+                OccurrenceId = OccurrenceId,
+                StatusId = action.TP_StatusId,
+                Status = action.TP_Status
+            };
+            ViewBag.Status = new SelectList(_context.TP_Status, "Id", "Name", model.Status);
             return View(model);
         }
 
@@ -127,22 +169,23 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,What,Why,Where,Who,Init,Finish,NewFinish,How,HowMuch,PlanId,status")] CreateActionViewModel model)
+        public async Task<IActionResult> Edit(string planId, [Bind("Id,What,Why,Where,Who,Init,Finish,NewFinish,How,HowMuch,PlanId,Status,OccurrenceId")] CreateActionViewModel model)
         {
-            if (id != model.Id)
+            if (planId != model.PlanId)
             {
                 return NotFound();
             }
-
+            var occurrence = await _context.Occurrences
+                .FirstOrDefaultAsync(c => c.Id == model.OccurrenceId);
             if (ModelState.IsValid)
             {
                 try
                 {
                     Models.Models.Action action = new Models.Models.Action()
                     {
-                        Id = (int)model.Id,
+                        Id = model.Id,
                         What = model.What,
-                        Why =model.Why,
+                        Why = model.Why,
                         Where = model.Where,
                         Who = model.Who,
                         Init = model.Init,
@@ -152,14 +195,32 @@ namespace Checked.Controllers
                         HowMuch = model.HowMuch,
                         UpdatedAt = DateTime.Now,
                         PlanId = model.PlanId,
-                        TP_Status = model.status
+                        TP_StatusId = model.Status.Id,
+                        OccurrenceId = model.OccurrenceId
                     };
                     _context.Update(action);
                     await _context.SaveChangesAsync();
+
+                    var existsActionOpen = await _context.Actions
+                    .Where(c => c.OccurrenceId == model.OccurrenceId && c.TP_StatusId != ((int)TP_StatusEnum.Encerrado))
+                    .AnyAsync();
+
+                    if (existsActionOpen)
+                    {
+                        occurrence.StatusActions = "Existe Ações em Aberto";
+                    }
+                    else
+                    {
+                        occurrence.StatusActions = "Todas as ações estão encerradas";
+                    }
+                    _context.Update(occurrence);
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction("Index", "Plans", new { planId = model.PlanId });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ActionExists((int)model.Id))
+                    if (!ActionExists(model.Id))
                     {
                         return NotFound();
                     }
@@ -168,22 +229,22 @@ namespace Checked.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction("Index", "Plans", new { planId = model.PlanId});
-            }            
+                return RedirectToAction("Index", "Plans", new { planId = model.PlanId });
+            }
             return View(model);
         }
 
         // GET: Actions/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(string? actionId)
         {
-            if (id == null)
+            if (actionId == null)
             {
                 return NotFound();
             }
 
             var action = await _context.Actions
                 .Include(a => a.Plan)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == actionId);
             if (action == null)
             {
                 return NotFound();
@@ -195,15 +256,46 @@ namespace Checked.Controllers
         // POST: Actions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string Id)
         {
-            var action = await _context.Actions.FindAsync(id);
-            _context.Actions.Remove(action);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Plans", new { planId = action.PlanId });
+            var action = await _context.Actions.FindAsync(Id);
+
+            if (action != null)
+            {
+                _context.Actions.Remove(action);
+                await _context.SaveChangesAsync();
+
+                bool existActions = await _context.Actions
+                    .Where(c => c.OccurrenceId == action.OccurrenceId)
+                    .AnyAsync();
+                Occurrence oc = await _context.Occurrences
+                        .FirstOrDefaultAsync(c => c.Id == action.OccurrenceId);
+
+
+                var existsActionOpen = await _context.Actions
+                    .Where(c => c.OccurrenceId == action.OccurrenceId && c.TP_StatusId != ((int)TP_StatusEnum.Encerrado))
+                    .AnyAsync();
+
+                if (existsActionOpen)
+                {
+                    oc.StatusActions = "Existe Ações em Aberto";
+                }
+                else
+                {
+                    oc.StatusActions = "Todas as ações estão encerradas";
+                }
+                if (!existActions)
+                {
+                    oc.StatusActions = "Não há Planos de ação para esta ocorrencia";
+                }
+                _context.Occurrences.Update(oc);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Plans", new { planId = action.PlanId });
+            }
+            return View();
         }
 
-        private bool ActionExists(int id)
+        private bool ActionExists(string id)
         {
             return _context.Actions.Any(e => e.Id == id);
         }

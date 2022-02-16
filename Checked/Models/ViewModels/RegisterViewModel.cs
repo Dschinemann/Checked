@@ -6,27 +6,32 @@ namespace Checked.Models.ViewModels
     public class RegisterViewModel
     {
 
-        public int? organizationId { get; set; }
+        public virtual string? Id { get; set; }
+        public string? organizationId { get; set; }
+
         [Required]
-        [Display(Name = "Nome")]
+        [Display(Name ="Nome")]
         public string Name { get; set; }
         [Required]
         [EmailAddress]
         [Remote(action: "IsEmailInUse", controller: "Account")]
         [Display(Name="Email")]
         public string Email { get; set; }
+     
         [Required]
-        [Display(Name = "País")]
-        public string Country { get; set; }
+        [Display(Name ="País")]
+        public int CountryId { get; set; }
+
         [Required]
-        [Display(Name = "Estado")]
-        public string Region { get; set; }
+        [Display(Name ="Estado")]
+        public int StateId { get; set; }
+
         [Required]
-        [Display(Name = "Cidade")]
-        public string City{ get; set; }
+        [Display(Name ="Cidade")]
+        public int CityId{ get; set; }
+
         [Required]
         [Display(Name ="CEP")]
-        [DataType(DataType.PostalCode)]
         public string PostalCode { get; set; }
 
         [Required]

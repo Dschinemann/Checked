@@ -1,6 +1,14 @@
 ﻿.delete {
     color: white;
 }
+.col-md-4 form div {
+    padding-top: 6px;
+}
+.col-md-4 form{
+    display:flex;
+    justify-content:space-between;
+}
+
 
 .create-box-occurrence {
     width: 100%;

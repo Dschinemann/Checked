@@ -20,17 +20,25 @@ namespace Checked.Models.Models
         [DisplayFormat(DataFormatString = "dd/MM/yyyy HH:mm")]
         public DateTime CreatedAt { get; set; }
         [PersonalData]
-        public string City { get; set; }
+        public virtual City City { get; set; }
+        public int CityId { get; set; }
+
+
         [PersonalData]
-        public string Region { get; set; }
+        public virtual State State { get; set; }
+        public int StateId { get; set; }
+
+
         [PersonalData]
         [DataType(DataType.PostalCode)]
         public string PostalCode { get; set; }
         [PersonalData]
-        public string Country { get; set; }
+        public virtual Country Country { get; set; }
+        public int CountryId { get; set; }  
+
 
         [PersonalData]
-        public int? OrganizationId { get; set; }
+        public string? OrganizationId { get; set; }
 
         public virtual Organization Organization { get; set; }
         [InverseProperty("ApplicationUser")]

@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Details";
 }
- 
+
 <div class="cntr" style="color:white">
     <h4>Occurrence</h4>
     <hr />
@@ -69,6 +69,12 @@
             @Html.DisplayFor(model => model.ApplicationUser.Name)
         </dd>
         <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Status.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Status.Name)
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Organization)
         </dt>
         <dd class="col-sm-10">
@@ -76,7 +82,7 @@
         </dd>
     </dl>
     <div>
-        <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+        <a asp-action="Edit" asp-route-idOccurrence="@Model?.Id">Edit</a> |
         <a asp-action="Index">Back to List</a>
     </div>
 </div>

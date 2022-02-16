@@ -1,4 +1,8 @@
 ﻿@model Checked.Models.ViewModels.DashViewModel;
+@{
+    var data = @Model.DeadLineActions.DeadLine.ToString().Equals("01/01/0001 00:00:00") ? "Sem registros" : @String.Format("{0:dd MMM yyyy}", @Model.DeadLineActions.DeadLine) ;
+    var deadLine = data;
+}
 
 <link rel="stylesheet" href="~/css/dashboard.css" />
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -71,8 +75,11 @@
                     <span>@Model.DeadLineActions.Name</span>
                 </div>
                 <div>
-                    <span>DeadLine</span>
-                    <span>em @String.Format("{0:dd MMM yyyy}",@Model.DeadLineActions.DeadLine)</span>
+                    @if(!@Model.DeadLineActions.DeadLine.ToString().Equals("01/01/0001 00:00:00"))
+                    {
+                        <span>DeadLine em </span>
+                    }                    
+                    <span> @deadLine</span>
                 </div>
             </div>
         </div>

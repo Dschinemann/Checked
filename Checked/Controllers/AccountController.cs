@@ -8,7 +8,9 @@ using Checked.Models;
 using Checked.Servicos.InviteService;
 using System.Diagnostics;
 using System.Text.Encodings.Web;
-
+using Checked.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace Checked.Controllers
 {
@@ -19,13 +21,15 @@ namespace Checked.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IMailService _mailService;
         private readonly InviteService _inviteservice;
+        private readonly CheckedDbContext _context;
 
         public AccountController(
             ILogger<HomeController> logger,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IMailService mailService,
-            InviteService service
+            InviteService service,
+            CheckedDbContext context
             )
         {
             _userManager = userManager;
@@ -33,6 +37,7 @@ namespace Checked.Controllers
             _logger = logger;
             _mailService = mailService;
             _inviteservice = service;
+            _context = context;
         }
 
         /*
@@ -41,9 +46,39 @@ namespace Checked.Controllers
         [AllowAnonymous]
         public IActionResult Register()
         {
+            ViewBag.Pais = new SelectList(_context.Countries, "Id", "Pais", "Brasil");
             return View();
         }
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<JsonResult> GetStates(int idCountry)
+        {
+            try
+            {
+                var estados = await _context.States.Where(c => c.CountryId == idCountry).ToListAsync();
+                return Json(estados);
+            }
+            catch (Exception e)
+            {
+                return Json(new { erro = e.Message });
+            }
 
+        }
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<JsonResult> GetCityes(int IdState)
+        {
+            try
+            {
+                var cityes = await _context.Cities.Where(c => c.StateId == IdState).ToListAsync();
+                return Json(cityes);
+            }
+            catch (Exception e)
+            {
+                return Json(new { erro = e.Message });
+            }
+
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -59,10 +94,10 @@ namespace Checked.Controllers
                     Name = model.Name,
                     UserName = model.Email,
                     Email = model.Email,
-                    Country = model.Country,
-                    Region = model.Region,
+                    CountryId = model.CountryId,
+                    StateId = model.StateId,
                     PostalCode = model.PostalCode,
-                    City = model.City,
+                    CityId = model.CityId,
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -242,13 +277,17 @@ namespace Checked.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user.OrganizationId != null)
             {
-                return View(new InviteViewModel { OrganizationId = (int)user.OrganizationId });
+                List<ApplicationUser> users = await _inviteservice.GetUsersAsync(user.OrganizationId);
+                return View(new InviteViewModel { OrganizationId = user.OrganizationId, users = users });
             }
-            return View();
+            else
+            {
+                return RedirectToAction("Create", "Organizations");
+            }
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> InviteUserAsync([Bind("Email, OrganizationId")] InviteViewModel model)
+        public async Task<IActionResult> InviteUserAsync([Bind("Email, OrganizationId, Message")] InviteViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -261,7 +300,8 @@ namespace Checked.Controllers
                     {
                         ToEmail = model.Email,
                         Subject = "Faça parte do meu grupo.",
-                        Body = @$"Você foi convidado a partipar do meu grupo, <a href='{HtmlEncoder.Default.Encode(inviteLink)}'>clique no link para se cadastrar</a>.<br/>"
+                        Body = @$"Você foi convidado a partipar do meu grupo, <a href='{HtmlEncoder.Default.Encode(inviteLink)}'>clique no link para se cadastrar</a>.<br/>
+                        <div><span>Message</span>{model.Message}</div>"
                     });
                     ModelState.AddModelError(string.Empty, response);
                 }
@@ -276,7 +316,7 @@ namespace Checked.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult CreateUser(int organizationId)
+        public IActionResult CreateUser(string organizationId)
         {
             RegisterViewModel model = new RegisterViewModel { organizationId = organizationId };
             return View(model);
@@ -286,9 +326,9 @@ namespace Checked.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
-        public async Task<IActionResult> CreateUserAsync([Bind("Name,Email,Country,Region,City,PostalCode,Password,ConfirmPassword,organizationId")] RegisterViewModel model)
+        public async Task<IActionResult> CreateUserAsync([Bind("Name,Email,CountryId,StateId,CityId,PostalCode,Password,ConfirmPassword,organizationId")] RegisterViewModel model)
         {
-            if(model.organizationId == 0)
+            if (model.organizationId == null || model.organizationId == "")
             {
                 return NotFound();
             }
@@ -300,17 +340,17 @@ namespace Checked.Controllers
                     Name = model.Name,
                     UserName = model.Email,
                     Email = model.Email,
-                    Country = model.Country,
-                    Region = model.Region,
+                    CountryId = model.CountryId,
+                    StateId = model.StateId,
                     PostalCode = model.PostalCode,
-                    City = model.City,
+                    CityId = model.CityId,
                     OrganizationId = model.organizationId,
                     EmailConfirmed = true
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Login", "Home",new LoginViewModel { Email = model.Email, Password = model.Password});
+                    return RedirectToAction("Login", "Home", new LoginViewModel { Email = model.Email, Password = model.Password });
                 }
                 foreach (var error in result.Errors)
                 {
@@ -320,5 +360,124 @@ namespace Checked.Controllers
             return View(model);
         }
 
+        /*
+         * 
+         * ControlUsers
+         * 
+         */
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(string userId)
+        {
+            var user = await _context.Users
+                .Include(o => o.City)
+                .Include(o => o.Country)
+                .Include(o => o.State)
+                .Where(c => c.Id == userId)
+                .FirstAsync();
+
+
+            EditUserViewModel model = new EditUserViewModel()
+            {
+                Cities = await _context.Cities.Where(c => c.StateId == user.StateId).ToListAsync(),
+                CityId = user.CityId,
+                Country = user.Country,
+                CountryId = user.CountryId,
+                Id = user.Id,
+                Name = user.Name,
+                PostalCode = user.PostalCode,
+                States = await _context.States.Where(c => c.CountryId == user.CountryId).ToListAsync(),
+                StateId = user.StateId,
+                City = user.City,
+                State = user.State
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit([Bind("Id,Cities,Country,States,City,State,Name,CountryId,StateId,CityId,PostalCode")] EditUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByIdAsync(model.Id);
+                user.Name = model.Name;
+                user.CountryId = model.CountryId;
+                user.StateId = model.StateId;
+                user.CityId = model.CityId;
+                user.PostalCode = model.PostalCode;
+                try
+                {
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(InviteUser));
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError(string.Empty, e.Message);
+                }
+            }
+            model.Country = await _context.Countries.Where(c => c.Id == model.CountryId).FirstAsync();
+            model.City = await _context.Cities.FirstAsync(c => c.Id == model.CityId);
+            model.State = await _context.States.FirstAsync(c => c.Id == model.StateId);
+            model.Cities = await _context.Cities.Where(c => c.StateId == model.StateId).ToListAsync();
+            model.States = await _context.States.Where(c => c.CountryId == model.CountryId).ToListAsync();
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Detail(string userId)
+        {
+            var user = await _context.Users
+                .Include(o => o.City)
+                .Include(o => o.Country)
+                .Include(o => o.State)
+                .Where(c => c.Id == userId)
+                .FirstAsync();
+            EditUserViewModel model = new()
+            {
+                City = user.City,
+                Country = user.Country,
+                Name = user.Name,
+                Id = user.Id,
+                PostalCode = user.PostalCode,
+                State = user.State
+            };
+            return View(model);
+        }
+        [HttpGet]
+        public async Task<IActionResult> Delete(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            RegisterViewModel model = new()
+            {
+                Email = user.Email,
+                Id = user.Id,
+                Name = user.Name
+            };
+            return View(model);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed([Bind("Email,Id,Name")] RegisterViewModel model, string userId)
+        {
+            if (userId == null) return NotFound();
+            if (await UserExistsAsync(userId))
+            {
+                var user = await _context.Users.FirstAsync(c => c.Id.Equals(userId));
+                _context.Remove(user);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(InviteUser));
+            }
+            ModelState.AddModelError(string.Empty, "Não foi possível excluir o usuário");
+            return View(model);
+        }
+        public async Task<bool> UserExistsAsync(string userId)
+        {
+            return await _context.Users.AnyAsync(c => c.Id.Equals(userId));
+        }
     }
+
 }

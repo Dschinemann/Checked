@@ -1,9 +1,11 @@
 ﻿@model Checked.Models.Models.Organization
+@using System.Security.Cryptography.Pkcs;
 
 @{
     ViewData["Title"] = "Create";
     bool showButtons;
     bool.TryParse(@ViewBag.ShowButtons, out showButtons);
+    var id = Guid.NewGuid().ToString();
 }
 <link rel="stylesheet" href="~/css/Organization.css" />
 <style>
@@ -19,6 +21,7 @@
             <div class="col-md-4">
                 <form asp-action="Create">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" value="@id" />
                     <div class="form-group">
                         <label asp-for="Name" class="control-label"></label>
                         <input asp-for="Name" class="form-control" />

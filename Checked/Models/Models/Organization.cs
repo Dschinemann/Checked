@@ -10,7 +10,7 @@ namespace Checked.Models.Models
             Occurrences = new HashSet<Occurrence>();
         }
 
-        public int Id { get; set; }
+        public string Id { get; set; }
         [Required]
         [Display(Name ="Nome da Empresa")]
         public string Name { get; set; }

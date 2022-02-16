@@ -1,4 +1,4 @@
-﻿@model RegisterViewModel;
+﻿@model Checked.Models.ViewModels.RegisterViewModel;
 
 <div class="img-background">
     <div class="home">
@@ -6,7 +6,7 @@
             <div class="container-fluid">
                 <ul class="nav">
                     <li>
-                        <a class="navbar-brand text-align" href="#">
+                        <a style="font-size: inherit" class="navbar-brand text-align" href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-info-square-fill" viewBox="0 0 16 16">
                                 <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.93 4.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
                             </svg>
@@ -14,8 +14,8 @@
                         </a>
                     </li>
                     <li>
-                        <a class="navbar-brand text-align" asp-controller="Home" asp-action="Index">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-door-open-fill" viewBox="0 0 16 16">
+                        <a style="font-size: inherit" class="navbar-brand text-align" asp-controller="Home" asp-action="Index">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-door-open-fill" viewBox="0 0 16 16">
                                 <path d="M1.5 15a.5.5 0 0 0 0 1h13a.5.5 0 0 0 0-1H13V2.5A1.5 1.5 0 0 0 11.5 1H11V.5a.5.5 0 0 0-.57-.495l-7 1A.5.5 0 0 0 3 1.5V15H1.5zM11 2h.5a.5.5 0 0 1 .5.5V15h-1V2zm-2.5 8c-.276 0-.5-.448-.5-1s.224-1 .5-1 .5.448.5 1-.224 1-.5 1z" />
                             </svg>
                             Login
@@ -40,21 +40,28 @@
                             <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <label asp-for="Country"></label>
-                            <input asp-for="Country" class="form-control" />
-                            <span asp-validation-for="Country" class="text-danger"></span>
+                            <label asp-for="CountryId"></label>
+                            <select asp-for="CountryId"class="form-control">
+                                 <option>Selecione um País</option>
+                                 <option value="35">Brasil</option>
+                            </select>
+                            <span asp-validation-for="CountryId" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <label asp-for="Region"></label>
-                            <input asp-for="Region" class="form-control" />
-                            <span asp-validation-for="Region" class="text-danger"></span>
+                            <label asp-for="StateId"></label>
+                            <select asp-for="StateId" class="form-control">
+                                <option>Selecione um estado</option>
+                            </select>
+                            <span asp-validation-for="StateId" class="text-danger"></span>
                         </div>
                     </div>
-                   <div style="margin:25px">
+                    <div style="margin:25px">
                         <div class="form-group">
-                            <label asp-for="City"></label>
-                            <input asp-for="City" class="form-control" />
-                            <span asp-validation-for="City" class="text-danger"></span>
+                            <label asp-for="CityId"></label>
+                            <select asp-for="CityId" class="form-control">
+                                <option value="-1">Selecione uma cidade</option>
+                            </select>
+                            <span asp-validation-for="CityId" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <label asp-for="PostalCode"></label>
@@ -70,11 +77,14 @@
                             <label asp-for="ConfirmPassword"></label>
                             <input asp-for="ConfirmPassword" class="form-control" />
                             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                        </div>                        
-                    </div>                    
+                        </div>
+                    </div>
                 </form>
                 <button form="register" type="submit" class="btn btn-primary">Register</button>
             </div>
         </div>
     </div>
 </div>
+<script type="text/javascript" src="~/js/RegisterListItems.js"></script>
+
+    

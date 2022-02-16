@@ -1,11 +1,13 @@
-﻿namespace Checked.Models.Enums
+﻿namespace Checked.Models.Types
 {
-    public enum TP_Ocorrencia : int
+    public class TP_Ocorrencia
     {
-        Entrega = 1,       
-        FaltaMercadoria = 2,
-        Avaria = 3,
-        EntregaForaDoPrazo = 4,
-        SobraMercadoria = 5,
+        public int Id { get; set; }
+        public string Name { get; set; }
+        /*public int Entrega { get; set; } = 1;
+        public int FaltaMercadoria { get; set; } = 2;
+        public int Avaria { get; set; } = 3;
+        public int EntregaForaDoPrazo { get; set; } = 4;
+        public int SobraMercadoria { get; set; } = 5;*/
     }
 }

@@ -3,17 +3,13 @@
 @{
     ViewData["Title"] = "Edit";
 }
-<style>
-    .col-md-4 form div {
-        padding-top: 6px;
-    }
-</style>
+<link rel="stylesheet" href="~/css/Occurrence.css" />
 <div class="cntr" style="color:white">
     <div class="row">
         <hr />
-        <div class="col-md-4">
+        <div class="col-md-4" style="width:80%">
             <form asp-action="Edit">
-                <div>
+                <div style="width:40%">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input type="hidden" asp-for="Id" />
                     <input type="hidden" asp-for="ApplicationUserId" />
@@ -49,16 +45,21 @@
                         <span asp-validation-for="Origin" class="text-danger"></span>
                     </div>
                 </div>
-                <div>
+                <div style="width:40%">
+                    <div class="form-group">
+                        <label asp-for="CorretiveActions" class="control-label"></label>
+                        <input asp-for="CorretiveActions" class="form-control" />
+                        <span asp-validation-for="CorretiveActions" class="text-danger"></span>
+                    </div>
                     <div class="form-group" style="display:flex; justify-content:space-between">
                         <label asp-for="AppraiserId" class="control-label"></label>
-                        @Html.DropDownList("AppraiserId",(ViewData["AppraiserId"] as SelectList))
+                        <select asp-for="AppraiserId" asp-items="@ViewBag.AppraiserId"></select>
                         <span asp-validation-for="AppraiserId" class="text-danger"></span>
                     </div>
                     <div class="form-group" style="display: flex;justify-content: space-between;">
-                        <label asp-for="Status" class="control-label"></label>
-                        @Html.DropDownList("status",Html.GetEnumSelectList<Checked.Models.Enums.TP_StatusOccurence>(),"Status",Model.Status )
-                        <span asp-validation-for="Status" class="text-danger"></span>
+                        <label asp-for="Status.Name" class="control-label"></label>
+                        <select asp-for="Status.Id" asp-items="@ViewBag.Status"></select>
+                        <span asp-validation-for="Status.Id" class="text-danger"></span>
                     </div>
 
                     <div class="form-group">

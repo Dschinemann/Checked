@@ -1,7 +1,8 @@
-﻿
-using Microsoft.EntityFrameworkCore;
-using Checked.Models.Models;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Checked.Models.Models;
+using Checked.Models.Types;
+using Checked.Models.ViewModels;
 
 namespace Checked.Data
 {
@@ -17,12 +18,13 @@ namespace Checked.Data
         public DbSet<Plan> Plans { get; set; }
         public DbSet<Invite> Invites { get; set; }
 
-        /*protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
-            builder.Entity<ApplicationUser>()
-                .HasMany(u => u.Occurrences)
-        }*/
+        public DbSet<TP_Ocorrencia> TP_Ocorrencias { get; set; }
+        public DbSet<TP_Status> TP_Status { get; set; }
+        public DbSet<TP_StatusOccurence> TP_StatusOccurences { get; set; }
+
+        public DbSet<State> States { get; set; } 
+        public DbSet<City> Cities { get; set; }
+        public DbSet<Country> Countries { get; set; } 
 
     }
 }

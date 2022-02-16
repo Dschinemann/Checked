@@ -1,48 +1,51 @@
-﻿@model IEnumerable<Checked.Models.Models.Occurrence>
-
+﻿@using Checked.Models.Types
+@model IEnumerable<Checked.Models.Models.Plan>
 @{
-    ViewData["Title"] = "Index";
-    var itens = ViewData["actions"];
+    ViewData["Title"] = "Plans";
+    //@Html.ViewContext.RouteData.Values["id"]
 }
+
+
 <div class="cntr">
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
+    <div style="color:white">
+        <h4>@ViewData["Title"]</h4>
+        <hr />
+    </div>
     <table style="color:white;font-size:13px" class="table table-hover table-sm align-middle">
         <thead class="table-dark">
             <tr>
                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                    @Html.DisplayNameFor(model => model.Name)
+                    @Html.DisplayNameFor(model => model.Occurrence.Name)
                 </th>
                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                    @Html.DisplayNameFor(model => model.Description)
+                    @Html.DisplayNameFor(model => model.Occurrence.Description)
                 </th>
                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                    @Html.DisplayNameFor(model => model.Harmed)
+                    @Html.DisplayNameFor(model => model.Subject)
                 </th>
                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                    @Html.DisplayNameFor(model => model.Document)
+                    @Html.DisplayNameFor(model => model.Objective)
                 </th>
                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                    @Html.DisplayNameFor(model => model.Cost)
+                    @Html.DisplayNameFor(model => model.Goal)
                 </th>
                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                    @Html.DisplayNameFor(model => model.Appraiser)
+                    @Html.DisplayNameFor(model => model.Accountable)
                 </th>
                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                    @Html.DisplayNameFor(model => model.Origin)
+                    @Html.DisplayNameFor(model => model.CostTotal)
                 </th>
                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                    Plano de Ação
+                    Ações
                 </th>
                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                    @Html.DisplayNameFor(model => model.StatusActions)
+                    Total de ações
                 </th>
                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                    @Html.DisplayNameFor(model => model.Status)
+                    Ações em Aberto
                 </th>
                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                    @Html.DisplayNameFor(model => model.CorrectiveAction)
+                    Ações encerradas
                 </th>
                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); "></th>
             </tr>
@@ -52,42 +55,42 @@
             {
                 <tr>
                     <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        @Html.DisplayFor(modelItem => item.Name)
+                        @Html.DisplayFor(modelItem => item.Occurrence.Name)
                     </td>
                     <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        @Html.DisplayFor(modelItem => item.Description)
+                        @Html.DisplayFor(modelItem => item.Occurrence.Description)
                     </td>
                     <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        @Html.DisplayFor(modelItem => item.Harmed)
+                        @Html.DisplayFor(modelItem => item.Subject)
                     </td>
                     <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        @Html.DisplayFor(modelItem => item.Document)
+                        @Html.DisplayFor(modelItem => item.Objective)
                     </td>
                     <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        @Html.DisplayFor(modelItem => item.Cost)
+                        @String.Format("{0: dd MMM yyyy}",item.Goal)
                     </td>
                     <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        @Html.DisplayFor(modelItem => item.Appraiser.Name)
+                        @Html.DisplayFor(modelItem => item.Accountable)
                     </td>
                     <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        @Html.DisplayFor(modelItem => item.Origin)
+                        @String.Format("{0:C2}",item.CostTotal)
                     </td>
                     <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        <a asp-action="Index" asp-controller="Plans" asp-route-id="@item.Id">Action Plan</a>
+                        <a asp-action="Index" asp-route-planId="@item.Id">Verificar Ações</a>
                     </td>
                     <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        @Html.DisplayFor(modelItem => item.StatusActions)
+                        @item.Actions.Count()
                     </td>
                     <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        @Html.DisplayFor(modelItem => item.Status.Name)
+                        @item.Actions.Count(c => c.TP_StatusId == (int)TP_StatusEnum.Aberto)
                     </td>
                     <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        @Html.DisplayFor(modelItem => item.CorrectiveAction)
+                        @item.Actions.Count(c => c.TP_StatusId == (int)TP_StatusEnum.Encerrado)
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-idOccurrence="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-idOccurrence="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-idOccurrence="@item.Id">Delete</a>
+                        <a asp-action="Edit" asp-route-planId="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-planId="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-planId="@item.Id">Delete</a>
                     </td>
                 </tr>
             }

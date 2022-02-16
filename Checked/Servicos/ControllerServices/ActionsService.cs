@@ -1,6 +1,7 @@
 ﻿using Checked.Data;
 using Checked.Models.Models;
 using Microsoft.EntityFrameworkCore;
+using Action = Checked.Models.Models.Action;
 
 namespace Checked.Servicos.ControllerServices
 {
@@ -11,12 +12,14 @@ namespace Checked.Servicos.ControllerServices
         {
             _context = context;
         }
-        /*public async Task<List<Models.Models.Action>> ListActionAsync(int? id)
-        {
-            var //.Where(x => x.OccurrenceId == id)
-                //.ToListAsync();
 
-            return result;
-        }*/
+        public async Task<List<Action>> GetAllAsync(string organizationId)
+        {
+            var actions = await _context.Actions
+                .Include(o => o.TP_Status)
+                .Where(c => c.OrganizationId.Equals(organizationId))
+                .ToListAsync();
+            return actions;
+        }
     }
 }

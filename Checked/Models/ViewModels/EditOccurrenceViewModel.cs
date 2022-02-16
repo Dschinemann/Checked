@@ -1,12 +1,13 @@
 ﻿using Checked.Models.Enums;
 using Checked.Models.Models;
+using Checked.Models.Types;
 using System.ComponentModel.DataAnnotations;
 
 namespace Checked.Models.ViewModels
 {
     public class EditOccurrenceViewModel
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         [Display(Name = "Nome")]
         public string Name { get; set; }
         [Display(Name = "Descrição")]
@@ -25,11 +26,13 @@ namespace Checked.Models.ViewModels
         [Display(Name = "Origem")]
         public string Origin { get; set; }
         public TP_StatusOccurence  Status { get; set; }
+        [Display(Name = "Ação Corretiva")]
         public string? CorretiveActions { get; set; }
 
-        public int OrganizationId { get; set; }
+        public string OrganizationId { get; set; }
 
-        public EditOccurrenceViewModel(int id, 
+        public EditOccurrenceViewModel(
+            string id, 
             string name, 
             string description,
             string harmed, 
@@ -38,7 +41,7 @@ namespace Checked.Models.ViewModels
             string? appraiserId, 
             string applicationUserId,
             string origin, 
-            int organizationId,
+            string organizationId,
             TP_StatusOccurence  status,
             string? corretiveActions
             )

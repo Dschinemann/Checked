@@ -1,12 +1,17 @@
 ﻿using Checked.Models.Enums;
+using Checked.Models.Types;
 using System.ComponentModel.DataAnnotations;
 
 namespace Checked.Models.ViewModels
 {
     public class CreateActionViewModel
     {
-        public int? Id { get; set; }
-        public int PlanId { get; set; }
+        public string? Id { get; set; }
+        public string PlanId { get; set; }
+
+        public string OccurrenceId { get; set; }
+
+
         [Display(Name = "What? (O que?)")]
         public string? What { get; set; }
         [Display(Name = "Why? (Porquê?)")]
@@ -32,6 +37,7 @@ namespace Checked.Models.ViewModels
         [DataType(DataType.Currency)]
         [Display(Name = "How Much? (Quanto Custa?)")]
         public double? HowMuch { get; set; }
-        public TP_Status status { get; set; }
+        public TP_Status? Status { get; set; }
+        public virtual int StatusId { get; set; }
     }
 }
