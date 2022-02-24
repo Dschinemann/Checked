@@ -1,0 +1,46 @@
+﻿@model Checked.Models.Models.HelpDesk
+
+@{
+    ViewData["Title"] = "Create";
+}
+<div class="cntr" style="color:white;padding:16px">
+
+    <h4>HelpDesk</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="UserId" />
+                <div class="form-group">
+                    <label asp-for="UrlAccess" class="control-label"></label>
+                    <input asp-for="UrlAccess" class="form-control" />
+                    <span asp-validation-for="UrlAccess" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ErrorMessage" class="control-label"></label>
+                    <textarea asp-for="ErrorMessage" rows=5 wrap="hard" class="form-control"></textarea>
+                    <span asp-validation-for="ErrorMessage" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Message" class="control-label"></label>
+                    <textarea asp-for="Message" rows=5 wrap="hard" class="form-control"></textarea>
+                    <span asp-validation-for="Message" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Enviar" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Index">Voltar</a>
+    </div>
+
+    @section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+    }
+</div>

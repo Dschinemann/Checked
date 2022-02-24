@@ -50,7 +50,7 @@
                         <div class="form-group">
                             <label asp-for="StateId"></label>
                             <select asp-for="StateId" class="form-control">
-                                <option>Selecione um estado</option>
+                                <option value="@Model.StateId">@Model.StateName</option>
                             </select>
                             <span asp-validation-for="StateId" class="text-danger"></span>
                         </div>
@@ -59,7 +59,7 @@
                         <div class="form-group">
                             <label asp-for="CityId"></label>
                             <select asp-for="CityId" class="form-control">
-                                <option value="-1">Selecione uma cidade</option>
+                                <option value="@Model.CityId">@Model.CityName</option>
                             </select>
                             <span asp-validation-for="CityId" class="text-danger"></span>
                         </div>

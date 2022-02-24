@@ -39,3 +39,9 @@ form label{
     .create-box div div {
         padding-top:6px;
     }
+
+.header-details{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}

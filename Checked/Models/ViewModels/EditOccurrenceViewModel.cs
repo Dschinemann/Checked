@@ -7,10 +7,12 @@ namespace Checked.Models.ViewModels
 {
     public class EditOccurrenceViewModel
     {
+
         public string Id { get; set; }
-        [Display(Name = "Nome")]
-        public string Name { get; set; }
-        [Display(Name = "Descrição")]
+
+        [Required]
+        [Display(Name = "Tipo")]
+        public int TypeOccurrence { get; set; }
         public string Description { get; set; }
         [Display(Name = "Prejudicado")]
         public string Harmed { get; set; }
@@ -31,9 +33,15 @@ namespace Checked.Models.ViewModels
 
         public string OrganizationId { get; set; }
 
+        [Display(Name = "Informação Adicional 01")]
+        public string? Additional1 { get; set; }
+
+        [Display(Name = "Informação Adicional 02")]
+        public string? Additional2 { get; set; }
+
         public EditOccurrenceViewModel(
             string id, 
-            string name, 
+            int type, 
             string description,
             string harmed, 
             string? document, 
@@ -47,7 +55,7 @@ namespace Checked.Models.ViewModels
             )
         {
             Id = id;
-            Name = name;
+            TypeOccurrence = type;
             Description = description;
             Harmed = harmed;
             Document = document;

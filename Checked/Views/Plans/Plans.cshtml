@@ -1,7 +1,7 @@
 ﻿@using Checked.Models.Types
 @model IEnumerable<Checked.Models.Models.Plan>
 @{
-    ViewData["Title"] = "Plans";
+    ViewData["Title"] = "Planos";
     //@Html.ViewContext.RouteData.Values["id"]
 }
 
@@ -14,9 +14,6 @@
     <table style="color:white;font-size:13px" class="table table-hover table-sm align-middle">
         <thead class="table-dark">
             <tr>
-                <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                    @Html.DisplayNameFor(model => model.Occurrence.Name)
-                </th>
                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                     @Html.DisplayNameFor(model => model.Occurrence.Description)
                 </th>
@@ -54,9 +51,6 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        @Html.DisplayFor(modelItem => item.Occurrence.Name)
-                    </td>
                     <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                         @Html.DisplayFor(modelItem => item.Occurrence.Description)
                     </td>

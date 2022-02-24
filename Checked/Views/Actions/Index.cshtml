@@ -1,15 +1,37 @@
 ﻿@using Checked.Models.Types
+@using System.Text.Json
+@using System.Text.Json.Serialization
 @model IEnumerable<Checked.Models.Models.Action>
 @{
-    ViewData["Title"] = "Plans";
-    //@Html.ViewContext.RouteData.Values["id"]
+    ViewData["Title"] = "Planos";
+        JsonSerializerOptions options = new()
+            {
+                ReferenceHandler = ReferenceHandler.IgnoreCycles,
+                WriteIndented = true
+            };
+    var jsonActions = JsonSerializer.Serialize(ViewBag.Resume, options);
 }
+<script>let action = @Html.Raw(jsonActions)</script>
+<style>
+    .header-plan {
+        color: white;
+        display: flex;
+        justify-content: space-between;
+    }
 
-<div class="cntr">
-    <div style="color:white">
-        <h4>@ViewData["Title"]</h4>
-        <hr />
+        .header-plan h4 {
+            text-align: center;
+            align-self: end;
+        }
+</style>
+<div style="color:white" class="cntr">
+    <div class="header-plan">       
+        <div style="display: flex;margin-right:26px; height:100%">
+            <div id="piechart"></div>
+        </div>
+         <h4>@ViewData["Title"]</h4>
     </div>
+    <hr />
     <table style="color:white;font-size:13px" class="table table-hover table-sm align-middle">
         <thead class="table-dark">
             <tr>
@@ -31,12 +53,8 @@
                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                     @Html.DisplayNameFor(model => model.Who)
                 </th>
-                <th>
-                </th>
-                <th>
+                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                     @Html.DisplayNameFor(model => model.When)
-                </th>
-                <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                 </th>
                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                     @Html.DisplayNameFor(model => model.How)
@@ -52,12 +70,20 @@
         <tbody>
             @foreach (var item in Model)
             {
+                var totalDeDiasDaAcao = item.NewFinish.Subtract(item.Init).TotalDays;
+                var totaldecorrido = DateTime.Today.Subtract(item.Init).TotalDays;
+                string classe = "";
+                var widht = (int)((totaldecorrido / totalDeDiasDaAcao) * 100);
+                if (widht < 25) classe = "";
+                if (widht > 25 && widht < 50) classe = "bg-info";
+                if (widht > 50 && widht < 75) classe = "bg-warning"; else classe = "bg-danger";
+
                 <tr>
                     <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                         @String.Format("{0: dd/MM/yyyy HH:mm}", item.CreatedAt)
                     </td>
                     <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                       @String.Format("{0: dd/MM/yyyy HH:mm}", item.UpdatedAt)
+                        @String.Format("{0: dd/MM/yyyy HH:mm}", item.UpdatedAt)
                     </td>
                     <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                         @Html.DisplayFor(modelItem => item.What)
@@ -71,15 +97,26 @@
                     <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                         @Html.DisplayFor(modelItem => item.Who)
                     </td>
-                    <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        Início da ação: @Html.DisplayFor(modelItem => item.Init)
+                    <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4);width:max-content">
+                        <div style="margin-bottom:6px;" class="progress">
+                            <div class="progress-bar progress-bar-striped @classe " role="progressbar" style="width: @widht%" aria-valuenow="@widht" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div style="display:flex;">
+                            <div style="align-items: center;width:max-content;display:flex;flex-direction:column;padding: 0 6px;">
+                                <span>Início</span>
+                                <span>@string.Format("{0:d}",@item.Init)</span>
+                            </div>
+                            <div style="align-items: center;width:max-content;display:flex;flex-direction:column;padding: 0 6px;">
+                                <span>Prazo inicial</span>
+                                <span>@string.Format("{0:d}",@item.Finish)</span>
+                            </div>
+                            <div style="align-items: center;width:max-content;display:flex;flex-direction:column;padding: 0 6px;">
+                                <span>Prazo atualizado</span>
+                                <span> @string.Format("{0:d}",@item.NewFinish)</span>
+                            </div>
+                        </div>
                     </td>
-                    <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        Prazo: @Html.DisplayFor(modelItem => item.Finish)
-                    </td>
-                    <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        Novo prazo: @Html.DisplayFor(modelItem => item.NewFinish)
-                    </td>
+
                     <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                         @Html.DisplayFor(modelItem => item.How)
                     </td>
@@ -94,3 +131,4 @@
         </tbody>
     </table>
 </div>
+<script type="text/javascript" src="~/js/ChartActions.js"></script>

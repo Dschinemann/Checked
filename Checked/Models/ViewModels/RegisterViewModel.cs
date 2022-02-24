@@ -25,10 +25,12 @@ namespace Checked.Models.ViewModels
         [Required]
         [Display(Name ="Estado")]
         public int StateId { get; set; }
+        public string? StateName { get; set; }
 
         [Required]
         [Display(Name ="Cidade")]
         public int CityId{ get; set; }
+        public string? CityName { get; set; }
 
         [Required]
         [Display(Name ="CEP")]

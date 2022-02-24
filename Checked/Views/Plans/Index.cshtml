@@ -1,4 +1,6 @@
-﻿@model Checked.Models.ViewModels.PlanViewModel;
+﻿@using System.Text.Json
+@using System.Text.Json.Serialization
+@model Checked.Models.ViewModels.PlanViewModel;
 @{
     DateTime date = new DateTime();
     string goal = "";//@Model.DeadLine.ToString().Equals("01/01/0001 00:00:00") ? "" : @Model.DeadLine;
@@ -10,18 +12,24 @@
             goal = @$"Ultimo prazo para conclusão do Plano:  {String.Format("{0:dd MMM yyyy}", date)}";
         }
     }
+    JsonSerializerOptions options = new()
+            {
+                ReferenceHandler = ReferenceHandler.IgnoreCycles,
+                WriteIndented = true
+            };
+    var jsonActions = JsonSerializer.Serialize(Model.QuantStatus, options);
 }
-
+<script>let action = @Html.Raw(jsonActions)</script>
 <link rel="stylesheet" asp-append-version="true" href="~/css/actions.css" />
 <div class="cntr" style="padding:16px;">
     <div class="header-action">
-        <div>
+        <div class="header-details">
             <div>
                 <span>Assunto:</span>
                 <span>@Model.Subject</span>
             </div>
             <div>
-                <span>@goal</span>
+                <span>Prazo para conclusão do plano @string.Format("{0: dd MMM yyyy}",Model.Goal)</span>
             </div>
             <div>
                 <span>Responsável:</span>
@@ -32,23 +40,21 @@
                 <span>@Model.Objective</span>
             </div>
         </div>
-        <div style="display: flex;align-items:end;margin-right:26px;">
-            <a asp-action="Index" asp-controller="Occurrences">Occurrences</a>
+        <div style="display: flex;margin-right:26px; height:100%">
+            <div id="piechart"></div>
         </div>
     </div>
     <div class="cntr-table-actions">
-        <table style="color:white;" class="table table-hover align-middle">
+        <table style="color:white;font-size:13px" class="table table-hover align-middle">
             <thead>
                 <tr>
                     <td>What? (O que?)</td>
                     <td>Why? (Porquê?)</td>
                     <td>Where? (Onde?)</td>
                     <td>Who? (Quem?)</td>
-                    <td></td>
-                    <td>When? (Quando?)</td>
-                    <td></td>
+                    <td style="text-align:center;">When? (Quando?)</td>
                     <td>How? (Como?)</td>
-                    <td>How Much? (Quanto Custa?)</td>
+                    <td>How Much?  (Quanto Custa?)</td>
                     <td>Status</td>
                     <td></td>
                 </tr>
@@ -56,14 +62,38 @@
             <tbody>
                 @foreach (var item in Model.Actions)
                 {
+                    var totalDeDiasDaAcao = item.NewFinish.Subtract(item.Init).TotalDays;
+                    var totaldecorrido = DateTime.Today.Subtract(item.Init).TotalDays;
+                    string classe = "";
+                    var widht = (int)((totaldecorrido / totalDeDiasDaAcao) * 100);
+                    if (widht < 25) classe = "";
+                    if (widht > 25 && widht < 50) classe = "bg-info";
+                    if (widht > 50 && widht < 75) classe = "bg-warning"; else classe = "bg-danger";
+
                     <tr>
                         <td>@item.What</td>
                         <td>@item.Why</td>
                         <td>@item.Where</td>
                         <td>@item.Who</td>
-                        <td>Início @string.Format("{0:d}",@item.Init)</td>
-                        <td>Prazo @string.Format("{0:d}",@item.Finish)</td>
-                        <td>Novo prazo @string.Format("{0:d}",@item.NewFinish)</td>
+                        <td style="width:max-content">
+                            <div style="margin-bottom:6px;" class="progress">
+                                <div class="progress-bar progress-bar-striped @classe " role="progressbar" style="width: @widht%" aria-valuenow="@widht" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div style="display:flex;">
+                                <div style="align-items: center;width:max-content;display:flex;flex-direction:column;padding: 0 6px;">
+                                    <span>Início</span>
+                                    <span>@string.Format("{0:d}",@item.Init)</span>
+                                </div>
+                                <div style="align-items: center;width:max-content;display:flex;flex-direction:column;padding: 0 6px;">
+                                    <span>Prazo inicial</span>
+                                    <span>@string.Format("{0:d}",@item.Finish)</span>
+                                </div>
+                                <div style="align-items: center;width:max-content;display:flex;flex-direction:column;padding: 0 6px;">
+                                    <span>Prazo atualizado</span>
+                                    <span> @string.Format("{0:d}",@item.NewFinish)</span>
+                                </div>
+                            </div>
+                        </td>
                         <td>@item.How</td>
                         <td>@string.Format("{0:C2}",@item.HowMuch)</td>
                         <td>@item.TP_Status.Name</td>
@@ -84,10 +114,10 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td></td>
                     <td><a class="btn btn-add" asp-route-planId="@Model.PlanId" asp-route-OccurrenceId="@Model.OccurrenceId" asp-controller="Actions" asp-action="Create">+</a></td>
                 </tr>
             </tbody>
         </table>
     </div>
 </div>
+<script type="text/javascript" src="~/js/ChartActions.js"></script>

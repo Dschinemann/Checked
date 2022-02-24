@@ -1,5 +1,4 @@
-﻿using Checked.Models.Enums;
-using Checked.Models.Types;
+﻿using Checked.Models.Types;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -9,8 +8,10 @@ namespace Checked.Models.Models
     {
         public string Id { get; set; }
 
-        [Display(Name ="Nome")]
-        public string Name { get; set; }
+        [Display(Name = "Tipo")]
+        public virtual TP_Ocorrencia Tp_Ocorrencia { get; set; }
+
+        public int TP_OcorrenciaId { get; set; }        
 
         [Display(Name = "Descrição")]
         public string Description { get; set; }
@@ -66,13 +67,20 @@ namespace Checked.Models.Models
 
         public List<Action> Actions { get; set; }
 
+        [Display(Name = "Informação Adicional 01")]
+        public string? Additional1 { get; set; }
+
+        [Display(Name = "Informação Adicional 02")]
+        public string? Additional2 { get; set; }
+
+
         public Occurrence()
         {
         }
 
-        public Occurrence(string name, string description, string harmed, string? document, double cost, DateTime createdAt, DateTime updatedAt, string? appraiserId, string origin, string applicationUserId,string organizationId, int statusId)
+        public Occurrence(int tp_OcorrenciaId, string description, string harmed, string? document, double cost, DateTime createdAt, DateTime updatedAt, string? appraiserId, string origin, string applicationUserId,string organizationId, int statusId)
         {
-            Name = name;
+            TP_OcorrenciaId = tp_OcorrenciaId;
             Description = description;
             Harmed = harmed;
             Document = document;

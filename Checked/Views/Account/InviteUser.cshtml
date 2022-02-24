@@ -28,21 +28,32 @@
                 <tr>
                     <td>Nome</td>
                     <td>Email</td>
+                    <td>Acesso</td>
                     <td></td>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.users)
+                @if (Model.users != null)
                 {
-                    <tr>
-                        <td>@item.Name</td>
-                        <td>@item.Email</td>
-                        <td>
-                            <a asp-action="Edit" asp-route-userId="@item.Id">Edit</a> |
-                            <a asp-action="Detail" asp-route-userId="@item.Id">Details</a> |
-                            <a asp-action="Delete" asp-route-userId="@item.Id">Delete</a>
-                        </td>
-                    </tr>
+                    @foreach (var item in Model.users)
+                    {
+                        <tr>
+                            <td>@item.Username</td>
+                            <td>@item.Email</td>
+                            <td>
+                                @foreach (var role in @item.Role)
+                                {
+                                    @role
+                                    ;
+                                }
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-userId="@item.UserId">Edit</a> |
+                                <a asp-action="Detail" asp-route-userId="@item.UserId">Details</a> |
+                                <a asp-action="Delete" asp-route-userId="@item.UserId">Delete</a>
+                            </td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>

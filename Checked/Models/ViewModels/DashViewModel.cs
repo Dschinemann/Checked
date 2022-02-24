@@ -5,18 +5,21 @@ namespace Checked.Models.ViewModels
 {
     public class DashViewModel
     {
-        public string OrganizationName { get; set; }
-        public List<ActionsResume> resume { get; set; }
-        public PlansResume PlanResume { get; set; }
-        public OccurrenceResume OccurrenceResume { get; set; }
+        public string UserName { get; set; }
+        public List<ActionsSummary> Summary { get; set; }
+        public PlansSummary PlanSummary { get; set; }
+        public OccurrenceResume OccurrenceSummary { get; set; }
         public DeadLineActions DeadLineActions { get; set; }
+        public List<SummaryPerWeek> WeekSummary { get; set; }
+        public List<SummaryOccurrencesPerStatus> SummaryOccurrencesPerStatuses { get; set; }
+        public List<SummarryOccurrencePerName> SummarryOccurrencePerNames { get; set; }
     }
-    public class ActionsResume
+    public class ActionsSummary
     {
         public string Tipo { get; set; }
         public int Quantidade { get; set; }
     }
-    public class PlansResume
+    public class PlansSummary
     {
         public int PlanCriados { get; set; }
         public int QuantEncerrados { get; set; }
@@ -32,5 +35,24 @@ namespace Checked.Models.ViewModels
     {
         public string Name { get; set; }
         public DateTime DeadLine { get; set; }
+    }
+
+    public class SummaryPerWeek
+    {
+        public string Week { get; set; }
+        public double Cost { get; set; }
+    }
+
+    public class SummaryOccurrencesPerStatus
+    {
+        public string Status { get; set; }
+        public int Quantidade { get; set; }
+    }
+
+    public class SummarryOccurrencePerName
+    {
+        public string Name { get; set; }
+        public int Month { get; set; }
+        public double Cost { get; set; }
     }
 }

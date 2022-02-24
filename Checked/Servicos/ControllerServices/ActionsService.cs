@@ -1,5 +1,5 @@
 ﻿using Checked.Data;
-using Checked.Models.Models;
+using Checked.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Action = Checked.Models.Models.Action;
 
@@ -20,6 +20,14 @@ namespace Checked.Servicos.ControllerServices
                 .Where(c => c.OrganizationId.Equals(organizationId))
                 .ToListAsync();
             return actions;
+        }
+
+        public IEnumerable<StatusQuantidade> CountPerStatus(List<Models.Models.Action> actions)
+        {
+            var result = actions
+                    .GroupBy(c => c.TP_Status)
+                    .Select(c => new StatusQuantidade { Status = c.Key.Name, Quantidade = c.Count() });
+            return result;
         }
     }
 }

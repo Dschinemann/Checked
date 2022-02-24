@@ -10,6 +10,6 @@ namespace Checked.Models.ViewModels
         [Required]
         public string Email { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
-        public List<ApplicationUser>? users { get; set; }
+        public List<UsersInRoleViewModel>? users { get; set; }
     }
 }

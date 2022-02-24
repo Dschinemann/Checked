@@ -1,0 +1,41 @@
+﻿@model Checked.Models.Models.HelpDesk
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="cntr" style="color:white;padding:16px">
+    <div>
+        <h4>HelpDesk</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.UrlAccess)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.UrlAccess)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.ErrorMessage)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.ErrorMessage)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Message)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Message)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Response)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Response)
+            </dd>
+        </dl>
+    </div>
+    <div>
+        <a asp-action="Index">Voltar</a>
+    </div>
+</div>

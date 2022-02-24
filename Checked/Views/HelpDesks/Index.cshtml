@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Checked.Models.Models.HelpDesk>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="cntr" style="color:white;padding:16px">
+    <p>
+        <a asp-action="Create">Novo</a>
+    </p>
+    <table style="color:white;font-size:13px" class="table table-hover table-sm align-middle">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.UrlAccess)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ErrorMessage)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Message)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Response)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UrlAccess)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ErrorMessage)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Message)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Response)
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

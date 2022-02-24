@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="~/css/Occurrence.css" />
 <div class="cntr cntr-occurrence" style="color:white">
     <div>
-        <h4>Occurrence</h4>
+        <h4>Ocorrência</h4>
         <hr />
     </div>
     <div class="row" style="width:100%">
@@ -17,9 +17,14 @@
                 <div class="create-box-occurrence">
                     <div>
                         <div class="form-group">
-                            <label asp-for="Name" class="control-label"></label>
-                            <input asp-for="Name" class="form-control" />
-                            <span asp-validation-for="Name" class="text-danger"></span>
+                            <div style="display:flex;align-items: end;">
+                                <div>
+                                    <label asp-for="TypeOccurrence" class="control-label"></label>
+                                    <select asp-for="TypeOccurrence" asp-items="@ViewBag.Types" class="form-control"></select>
+                                    <span asp-validation-for="TypeOccurrence" class="text-danger"></span>
+                                </div>
+                                <a style="background-color:green; font-weight:bold" class="btn" asp-action="Create" asp-controller="TP_Ocorrencia">+</a>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label asp-for="Description" class="control-label"></label>
@@ -37,6 +42,19 @@
                             <span asp-validation-for="Document" class="text-danger"></span>
                         </div>
                         <div class="form-group">
+                            <label asp-for="Additional1" class="control-label"></label>
+                            <input asp-for="Additional1" class="form-control" />
+                            <span asp-validation-for="Additional1" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Additional2" class="control-label"></label>
+                            <input asp-for="Additional2" class="form-control" />
+                            <span asp-validation-for="Additional2" class="text-danger"></span>
+                        </div>
+
+                    </div>
+                    <div>
+                        <div class="form-group">
                             <label asp-for="Origin" class="control-label"></label>
                             <input asp-for="Origin" class="form-control" />
                             <span asp-validation-for="Origin" class="text-danger"></span>
@@ -46,11 +64,10 @@
                             <input asp-for="Cost" class="form-control" />
                             <span asp-validation-for="Cost" class="text-danger"></span>
                         </div>
-                    </div>
-                    <div>
                         <div class="form-group">
                             <label asp-for="Appraiser" class="control-label"></label>
                             <select asp-for="Appraiser" class="form-control" asp-items="@ViewBag.AppraiserId"></select>
+                            <span asp-validation-for="Appraiser" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <input type="submit" value="Create" class="btn btn-primary" />

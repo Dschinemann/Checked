@@ -1,8 +1,11 @@
-﻿using Checked.Models.Models;
+﻿using Checked.Models;
+using Checked.Models.Models;
 using Checked.Models.ViewModels;
 using Checked.Servicos;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace Checked.Controllers
 {
@@ -34,16 +37,28 @@ namespace Checked.Controllers
                 var resume = await _service.GetCountActionsAsync(user.OrganizationId);
                 var plansResume = await _service.GetCountPlansAsync(user.OrganizationId);
                 var deadLine = await _service.GetDeadlineAsync(user.OrganizationId);
+                var resumeCostPerWeek = await _service.GetCostPerMonthAsync(user.OrganizationId);
+                var summaryOccurrencesPerStatus = await _service.GetOccurrencesPerStatus(user.OrganizationId);
+                var summarryOccurrencePerName = await _service.GetCostPerTypeOccurrences(user.OrganizationId);
                 model = new DashViewModel()
                 {
-                    OccurrenceResume = ocResume,
-                    OrganizationName = organization.Name,
-                    resume = resume,
-                    PlanResume = plansResume,
-                    DeadLineActions = deadLine
+                    OccurrenceSummary = ocResume,
+                    UserName = user.Name,
+                    Summary = resume,
+                    PlanSummary = plansResume,
+                    DeadLineActions = deadLine,
+                    WeekSummary = resumeCostPerWeek,
+                    SummaryOccurrencesPerStatuses = summaryOccurrencesPerStatus,
+                    SummarryOccurrencePerNames = summarryOccurrencePerName
                 };
             }
             return View(model);
+        }
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [AllowAnonymous]
+        public IActionResult Error(string message)
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, Message = message });
         }
     }
 }

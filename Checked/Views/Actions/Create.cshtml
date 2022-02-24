@@ -18,6 +18,7 @@
                 <input type="hidden" asp-for="OccurrenceId" />
                  <input type="hidden" asp-for="Id" />
                   <input type="hidden" asp-for="StatusId" />
+                 <input type="hidden" asp-for="Goal" />
                 <div class="create-box">
                     <div>
                         <div class="form-group">
@@ -59,8 +60,8 @@
                         </div>
                         <div class="form-group">
                             <label asp-for="Finish" class="control-label"></label>
-                            <input asp-for="Finish" class="form-control" />
-                            <span asp-validation-for="Finish" class="text-danger"></span>
+                            <input asp-for="NewFinish" class="form-control" />
+                            <span asp-validation-for="NewFinish" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <input type="submit" value="Create" class="btn btn-primary" />

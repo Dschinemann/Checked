@@ -29,7 +29,6 @@ namespace Checked.Models.ViewModels
         [Display(Name = "Estado")]
         public virtual State? State { get; set; }
 
-
         public List<City>? Cities { get; set; }
 
         [Display(Name = "Cidade")]
@@ -42,5 +41,9 @@ namespace Checked.Models.ViewModels
         [Required]
         [Display(Name ="CEP")]
         public string PostalCode { get; set; }
+
+        [Required]
+        [Display(Name = "Permissão")]
+        public string RoleId { get; set; }
     }
 }

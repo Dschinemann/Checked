@@ -1,5 +1,6 @@
 ﻿using Checked.Data;
 using Checked.Models.Models;
+using Checked.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace Checked.Servicos.ControllerServices
@@ -23,7 +24,7 @@ namespace Checked.Servicos.ControllerServices
         public async Task<Plan> GetPlanById(string id)
         {
             return await _context.Plans
-                .Include(o => o.Occurrence)
+                .Include(o => o.Occurrence)                
                 .FirstAsync(o => o.Id == id);
         }
         public async Task UpdatePlanAsync(Plan plan)
@@ -40,6 +41,14 @@ namespace Checked.Servicos.ControllerServices
                     throw;
                 }
             }
+        }
+
+        public IEnumerable<StatusQuantidade> GetSumActionPerStatus(List<Models.Models.Action> actions)
+        {
+            var result = actions
+                .GroupBy(c => c.TP_Status)
+                .Select(c => new StatusQuantidade { Status = c.Key.Name, Quantidade = c.Count() });
+            return result;
         }
     }
 }

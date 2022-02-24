@@ -34,6 +34,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/menu.css" asp-append-version="true" />
     <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <!-- Created by CodingLab |www.youtube.com/CodingLabYT-->
 </head>
 <body>
@@ -41,93 +42,109 @@
         <main role="main">
             @if (SignInManager.IsSignedIn(User))
             {
-                        <div class="sidebar close">
-                            <div class="logo-details">
-                                <i class='bx bx-check-double'></i>
-                                <span class="logo_name">Checked</span>
-                            </div>
-                            <ul class="nav-links">
-                                <li>
-                                    <a asp-action="Index" asp-controller="Dashboard">
-                                        <i class='bx bx-line-chart'></i>
-                                        <span class="link_name">Dashboard</span>
-                                    </a>
-                                    <ul class="sub-menu blank">
-                                        <li><a class="link_name" asp-action="Index" asp-controller="Dashboard">Dashboard</a></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <div class="iocn-link">
-                                        <a href="#">
-                                            <i class='bx bx-collection'></i>
-                                            <span class="link_name">Category</span>
-                                        </a>
-                                        <i class='bx bxs-chevron-down arrow'></i>
-                                    </div>
-                                    <ul class="sub-menu">
-                                        <li><a class="link_name" href="#">Category</a></li>
-                                        <li><a asp-action="Index" asp-controller="Occurrences">Occurrences</a></li>
-                                        <li><a asp-action="Plans" asp-controller="Plans">Plans</a></li>
-                                        <li><a asp-action="Index" asp-controller="Actions">Actions</a></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <a asp-action="InviteUser" asp-controller="Account">
-                                        <i class='bx bx-user-plus'></i>
-                                        <span class="link_name">Convites</span>
-                                    </a>
-                                    <ul class="sub-menu blank">
-                                        <li><a class="link_name" asp-action="InviteUser" asp-controller="Account">Convites</a></li>
-                                    </ul>
-                                </li>
-
-                                <li>
-                                    <a href="#">
-                                        <i class='bx bx-cog'></i>
-                                        <span class="link_name">Setting</span>
-                                    </a>
-                                    <ul class="sub-menu blank">
-                                        <li><a class="link_name" href="#">Setting</a></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <div style="padding:10px" class="profile-details">
-                                        <div class="profile-content">
-                                            <!--<img src="image/profile.jpg" alt="profileImg">-->
-                            </div>
-                                        <div class="name-job">
-                                            <div class="profile_name">@name</div>
-                                            <div class="job">@OrganizationName</div>
-                                        </div>
-                                        <i onclick="logout()" class='bx bx-log-out'></i>
-                                    </div>
-                                </li>
+                <div class="sidebar close">
+                    <div class="logo-details">
+                        <i class='bx bx-check-double'></i>
+                        <span class="logo_name">Checked</span>
+                    </div>
+                    <ul class="nav-links">
+                        <li>
+                            <a asp-action="Index" asp-controller="Dashboard">
+                                <i class='bx bx-line-chart'></i>
+                                <span class="link_name">Dashboard</span>
+                            </a>
+                            <ul class="sub-menu blank">
+                                <li><a class="link_name" asp-action="Index" asp-controller="Dashboard">Dashboard</a></li>
                             </ul>
-                        </div>
-                        <section class="home-section">
-                            <div class="home-content">
-                                <i class='bx bx-menu'></i>
+                        </li>
+                        <li>
+                            <div class="iocn-link">
+                                <a href="#">
+                                    <i class='bx bx-collection'></i>
+                                    <span class="link_name">Category</span>
+                                </a>
+                                <i class='bx bxs-chevron-down arrow'></i>
                             </div>
+                            <ul class="sub-menu">
+                                <li><a class="link_name" href="#">Navegação</a></li>
+                                <li><a asp-action="Index" asp-controller="Occurrences">Ocorrências</a></li>
+                                <li><a asp-action="Plans" asp-controller="Plans">Planos</a></li>
+                                <li><a asp-action="Index" asp-controller="Actions">Ações</a></li>
+                            </ul>
+                        </li>
+                        @if (User.IsInRole("Administrador"))
+                        {
+                            <li>
+                                <a asp-action="InviteUser" asp-controller="Account">
+                                    <i class='bx bx-user-plus'></i>
+                                    <span class="link_name">Convites</span>
+                                </a>
+                                <ul class="sub-menu blank">
+                                    <li><a class="link_name" asp-action="InviteUser" asp-controller="Account">Convites</a></li>
+                                </ul>
+                            </li>
+                        }
+                        <li>
+                            <a href="#">
+                                <i class='bx bx-cog'></i>
+                                <span class="link_name">Settings</span>
+                            </a>
+                            <ul class="sub-menu blank">
+                                <li><a class="link_name" href="#">Settings</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <div class="iocn-link">
+                                <a href="#">
+                                    <i class='bx bxs-help-circle'></i>
+                                    <span class="link_name">Ajuda</span>
+                                </a>
+                                <i class='bx bxs-chevron-down arrow'></i>
+                            </div>
+                            <ul class="sub-menu">
+                                <li><a class="link_name" href="#">Ajuda</a></li>
+                                <li><a href="#">Dúvidas</a></li>
+                                <li><a asp-action="Index" asp-controller="HelpDesks">Relate um problema</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <div style="padding:10px" class="profile-details">
+                                <div class="profile-content">
+                                    <!--<img src="image/profile.jpg" alt="profileImg">-->
+                            </div>
+                                <div class="name-job">
+                                    <div class="profile_name">@name</div>
+                                    <div class="job">@OrganizationName</div>
+                                </div>
+                                <i onclick="logout()" class='bx bx-log-out'></i>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <section class="home-section">
+                    <div class="home-content">
+                        <i class='bx bx-menu'></i>
+                    </div>
                     @RenderBody()
-                        </section>
-                        <script>
-                                        let arrow = document.querySelectorAll(".arrow");
-                                    for (var i = 0; i < arrow.length; i++) {
-                                      arrow[i].addEventListener("click", (e)=>{
-                                     let arrowParent = e.target.parentElement.parentElement;//selecting main parent of arrow
-                                     arrowParent.classList.toggle("showMenu");
-                                      });
-                                    }
-                                    let sidebar = document.querySelector(".sidebar");
-                                    let sidebarBtn = document.querySelector(".bx-menu");
-                                   
-                                    sidebarBtn.addEventListener("click", ()=>{
-                                      sidebar.classList.toggle("close");
-                                    });
-                                            function logout(){
-                                                 document.location = "@Url.Action("Logout","Account")";
+                </section>
+                <script>
+                                let arrow = document.querySelectorAll(".arrow");
+                            for (var i = 0; i < arrow.length; i++) {
+                              arrow[i].addEventListener("click", (e)=>{
+                             let arrowParent = e.target.parentElement.parentElement;//selecting main parent of arrow
+                             arrowParent.classList.toggle("showMenu");
+                              });
                             }
-                        </script>
+                            let sidebar = document.querySelector(".sidebar");
+                            let sidebarBtn = document.querySelector(".bx-menu");
+
+                            sidebarBtn.addEventListener("click", ()=>{
+                              sidebar.classList.toggle("close");
+                            });
+                                    function logout(){
+                                         document.location = "@Url.Action("Logout","Account")";
+                    }
+                </script>
             }
         </main>
     </div>

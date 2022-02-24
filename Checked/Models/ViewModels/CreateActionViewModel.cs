@@ -1,5 +1,6 @@
 ﻿using Checked.Models.Enums;
 using Checked.Models.Types;
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
 namespace Checked.Models.ViewModels
@@ -22,15 +23,23 @@ namespace Checked.Models.ViewModels
         public string? Who { get; set; }
 
         [DataType(DataType.Date)]
-        [Display(Name = "Início")]
+        [Display(Name = "Início")]        
         public DateTime Init { get; set; } = DateTime.Now;
+
         [DataType(DataType.Date)]
         [Display(Name = "Previsão para término")]
+        [Remote("isValideFinishDate","Actions", AdditionalFields = nameof(Goal))]
         public DateTime Finish { get; set; } = DateTime.Now;
 
         [DataType(DataType.Date)]
         [Display(Name = "Nova previsão")]
+        [Remote("isValideFinishDate", "Actions", AdditionalFields = nameof(Goal))]
         public DateTime NewFinish { get; set; } = DateTime.Now;
+
+        [Remote("isValideFinishDate", "Actions", AdditionalFields = nameof(NewFinish))]        
+        public DateTime Goal { get; set; }
+
+
         [Display(Name = "How? (Como?)")]
         public string? How { get; set; }
 

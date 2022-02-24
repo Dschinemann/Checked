@@ -45,7 +45,7 @@ namespace Checked.Servicos
                 .FirstAsync();
             return org;
         }
-        public async Task<List<ActionsResume>> GetCountActionsAsync(string id)
+        public async Task<List<ActionsSummary>> GetCountActionsAsync(string id)
         {
             var ids = await _context.Plans
               .Where(c => c.organizationId == id)
@@ -59,11 +59,11 @@ namespace Checked.Servicos
                 .Select(c => new { status = c.Key, total = c.Count() })
                 .ToListAsync();
 
-            List<ActionsResume> list = new List<ActionsResume>();
+            List<ActionsSummary> list = new List<ActionsSummary>();
 
             foreach (var action in actions)
             {
-                list.Add(new ActionsResume
+                list.Add(new ActionsSummary
                 {
                     Quantidade = action.total,
                     Tipo = Enum.GetName(typeof(TP_StatusEnum), action.status)
@@ -72,7 +72,7 @@ namespace Checked.Servicos
             return list;
         }
 
-        public async Task<PlansResume> GetCountPlansAsync(string id)
+        public async Task<PlansSummary> GetCountPlansAsync(string id)
         {
             var plansEncerradas = await _context.Plans
                 .Where(c => c.organizationId == id && !_context.Actions.Any(b => b.TP_StatusId != ((int)TP_StatusEnum.Encerrado) && b.PlanId == c.Id))
@@ -91,7 +91,7 @@ namespace Checked.Servicos
                 .Where(c => idPlans.Contains(c.PlanId))
                 .SumAsync(c => c.HowMuch);
 
-            PlansResume plansResume = new PlansResume()
+            PlansSummary plansResume = new PlansSummary()
             {
                 CustoTotal = custoPlans,
                 PlanCriados = countPlans,
@@ -130,5 +130,40 @@ namespace Checked.Servicos
             }
             return deadLineActions;
         }
+        
+        public async Task<List<SummaryPerWeek>> GetCostPerMonthAsync(string id)
+        {
+            return await _context.Occurrences
+                .Where(c => c.OrganizationId.Equals(id))
+                .GroupBy(c => new { weekNumber = (c.CreatedAt.Day)/7 })
+                .Select(c => new SummaryPerWeek { Week = $"Semana {c.Key.weekNumber}", Cost = c.Sum(x => x.Cost)})
+                .ToListAsync();
+        }
+        
+        public async Task<List<SummaryOccurrencesPerStatus>> GetOccurrencesPerStatus(string id)
+        {
+           return await _context.Occurrences
+                .Where(c => c.OrganizationId.Equals(id))
+                .Include(o => o.Status)
+                .GroupBy(o => new {o.StatusId, o.Status.Name})
+                .Select(x => new SummaryOccurrencesPerStatus { Status = x.Key.Name, Quantidade = x.Count()})
+                .ToListAsync();                
+        }
+        
+        public async Task<List<SummarryOccurrencePerName>> GetCostPerTypeOccurrences(string id)
+        {
+           return await _context.Occurrences
+                .Where(c => c.OrganizationId.Equals(id) && c.CreatedAt.Year == DateTime.Now.Year)
+                .Include(o => o.Tp_Ocorrencia)
+                .GroupBy(o => new {o.Tp_Ocorrencia.Name,o.CreatedAt.Month})
+                .Select(x => new SummarryOccurrencePerName()
+                {
+                    Name = x.Key.Name,
+                    Cost = x.Sum(i => i.Cost),
+                    Month = x.Key.Month,
+                })
+                .ToListAsync();
+        }
     }
+
 }

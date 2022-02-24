@@ -7,6 +7,9 @@ using Checked.Data;
 using Checked.Models.Models;
 using Checked.Models.ViewModels;
 using Checked.Models.Enums;
+using Microsoft.AspNetCore.Authorization;
+using Checked.Models;
+using System.Diagnostics;
 
 namespace Checked.Controllers
 {
@@ -32,6 +35,7 @@ namespace Checked.Controllers
             var occurrences = await _context.Occurrences
                 .Where(c => c.OrganizationId == user.OrganizationId)
                 .Include(o => o.ApplicationUser)
+                .Include(o => o.Tp_Ocorrencia)
                 .Include(o => o.Status)
                 .ToListAsync();
 
@@ -50,10 +54,11 @@ namespace Checked.Controllers
                 .Where(c => c.OrganizationId == user.OrganizationId && c.Id == idOccurrence)
                 .Include(o => o.ApplicationUser)
                 .Include(o => o.Appraiser)
+                .Include(o => o.Tp_Ocorrencia)
                 .Include(o => o.Organization)
                 .Include(o => o.Status)
                 .FirstOrDefaultAsync();
-            
+
             if (occurrence == null)
             {
                 return NotFound();
@@ -67,7 +72,8 @@ namespace Checked.Controllers
         {
             var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
             var users = await _context.Users.Where(c => c.OrganizationId == user.OrganizationId).ToListAsync();
-            ViewBag.AppraiserId = new SelectList(users,"Id", "Name",user);
+            ViewBag.AppraiserId = new SelectList(users, "Id", "Name", user);
+            ViewBag.Types = new SelectList(_context.TP_Ocorrencias, "Id", "Name");
             return View(new CreateOccurrenceModel());
         }
 
@@ -76,7 +82,7 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,Harmed,Document,Cost,Appraiser,Origin,Id")] CreateOccurrenceModel model)
+        public async Task<IActionResult> Create([Bind("Description,Harmed,Document,Cost,Appraiser,Origin,Id,TypeOccurrence,Additional2,Additional1")] CreateOccurrenceModel model)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +91,7 @@ namespace Checked.Controllers
                 if (user.OrganizationId == null) return NotFound();
 
                 Occurrence occurrence = new Occurrence(
-                    model.Name,
+                    model.TypeOccurrence,
                     model.Description,
                     model.Harmed,
                     model.Document,
@@ -100,11 +106,15 @@ namespace Checked.Controllers
                     );
                 occurrence.StatusActions = "Não há ação cadastrada ";
                 occurrence.Id = model.Id;
+                occurrence.Additional1 = model.Additional1;
+                occurrence.Additional2 = model.Additional2;
+                var typeName = await _context.TP_Ocorrencias.FindAsync(model.TypeOccurrence);                
                 _context.Occurrences.Add(occurrence);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.AppraiserId = new SelectList(_context.Users, "Id", "Name", model.Appraiser);
+            ViewBag.Types = new SelectList(_context.TP_Ocorrencias, "Id", "Name");
             return View(model);
         }
 
@@ -119,13 +129,29 @@ namespace Checked.Controllers
             var occurrence = await _context.Occurrences
                 .Include(o => o.Appraiser)
                 .Include(o => o.Status)
+                .Include(o => o.Tp_Ocorrencia)
                 .Where(x => x.Id.Equals(idOccurrence))
                 .FirstOrDefaultAsync();
             if (occurrence == null)
             {
                 return NotFound();
             }
-            EditOccurrenceViewModel model = new EditOccurrenceViewModel(occurrence.Id, occurrence.Name, occurrence.Description, occurrence.Harmed, occurrence.Document, occurrence.Cost, occurrence.AppraiserId, occurrence.ApplicationUserId, occurrence.Origin, occurrence.OrganizationId, occurrence.Status, occurrence.CorrectiveAction);
+            EditOccurrenceViewModel model = new EditOccurrenceViewModel(
+                occurrence.Id,
+                occurrence.TP_OcorrenciaId, 
+                occurrence.Description, 
+                occurrence.Harmed, 
+                occurrence.Document,
+                occurrence.Cost,
+                occurrence.AppraiserId,
+                occurrence.ApplicationUserId, 
+                occurrence.Origin,
+                occurrence.OrganizationId, 
+                occurrence.Status, 
+                occurrence.CorrectiveAction                
+                );
+            model.Additional1 = occurrence.Additional1;
+            model.Additional2 = occurrence.Additional2;
             ViewBag.AppraiserId = new SelectList(
                          _context.Users.Where(x => x.OrganizationId == occurrence.OrganizationId),
                          "Id",
@@ -138,6 +164,12 @@ namespace Checked.Controllers
                          "Name",
                          occurrence.Status
                          );
+            ViewBag.Types = new SelectList(
+                _context.TP_Ocorrencias,
+                "Id",
+                "Name",
+                occurrence.TP_OcorrenciaId
+                );
             return View(model);
         }
 
@@ -146,7 +178,7 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Name,Description,Harmed,Document,Cost,AppraiserId,Origin,Id,Appraiser,ApplicationUserId,OrganizationId,CorretiveActions,Status,Status.Name")] EditOccurrenceViewModel model)
+        public async Task<IActionResult> Edit(string id, [Bind("TypeOccurrence,Description,Harmed,Document,Cost,AppraiserId,Origin,Id,Appraiser,ApplicationUserId,OrganizationId,CorretiveActions,Status,Status.Name,Additional1,Additional2")] EditOccurrenceViewModel model)
         {
             if (id != model.Id)
             {
@@ -157,7 +189,7 @@ namespace Checked.Controllers
             {
                 Occurrence occurrence = new Occurrence()
                 {
-                    Name = model.Name,
+                    TP_OcorrenciaId = model.TypeOccurrence,
                     Description = model.Description,
                     Harmed = model.Harmed,
                     Document = model.Document,
@@ -168,7 +200,9 @@ namespace Checked.Controllers
                     ApplicationUserId = model.ApplicationUserId,
                     OrganizationId = model.OrganizationId,
                     StatusId = model.Status.Id,
-                    CorrectiveAction = model.CorretiveActions
+                    CorrectiveAction = model.CorretiveActions,
+                    Additional1 = model.Additional1,
+                    Additional2 = model.Additional2
                 };
                 try
                 {
@@ -200,6 +234,12 @@ namespace Checked.Controllers
                         "Name",
                         model.Status
                         );
+            ViewBag.Types = new SelectList(
+                _context.TP_Ocorrencias,
+                "Id",
+                "Name",
+                model.TypeOccurrence
+                );
             return View(model);
         }
 
@@ -215,8 +255,9 @@ namespace Checked.Controllers
                 .Include(o => o.ApplicationUser)
                 .Include(o => o.Appraiser)
                 .Include(o => o.Organization)
+                .Include(o => o.Tp_Ocorrencia)
                 .FirstOrDefaultAsync(c => c.Id.Equals(idOccurrence));
-                
+
             if (occurrence == null)
             {
                 return NotFound();
@@ -228,7 +269,7 @@ namespace Checked.Controllers
         // POST: Occurrences/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed( Occurrence occurrence)
+        public async Task<IActionResult> DeleteConfirmed(Occurrence occurrence)
         {
             //var occurrence = await _context.Occurrences.FindAsync(idOccurrence);
             _context.Occurrences.Remove(occurrence);
@@ -239,6 +280,13 @@ namespace Checked.Controllers
         private bool OccurrenceExists(string id)
         {
             return _context.Occurrences.Any(e => e.Id == id);
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [AllowAnonymous]
+        public IActionResult Error(string message)
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, Message = message });
         }
     }
 }

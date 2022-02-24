@@ -17,7 +17,7 @@ namespace Checked.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("ProductVersion", "6.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -240,6 +240,40 @@ namespace Checked.Migrations
                     b.ToTable("Countries");
                 });
 
+            modelBuilder.Entity("Checked.Models.Models.HelpDesk", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("ErrorMessage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Response")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UrlAccess")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("helpDesks");
+                });
+
             modelBuilder.Entity("Checked.Models.Models.Invite", b =>
                 {
                     b.Property<string>("Id")
@@ -292,10 +326,6 @@ namespace Checked.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("OrganizationId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -313,8 +343,17 @@ namespace Checked.Migrations
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
 
+                    b.Property<int>("TP_OcorrenciaId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("additional1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("additional2")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -329,6 +368,8 @@ namespace Checked.Migrations
                         .HasFilter("[PlanId] IS NOT NULL");
 
                     b.HasIndex("StatusId");
+
+                    b.HasIndex("TP_OcorrenciaId");
 
                     b.ToTable("Occurrences");
                 });
@@ -439,7 +480,13 @@ namespace Checked.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OrganizationId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("OrganizationId");
 
                     b.ToTable("TP_Ocorrencias");
                 });
@@ -688,6 +735,17 @@ namespace Checked.Migrations
                     b.Navigation("State");
                 });
 
+            modelBuilder.Entity("Checked.Models.Models.HelpDesk", b =>
+                {
+                    b.HasOne("Checked.Models.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Checked.Models.Models.Invite", b =>
                 {
                     b.HasOne("Checked.Models.Models.Organization", "Organization")
@@ -727,6 +785,12 @@ namespace Checked.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Checked.Models.Types.TP_Ocorrencia", "Tp_Ocorrencia")
+                        .WithMany()
+                        .HasForeignKey("TP_OcorrenciaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("Appraiser");
@@ -736,6 +800,8 @@ namespace Checked.Migrations
                     b.Navigation("Plan");
 
                     b.Navigation("Status");
+
+                    b.Navigation("Tp_Ocorrencia");
                 });
 
             modelBuilder.Entity("Checked.Models.Models.Plan", b =>
@@ -751,11 +817,22 @@ namespace Checked.Migrations
 
             modelBuilder.Entity("Checked.Models.Models.State", b =>
                 {
-                    b.HasOne("Checked.Models.Models.Country", "Pais")
+                    b.HasOne("Checked.Models.Models.Country", "Country")
                         .WithMany("States")
                         .HasForeignKey("CountryId");
 
-                    b.Navigation("Pais");
+                    b.Navigation("Country");
+                });
+
+            modelBuilder.Entity("Checked.Models.Types.TP_Ocorrencia", b =>
+                {
+                    b.HasOne("Checked.Models.Models.Organization", "Organization")
+                        .WithMany("TP_Ocorrencias")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -827,6 +904,8 @@ namespace Checked.Migrations
             modelBuilder.Entity("Checked.Models.Models.Organization", b =>
                 {
                     b.Navigation("Occurrences");
+
+                    b.Navigation("TP_Ocorrencias");
 
                     b.Navigation("Users");
                 });

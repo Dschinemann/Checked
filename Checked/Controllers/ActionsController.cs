@@ -7,6 +7,9 @@ using Checked.Models.Models;
 using Checked.Models.ViewModels;
 using Checked.Models.Types;
 using Checked.Servicos.ControllerServices;
+using Microsoft.AspNetCore.Authorization;
+using Checked.Models;
+using System.Diagnostics;
 
 namespace Checked.Controllers
 {
@@ -31,6 +34,7 @@ namespace Checked.Controllers
             var user = await _userManager
                 .FindByIdAsync(User.Identity.GetUserId());
             var actions = await _service.GetAllAsync(user.OrganizationId);
+            ViewBag.Resume = _service.CountPerStatus(actions);
             return View(actions);
         }
 
@@ -38,9 +42,9 @@ namespace Checked.Controllers
         // GET: Actions/Details/5
         public async Task<IActionResult> Details(string? actionId)
         {
-            if (actionId == null || actionId == "")
+            if (string.IsNullOrEmpty(actionId))
             {
-                return NotFound();
+                return View(nameof(Error), new { Message = $"Id inválido" });
             }
 
             var action = await _context.Actions
@@ -48,20 +52,22 @@ namespace Checked.Controllers
                 .FirstOrDefaultAsync(m => m.Id == actionId);
             if (action == null)
             {
-                return NotFound();
+                return View(nameof(Error), new { Message = $"Não há ações com este Id: {actionId}" });
             }
 
             return View(action);
         }
 
         // GET: Actions/Create
-        public IActionResult Create(string planId, string occurrenceId)
+        public async Task<IActionResult> Create(string planId, string occurrenceId)
         {
+            var plan = await _context.Plans.FirstAsync(c => c.Id.Equals(planId));
             CreateActionViewModel model = new CreateActionViewModel();
             model.PlanId = planId;
             model.OccurrenceId = occurrenceId;
             model.Id = Guid.NewGuid().ToString();
             model.StatusId = (int)TP_StatusEnum.Aberto;
+            model.Goal = plan.Goal;
             return View(model);
         }
 
@@ -70,9 +76,9 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("What,Why,Where,Who,Init,Finish,How,HowMuch, PlanId, OccurrenceId, Id,StatusId")] CreateActionViewModel model, string planId)
+        public async Task<IActionResult> Create([Bind("What,Why,Where,Who,Init,Finish,How,HowMuch, PlanId, OccurrenceId, Id,StatusId, Goal")] CreateActionViewModel model, string planId)
         {
-            if (model.PlanId != planId) return NotFound();
+            if (model.PlanId != planId) return View(nameof(Error), new { Message = $"Id não localizado" });
 
             var user = await _userManager
                 .FindByIdAsync(User.Identity.GetUserId());
@@ -95,8 +101,8 @@ namespace Checked.Controllers
                 action.Where = model.Where;
                 action.PlanId = model.PlanId;
                 action.Init = model.Init;
-                action.Finish = model.Finish;
-                action.NewFinish = model.Finish;
+                action.Finish = model.NewFinish;
+                action.NewFinish = model.NewFinish;
                 action.HowMuch = model.HowMuch;
                 action.What = model.What;
                 action.Who = model.Who;
@@ -129,18 +135,19 @@ namespace Checked.Controllers
         // GET: Actions/Edit/5
         public async Task<IActionResult> Edit(string actionId, string OccurrenceId)
         {
-            if (actionId == null)
+            if (string.IsNullOrEmpty(actionId))
             {
-                return NotFound();
+                return View(nameof(Error), new { Message = $"Id não localizado" });
             }
 
             var action = await _context.Actions
                 .Include(c => c.TP_Status)
+                .Include(o => o.Plan)
                 .FirstOrDefaultAsync(c => c.Id == actionId);
 
             if (action == null)
             {
-                return NotFound();
+                return View(nameof(Error), new { Message = $"Não existe ação com este Id:{actionId}" });
             }
 
             CreateActionViewModel model = new CreateActionViewModel()
@@ -158,7 +165,8 @@ namespace Checked.Controllers
                 Why = action.Why,
                 OccurrenceId = OccurrenceId,
                 StatusId = action.TP_StatusId,
-                Status = action.TP_Status
+                Status = action.TP_Status,
+                Goal = action.Plan.Goal
             };
             ViewBag.Status = new SelectList(_context.TP_Status, "Id", "Name", model.Status);
             return View(model);
@@ -169,11 +177,11 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string planId, [Bind("Id,What,Why,Where,Who,Init,Finish,NewFinish,How,HowMuch,PlanId,Status,OccurrenceId")] CreateActionViewModel model)
+        public async Task<IActionResult> Edit(string planId, [Bind("Id,What,Why,Where,Who,Init,Finish,NewFinish,How,HowMuch,PlanId,Status,OccurrenceId,Goal")] CreateActionViewModel model)
         {
             if (planId != model.PlanId)
             {
-                return NotFound();
+                return View(nameof(Error), new { Message = $"Id não localizado" });
             }
             var occurrence = await _context.Occurrences
                 .FirstOrDefaultAsync(c => c.Id == model.OccurrenceId);
@@ -196,7 +204,8 @@ namespace Checked.Controllers
                         UpdatedAt = DateTime.Now,
                         PlanId = model.PlanId,
                         TP_StatusId = model.Status.Id,
-                        OccurrenceId = model.OccurrenceId
+                        OccurrenceId = model.OccurrenceId,
+                        OrganizationId = occurrence.OrganizationId
                     };
                     _context.Update(action);
                     await _context.SaveChangesAsync();
@@ -222,7 +231,7 @@ namespace Checked.Controllers
                 {
                     if (!ActionExists(model.Id))
                     {
-                        return NotFound();
+                        return View(nameof(Error), new { Message = $"Não existe ação com esse ID: {model.Id}" });
                     }
                     else
                     {
@@ -239,15 +248,16 @@ namespace Checked.Controllers
         {
             if (actionId == null)
             {
-                return NotFound();
+                return View(nameof(Error), new {Message = "Não foi informado um Id válido"});
             }
 
             var action = await _context.Actions
                 .Include(a => a.Plan)
+                .Include(o => o.TP_Status)
                 .FirstOrDefaultAsync(m => m.Id == actionId);
             if (action == null)
             {
-                return NotFound();
+                return View(nameof(Error), new { Message = "Não há ações para o plano cadastrado" });
             }
 
             return View(action);
@@ -268,8 +278,10 @@ namespace Checked.Controllers
                 bool existActions = await _context.Actions
                     .Where(c => c.OccurrenceId == action.OccurrenceId)
                     .AnyAsync();
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                 Occurrence oc = await _context.Occurrences
                         .FirstOrDefaultAsync(c => c.Id == action.OccurrenceId);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
 
                 var existsActionOpen = await _context.Actions
@@ -298,6 +310,39 @@ namespace Checked.Controllers
         private bool ActionExists(string id)
         {
             return _context.Actions.Any(e => e.Id == id);
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public IActionResult isValideFinishDate(string newFinish, string goal)
+        {
+            var min = DateTime.Now;
+            var max = DateTime.Parse(goal);
+            var msg = string.Format("O inicio e o fim para a ação deve estar entre {0:dd/MM/yyyy} e {1:dd/MM/yyyy}", min, max);
+            try
+            {
+                var finishDate = DateTime.Parse(newFinish);
+                if(finishDate <= max)
+                {
+                    return Json(true);
+                }
+                else
+                {
+                    return Json(msg);
+                }
+                
+            }
+            catch (Exception)
+            {
+                return Json(msg);
+            }           
+        }
+
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [AllowAnonymous]
+        public IActionResult Error(string message)
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, Message = message });
         }
     }
 }

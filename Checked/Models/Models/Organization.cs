@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Checked.Models.Types;
+using System.ComponentModel.DataAnnotations;
 
 namespace Checked.Models.Models
 {
@@ -25,5 +26,6 @@ namespace Checked.Models.Models
         
         public virtual ICollection<ApplicationUser> Users { get; set; }
         public virtual ICollection<Occurrence> Occurrences { get; set; }
+        public virtual ICollection<TP_Ocorrencia> TP_Ocorrencias { get; set; }
     }
 }

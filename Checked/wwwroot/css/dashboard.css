@@ -4,7 +4,7 @@
     display: grid;
     grid-template-areas: 
         'A B C D E'
-        'F F G G E';        
+        'F F G G G';        
     grid-gap:10px;
 }
 .box{
@@ -21,11 +21,11 @@
 .graph {
     background-color: white;
     border-radius: 10px;
-    padding: 16px;
+    padding: 9px;
 }
 
-.graphPie{
-    width: 20vw;
+.graphPie {
+    
 }
 .welcome{
     color:white;
