@@ -294,7 +294,8 @@ namespace Checked.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user.OrganizationId != null)
             {
-                List<UsersInRoleViewModel> users = await _inviteservice.GetUsersAsync(user.OrganizationId);
+                List<UsersInRoleViewModel> users = await _inviteservice
+                    .GetUsersAsync(user.OrganizationId, user.Id);
                 return View(new InviteViewModel { OrganizationId = user.OrganizationId, users = users });
             }
             else
@@ -463,6 +464,7 @@ namespace Checked.Controllers
          */
 
         [HttpGet]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Edit(string userId)
         {
             var user = await _context.Users
@@ -493,6 +495,7 @@ namespace Checked.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Edit([Bind("Id,Cities,Country,States,City,State,Name,CountryId,StateId,CityId,PostalCode,RoleId")] EditUserViewModel model)
         {
             if (ModelState.IsValid)

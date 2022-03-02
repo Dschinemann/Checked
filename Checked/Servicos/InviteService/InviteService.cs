@@ -33,7 +33,6 @@ namespace Checked.Servicos.InviteService
                     message = "Um convite foi reenviado para este destinatário";
                     return message;
                 }
-
             }
             catch (Exception)
             {
@@ -42,10 +41,12 @@ namespace Checked.Servicos.InviteService
 
         }
 
-        public async Task<List<UsersInRoleViewModel>> GetUsersAsync(string organization)
+        public async Task<List<UsersInRoleViewModel>> GetUsersAsync(string organization, string userId)
         {
             List<UsersInRoleViewModel> models = new List<UsersInRoleViewModel>();
-            var usersInRoleViewModel = await _context.Users.Where(c => c.OrganizationId.Equals(organization)).ToListAsync();
+            var usersInRoleViewModel = await _context.Users
+                .Where(c => c.OrganizationId.Equals(organization) && !c.Id.Equals(userId))                
+                .ToListAsync();
             foreach (var user in usersInRoleViewModel)
             {
                 models.Add(new UsersInRoleViewModel()

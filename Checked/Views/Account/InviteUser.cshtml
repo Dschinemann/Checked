@@ -53,8 +53,11 @@
                                 }
                             </td>
                             <td>
-                                <a asp-action="Edit" asp-route-userId="@item.UserId">Edit</a> |
-                                <a asp-action="Detail" asp-route-userId="@item.UserId">Details</a> |
+                                @if (User.IsInRole("Administrador"))
+                                {
+                                     <a asp-action="Edit" asp-route-userId="@item.UserId">Editar</a>
+                                }                               
+                                | <a asp-action="Detail" asp-route-userId="@item.UserId">Detalhes</a> |
                                 <a asp-action="Delete" asp-route-userId="@item.UserId">Delete</a>
                             </td>
                         </tr>
