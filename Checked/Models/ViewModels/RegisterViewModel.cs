@@ -34,6 +34,7 @@ namespace Checked.Models.ViewModels
 
         [Required]
         [Display(Name ="CEP")]
+        [DataType(DataType.PostalCode)]
         public string PostalCode { get; set; }
 
         [Required]

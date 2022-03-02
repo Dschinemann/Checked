@@ -17,6 +17,7 @@ namespace Checked.Servicos.ControllerServices
             var plans = await _context.Plans
                 .Include(o => o.Actions)
                 .Include(o => o.Occurrence)
+                .Include(o => o.Accountable)
                 .Where(c => c.organizationId == organizationId)
                 .ToListAsync();
             return plans;

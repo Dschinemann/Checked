@@ -78,7 +78,7 @@ namespace Checked.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("What,Why,Where,Who,Init,Finish,How,HowMuch, PlanId, OccurrenceId, Id,StatusId, Goal")] CreateActionViewModel model, string planId)
         {
-            if (model.PlanId != planId) return View(nameof(Error), new { Message = $"Id não localizado" });
+            if (model.PlanId != planId) return View(nameof(Error), new ErrorViewModel { Message = $"Id não localizado" });
 
             var user = await _userManager
                 .FindByIdAsync(User.Identity.GetUserId());
@@ -110,6 +110,7 @@ namespace Checked.Controllers
                 action.TP_StatusId = ((int)TP_StatusEnum.Aberto);
                 action.OccurrenceId = model.OccurrenceId;
                 action.OrganizationId = user.OrganizationId;
+                action.CreatedById = user.Id;
                 _context.Add(action);
                 await _context.SaveChangesAsync();
 
@@ -137,7 +138,7 @@ namespace Checked.Controllers
         {
             if (string.IsNullOrEmpty(actionId))
             {
-                return View(nameof(Error), new { Message = $"Id não localizado" });
+                return View(nameof(Error), new ErrorViewModel { Message = $"Id não localizado" });
             }
 
             var action = await _context.Actions
@@ -147,7 +148,7 @@ namespace Checked.Controllers
 
             if (action == null)
             {
-                return View(nameof(Error), new { Message = $"Não existe ação com este Id:{actionId}" });
+                return View(nameof(Error), new ErrorViewModel { Message = $"Não existe ação com este Id:{actionId}" });
             }
 
             CreateActionViewModel model = new CreateActionViewModel()
@@ -181,7 +182,7 @@ namespace Checked.Controllers
         {
             if (planId != model.PlanId)
             {
-                return View(nameof(Error), new { Message = $"Id não localizado" });
+                return View(nameof(Error), new ErrorViewModel { Message = $"Id não localizado" });
             }
             var occurrence = await _context.Occurrences
                 .FirstOrDefaultAsync(c => c.Id == model.OccurrenceId);
@@ -189,24 +190,24 @@ namespace Checked.Controllers
             {
                 try
                 {
-                    Models.Models.Action action = new Models.Models.Action()
-                    {
-                        Id = model.Id,
-                        What = model.What,
-                        Why = model.Why,
-                        Where = model.Where,
-                        Who = model.Who,
-                        Init = model.Init,
-                        Finish = model.Finish,
-                        NewFinish = model.NewFinish,
-                        How = model.How,
-                        HowMuch = model.HowMuch,
-                        UpdatedAt = DateTime.Now,
-                        PlanId = model.PlanId,
-                        TP_StatusId = model.Status.Id,
-                        OccurrenceId = model.OccurrenceId,
-                        OrganizationId = occurrence.OrganizationId
-                    };
+                    Models.Models.Action action = await _context.Actions.FindAsync(model.Id);
+
+                    action.Id = model.Id;
+                    action.What = model.What;
+                    action.Why = model.Why;
+                    action.Where = model.Where;
+                    action.Who = model.Who;
+                    action.Init = model.Init;
+                    action.Finish = model.Finish;
+                    action.NewFinish = model.NewFinish;
+                    action.How = model.How;
+                    action.HowMuch = model.HowMuch;
+                    action.UpdatedAt = DateTime.Now;
+                    action.PlanId = model.PlanId;
+                    action.TP_StatusId = model.Status.Id;
+                    action.OccurrenceId = model.OccurrenceId;
+                    action.OrganizationId = occurrence.OrganizationId;
+
                     _context.Update(action);
                     await _context.SaveChangesAsync();
 
@@ -248,7 +249,7 @@ namespace Checked.Controllers
         {
             if (actionId == null)
             {
-                return View(nameof(Error), new {Message = "Não foi informado um Id válido"});
+                return View(nameof(Error), new { Message = "Não foi informado um Id válido" });
             }
 
             var action = await _context.Actions
@@ -321,7 +322,7 @@ namespace Checked.Controllers
             try
             {
                 var finishDate = DateTime.Parse(newFinish);
-                if(finishDate <= max)
+                if (finishDate <= max)
                 {
                     return Json(true);
                 }
@@ -329,12 +330,12 @@ namespace Checked.Controllers
                 {
                     return Json(msg);
                 }
-                
+
             }
             catch (Exception)
             {
                 return Json(msg);
-            }           
+            }
         }
 
 

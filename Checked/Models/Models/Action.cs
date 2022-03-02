@@ -67,6 +67,9 @@ namespace Checked.Models.Models
         public Organization Organization { get; set; }
         public virtual string OrganizationId { get; set; }
 
+        public ApplicationUser CreatedBy { get; set; }
+        public virtual string CreatedById { get; set; }
+
         public Action()
         {
 

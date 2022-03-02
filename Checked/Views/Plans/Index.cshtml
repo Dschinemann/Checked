@@ -33,7 +33,7 @@
             </div>
             <div>
                 <span>Responsável:</span>
-                <span>@Model.Accountable</span>
+                <span>@Model.Accountable.Name</span>
             </div>
             <div>
                 <span>Objetivo:</span>
@@ -98,8 +98,8 @@
                         <td>@string.Format("{0:C2}",@item.HowMuch)</td>
                         <td>@item.TP_Status.Name</td>
                         <td>
-                            <a asp-controller="Actions" asp-action="Edit" asp-route-actionId="@item.Id" asp-route-OccurrenceId="@Model.OccurrenceId">Edit</a> |
-                            <a asp-controller="Actions" asp-action="Details" asp-route-actionId="@item.Id">Details</a> |
+                            <a asp-controller="Actions" asp-action="Edit" asp-route-actionId="@item.Id" asp-route-OccurrenceId="@Model.OccurrenceId">Editar</a> |
+                            <a asp-controller="Actions" asp-action="Details" asp-route-actionId="@item.Id">Detalhes</a> |
                             <a asp-controller="Actions" asp-action="Delete" asp-route-actionId="@item.Id">Delete</a>
                         </td>
                     </tr>

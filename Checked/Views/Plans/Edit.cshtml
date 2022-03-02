@@ -10,7 +10,7 @@
     <div class="row">
         <div class="col-md-4">
             <form asp-action="Edit" method="post">
-                <input type="hidden" asp-for="OccurrenceId"/>
+                <input type="hidden" asp-for="OccurrenceId" />
                 <input type="hidden" asp-for="PlanId" />
                 <input type="hidden" asp-for="OrganizatioId" />
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -25,9 +25,14 @@
                     <span asp-validation-for="Goal" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label asp-for="Accountable" class="control-label"></label>
-                    <input asp-for="Accountable" class="form-control" />
-                    <span asp-validation-for="Accountable" class="text-danger"></span>
+                    <div style="display:flex;align-items: end;">
+                        <div>
+                            <label asp-for="AccountableId" class="control-label"></label>
+                            <select asp-for="AccountableId" asp-items="Model.ListUser" class="form-control"></select>
+                            <span asp-validation-for="AccountableId" class="text-danger"></span>
+                        </div>
+                        <a style="background-color:green; font-weight:bold" class="btn" asp-action="Create" asp-controller="TP_Ocorrencia">+</a>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label asp-for="Objective" class="control-label"></label>

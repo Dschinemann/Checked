@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Checked.Models.Models
 {
-    public class ApplicationUser: IdentityUser
+    public class ApplicationUser : IdentityUser
     {
         public ApplicationUser()
         {
-             this.Occurrences = new HashSet<Occurrence>();
+            this.Occurrences = new HashSet<Occurrence>();
         }
 
         [Required]
@@ -34,15 +34,16 @@ namespace Checked.Models.Models
         public string PostalCode { get; set; }
         [PersonalData]
         public virtual Country Country { get; set; }
-        public int CountryId { get; set; }  
+        public int CountryId { get; set; }
 
 
         [PersonalData]
         public string? OrganizationId { get; set; }
 
-        public virtual Organization Organization { get; set; }
-        [InverseProperty("ApplicationUser")]
-        public virtual ICollection<Occurrence> Occurrences { get; set;}
-        
+        public virtual Organization? Organization { get; set; }
+
+
+        public virtual ICollection<Occurrence> Occurrences { get; set; }
+
     }
 }

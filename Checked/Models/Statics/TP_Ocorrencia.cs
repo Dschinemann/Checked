@@ -9,5 +9,8 @@ namespace Checked.Models.Types
         
         public virtual Organization? Organization { get; set; }
         public string OrganizationId { get; set; }
+
+        public ApplicationUser? CreatedBy { get; set; }
+        public virtual string CreatedById { get; set; }
     }
 }

@@ -51,7 +51,11 @@ namespace Checked.Controllers
         // GET: Organizations/Create
         public IActionResult Create()
         {
-            return View();
+            Organization model = new Organization()
+            {
+                CreatedById = User.Identity.GetUserId()
+            };
+            return View(model);
         }
 
         // POST: Organizations/Create
@@ -59,12 +63,13 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Id")] Organization organization)
+        public async Task<IActionResult> Create([Bind("Name,Id,CreatedById")] Organization organization)
         {
             string userId = User.Identity.GetUserId();
             if (ModelState.IsValid)
             {
                 organization.CreatedAt = DateTime.Now;
+                organization.CreatedById = userId;
                 _context.Add(organization);
                 var result = await _context.SaveChangesAsync();
                 try

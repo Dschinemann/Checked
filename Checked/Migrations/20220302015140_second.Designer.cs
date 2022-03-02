@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Checked.Migrations
 {
     [DbContext(typeof(CheckedDbContext))]
-    [Migration("20220212014133_first")]
-    partial class first
+    [Migration("20220302015140_second")]
+    partial class second
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("ProductVersion", "6.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -31,6 +31,10 @@ namespace Checked.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("Finish")
                         .HasColumnType("datetime2");
@@ -48,6 +52,10 @@ namespace Checked.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("OccurrenceId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("OrganizationId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
@@ -78,7 +86,11 @@ namespace Checked.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedById");
+
                     b.HasIndex("OccurrenceId");
+
+                    b.HasIndex("OrganizationId");
 
                     b.HasIndex("PlanId");
 
@@ -95,17 +107,15 @@ namespace Checked.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CityId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CountryId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -151,12 +161,11 @@ namespace Checked.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Region")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StateId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -166,6 +175,10 @@ namespace Checked.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("CountryId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -177,7 +190,102 @@ namespace Checked.Migrations
 
                     b.HasIndex("OrganizationId");
 
+                    b.HasIndex("StateId");
+
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Checked.Models.Models.City", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("Ibge")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Ibge7")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Region")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StateId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Uf")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StateId");
+
+                    b.ToTable("Cities");
+                });
+
+            modelBuilder.Entity("Checked.Models.Models.Country", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Countries");
+                });
+
+            modelBuilder.Entity("Checked.Models.Models.HelpDesk", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ErrorMessage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Response")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UrlAccess")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("helpDesks");
                 });
 
             modelBuilder.Entity("Checked.Models.Models.Invite", b =>
@@ -185,7 +293,15 @@ namespace Checked.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -194,6 +310,8 @@ namespace Checked.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
 
                     b.HasIndex("OrganizationId");
 
@@ -204,6 +322,12 @@ namespace Checked.Migrations
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Additional1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Additional2")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ApplicationUserId")
                         .IsRequired()
@@ -221,6 +345,10 @@ namespace Checked.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -232,13 +360,6 @@ namespace Checked.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OccurrenceId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("OrganizationId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -247,13 +368,16 @@ namespace Checked.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PlanId")
-                        .HasColumnType("int");
+                    b.Property<string>("PlanId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StatusActions")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TP_OcorrenciaId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -265,13 +389,13 @@ namespace Checked.Migrations
 
                     b.HasIndex("AppraiserId");
 
-                    b.HasIndex("OccurrenceId")
-                        .IsUnique()
-                        .HasFilter("[OccurrenceId] IS NOT NULL");
+                    b.HasIndex("CreatedById");
 
                     b.HasIndex("OrganizationId");
 
                     b.HasIndex("StatusId");
+
+                    b.HasIndex("TP_OcorrenciaId");
 
                     b.ToTable("Occurrences");
                 });
@@ -284,6 +408,10 @@ namespace Checked.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -293,6 +421,8 @@ namespace Checked.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedById");
+
                     b.ToTable("Organizations");
                 });
 
@@ -301,12 +431,16 @@ namespace Checked.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Accountable")
+                    b.Property<string>("AccountableId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<double>("CostTotal")
                         .HasColumnType("float");
+
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("Forecast")
                         .HasColumnType("datetime2");
@@ -320,7 +454,7 @@ namespace Checked.Migrations
 
                     b.Property<string>("OccurrenceId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Subject")
                         .IsRequired()
@@ -332,9 +466,49 @@ namespace Checked.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AccountableId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("OccurrenceId")
+                        .IsUnique();
+
                     b.HasIndex("organizationId");
 
                     b.ToTable("Plans");
+                });
+
+            modelBuilder.Entity("Checked.Models.Models.State", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("CountryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Ibge")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Region")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Uf")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
+
+                    b.ToTable("States");
                 });
 
             modelBuilder.Entity("Checked.Models.Types.TP_Ocorrencia", b =>
@@ -345,11 +519,23 @@ namespace Checked.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OrganizationId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("OrganizationId");
 
                     b.ToTable("TP_Ocorrencias");
                 });
@@ -363,7 +549,6 @@ namespace Checked.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -380,7 +565,6 @@ namespace Checked.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -523,9 +707,21 @@ namespace Checked.Migrations
 
             modelBuilder.Entity("Checked.Models.Models.Action", b =>
                 {
+                    b.HasOne("Checked.Models.Models.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Checked.Models.Models.Occurrence", "Occurrence")
                         .WithMany("Actions")
                         .HasForeignKey("OccurrenceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Checked.Models.Models.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -541,7 +737,11 @@ namespace Checked.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("CreatedBy");
+
                     b.Navigation("Occurrence");
+
+                    b.Navigation("Organization");
 
                     b.Navigation("Plan");
 
@@ -550,20 +750,82 @@ namespace Checked.Migrations
 
             modelBuilder.Entity("Checked.Models.Models.ApplicationUser", b =>
                 {
+                    b.HasOne("Checked.Models.Models.City", "City")
+                        .WithMany()
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Checked.Models.Models.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Checked.Models.Models.Organization", "Organization")
                         .WithMany("Users")
                         .HasForeignKey("OrganizationId");
 
+                    b.HasOne("Checked.Models.Models.State", "State")
+                        .WithMany()
+                        .HasForeignKey("StateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("City");
+
+                    b.Navigation("Country");
+
                     b.Navigation("Organization");
+
+                    b.Navigation("State");
+                });
+
+            modelBuilder.Entity("Checked.Models.Models.City", b =>
+                {
+                    b.HasOne("Checked.Models.Models.State", "State")
+                        .WithMany("Cities")
+                        .HasForeignKey("StateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("State");
+                });
+
+            modelBuilder.Entity("Checked.Models.Models.HelpDesk", b =>
+                {
+                    b.HasOne("Checked.Models.Models.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Checked.Models.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Checked.Models.Models.Invite", b =>
                 {
+                    b.HasOne("Checked.Models.Models.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Checked.Models.Models.Organization", "Organization")
                         .WithMany()
                         .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CreatedBy");
 
                     b.Navigation("Organization");
                 });
@@ -580,9 +842,11 @@ namespace Checked.Migrations
                         .WithMany()
                         .HasForeignKey("AppraiserId");
 
-                    b.HasOne("Checked.Models.Models.Plan", "Plan")
-                        .WithOne("Occurrence")
-                        .HasForeignKey("Checked.Models.Models.Occurrence", "OccurrenceId");
+                    b.HasOne("Checked.Models.Models.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Checked.Models.Models.Organization", "Organization")
                         .WithMany("Occurrences")
@@ -596,26 +860,97 @@ namespace Checked.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Checked.Models.Types.TP_Ocorrencia", "Tp_Ocorrencia")
+                        .WithMany()
+                        .HasForeignKey("TP_OcorrenciaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("Appraiser");
 
+                    b.Navigation("CreatedBy");
+
                     b.Navigation("Organization");
 
-                    b.Navigation("Plan");
-
                     b.Navigation("Status");
+
+                    b.Navigation("Tp_Ocorrencia");
+                });
+
+            modelBuilder.Entity("Checked.Models.Models.Organization", b =>
+                {
+                    b.HasOne("Checked.Models.Models.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
                 });
 
             modelBuilder.Entity("Checked.Models.Models.Plan", b =>
                 {
-                    b.HasOne("Checked.Models.Models.Organization", "organization")
+                    b.HasOne("Checked.Models.Models.ApplicationUser", "Accountable")
+                        .WithMany()
+                        .HasForeignKey("AccountableId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Checked.Models.Models.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Checked.Models.Models.Occurrence", "Occurrence")
+                        .WithOne("Plan")
+                        .HasForeignKey("Checked.Models.Models.Plan", "OccurrenceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Checked.Models.Models.Organization", "Organization")
                         .WithMany()
                         .HasForeignKey("organizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("organization");
+                    b.Navigation("Accountable");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Occurrence");
+
+                    b.Navigation("Organization");
+                });
+
+            modelBuilder.Entity("Checked.Models.Models.State", b =>
+                {
+                    b.HasOne("Checked.Models.Models.Country", "Country")
+                        .WithMany("States")
+                        .HasForeignKey("CountryId");
+
+                    b.Navigation("Country");
+                });
+
+            modelBuilder.Entity("Checked.Models.Types.TP_Ocorrencia", b =>
+                {
+                    b.HasOne("Checked.Models.Models.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Checked.Models.Models.Organization", "Organization")
+                        .WithMany("TP_Ocorrencias")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Organization");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -674,14 +1009,23 @@ namespace Checked.Migrations
                     b.Navigation("Occurrences");
                 });
 
+            modelBuilder.Entity("Checked.Models.Models.Country", b =>
+                {
+                    b.Navigation("States");
+                });
+
             modelBuilder.Entity("Checked.Models.Models.Occurrence", b =>
                 {
                     b.Navigation("Actions");
+
+                    b.Navigation("Plan");
                 });
 
             modelBuilder.Entity("Checked.Models.Models.Organization", b =>
                 {
                     b.Navigation("Occurrences");
+
+                    b.Navigation("TP_Ocorrencias");
 
                     b.Navigation("Users");
                 });
@@ -689,9 +1033,11 @@ namespace Checked.Migrations
             modelBuilder.Entity("Checked.Models.Models.Plan", b =>
                 {
                     b.Navigation("Actions");
+                });
 
-                    b.Navigation("Occurrence")
-                        .IsRequired();
+            modelBuilder.Entity("Checked.Models.Models.State", b =>
+                {
+                    b.Navigation("Cities");
                 });
 #pragma warning restore 612, 618
         }

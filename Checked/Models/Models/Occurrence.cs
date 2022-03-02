@@ -11,7 +11,7 @@ namespace Checked.Models.Models
         [Display(Name = "Tipo")]
         public virtual TP_Ocorrencia Tp_Ocorrencia { get; set; }
 
-        public int TP_OcorrenciaId { get; set; }        
+        public int TP_OcorrenciaId { get; set; }
 
         [Display(Name = "Descrição")]
         public string Description { get; set; }
@@ -52,8 +52,6 @@ namespace Checked.Models.Models
         [Display(Name = "Empresa")]
         public virtual Organization Organization { get; set; }
 
-        //[ForeignKey("OccurrenceId")]
-        [ForeignKey("PlanId")]
         public Plan? Plan { get; set; }
         public virtual string? PlanId { get; set; }
 
@@ -74,11 +72,15 @@ namespace Checked.Models.Models
         public string? Additional2 { get; set; }
 
 
+        public ApplicationUser CreatedBy { get; set; }
+        public virtual string CreatedById { get; set; }
+
+
         public Occurrence()
         {
         }
 
-        public Occurrence(int tp_OcorrenciaId, string description, string harmed, string? document, double cost, DateTime createdAt, DateTime updatedAt, string? appraiserId, string origin, string applicationUserId,string organizationId, int statusId)
+        public Occurrence(int tp_OcorrenciaId, string description, string harmed, string? document, double cost, DateTime createdAt, DateTime updatedAt, string? appraiserId, string origin, string applicationUserId, string organizationId, int statusId)
         {
             TP_OcorrenciaId = tp_OcorrenciaId;
             Description = description;
@@ -94,5 +96,5 @@ namespace Checked.Models.Models
             StatusId = statusId;
         }
     }
-       
+
 }

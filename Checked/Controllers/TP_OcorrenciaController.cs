@@ -49,7 +49,8 @@ namespace Checked.Controllers
             
             TP_Ocorrencia model = new TP_Ocorrencia()
             {
-                OrganizationId = user.OrganizationId,                
+                OrganizationId = user.OrganizationId,    
+                CreatedById = user.Id
             };
             
             return View(model);
@@ -60,14 +61,14 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,OrganizationId,Organization")] TP_Ocorrencia tP_Ocorrencia)
+        public async Task<IActionResult> Create([Bind("Id,Name,OrganizationId,Organization,CreatedById")] TP_Ocorrencia tP_Ocorrencia)
         {
             
             if (ModelState.IsValid)
             {
                 _context.TP_Ocorrencias.Add(tP_Ocorrencia);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Create","Occurrences");
             }
             return View(tP_Ocorrencia);
         }

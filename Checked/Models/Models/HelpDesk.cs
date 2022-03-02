@@ -23,5 +23,8 @@ namespace Checked.Models.Models
         [Display(Name = "Resposta")]
         public string? Response { get;set;}
 
+        public ApplicationUser CreatedBy { get; set; }
+        public virtual string CreatedById { get; set; }
+
     }
 }

@@ -27,6 +27,7 @@ builder.Services.AddScoped<InviteService>();
 builder.Services.AddScoped<PlansService>();
 
 //Context
+//"CheckedDbContext": "Server=localhost;Database=CheckedDb;user id =sa;Password=1353;Connection Timeout=120;"
 var connectionString = builder.Configuration.GetConnectionString("CheckedDbContext");
 builder.Services.AddDbContext<CheckedDbContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
 
@@ -93,9 +94,10 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
-app.UseAuthorization();   
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Dashboard}/{action=Index}/{id?}");
 app.Run();
+

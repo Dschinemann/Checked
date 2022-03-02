@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Checked.Models.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace Checked.Models.ViewModels
 {
@@ -10,7 +12,8 @@ namespace Checked.Models.ViewModels
         public string Subject { get; set; } 
         [Required]
         [Display(Name = "Responsável")]
-        public string Accountable { get; set; } 
+        public string AccountableId { get; set; } 
+
         [Required]
         [DataType(DataType.Date)]
         [Display(Name = "Previsão para finalizar o plano")]
@@ -21,6 +24,10 @@ namespace Checked.Models.ViewModels
         [Required]
         public string OccurrenceId { get; set; } 
         public string? OrganizatioId { get; set; }
+
+        public SelectList ListUser;
+
+        public string? CreateById { get; set; }
 
     }
 }

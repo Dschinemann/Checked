@@ -34,5 +34,7 @@ namespace Checked.Models.ViewModels
 
         [Display(Name = "Informação Adicional 02")]
         public string? Additional2 { get; set; }
+
+        public string CreatedById { get; set; }
     }
 }

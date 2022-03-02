@@ -74,7 +74,7 @@ namespace Checked.Controllers
             var users = await _context.Users.Where(c => c.OrganizationId == user.OrganizationId).ToListAsync();
             ViewBag.AppraiserId = new SelectList(users, "Id", "Name", user);
             ViewBag.Types = new SelectList(_context.TP_Ocorrencias, "Id", "Name");
-            return View(new CreateOccurrenceModel());
+            return View(new CreateOccurrenceModel() { CreatedById = user.Id});
         }
 
         // POST: Occurrences/Create
@@ -82,7 +82,7 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Description,Harmed,Document,Cost,Appraiser,Origin,Id,TypeOccurrence,Additional2,Additional1")] CreateOccurrenceModel model)
+        public async Task<IActionResult> Create([Bind("Description,Harmed,Document,Cost,Appraiser,Origin,Id,TypeOccurrence,Additional2,Additional1,CreatedById")] CreateOccurrenceModel model)
         {
             if (ModelState.IsValid)
             {
@@ -108,6 +108,7 @@ namespace Checked.Controllers
                 occurrence.Id = model.Id;
                 occurrence.Additional1 = model.Additional1;
                 occurrence.Additional2 = model.Additional2;
+                occurrence.CreatedById = user.Id;
                 var typeName = await _context.TP_Ocorrencias.FindAsync(model.TypeOccurrence);                
                 _context.Occurrences.Add(occurrence);
                 await _context.SaveChangesAsync();
@@ -187,23 +188,23 @@ namespace Checked.Controllers
 
             if (ModelState.IsValid)
             {
-                Occurrence occurrence = new Occurrence()
-                {
-                    TP_OcorrenciaId = model.TypeOccurrence,
-                    Description = model.Description,
-                    Harmed = model.Harmed,
-                    Document = model.Document,
-                    Cost = model.Cost,
-                    AppraiserId = model.AppraiserId,
-                    Origin = model.Origin,
-                    Id = model.Id,
-                    ApplicationUserId = model.ApplicationUserId,
-                    OrganizationId = model.OrganizationId,
-                    StatusId = model.Status.Id,
-                    CorrectiveAction = model.CorretiveActions,
-                    Additional1 = model.Additional1,
-                    Additional2 = model.Additional2
-                };
+                Occurrence occurrence = await _context.Occurrences.FindAsync(id);
+
+                occurrence.TP_OcorrenciaId = model.TypeOccurrence;
+                occurrence.Description = model.Description;
+                occurrence.Harmed = model.Harmed;
+                occurrence.Document = model.Document;
+                occurrence.Cost = model.Cost;
+                occurrence.AppraiserId = model.AppraiserId;
+                occurrence.Origin = model.Origin;
+                occurrence.Id = model.Id;
+                occurrence.ApplicationUserId = model.ApplicationUserId;
+                occurrence.OrganizationId = model.OrganizationId;
+                occurrence.StatusId = model.Status.Id;
+                occurrence.CorrectiveAction = model.CorretiveActions;
+                occurrence.Additional1 = model.Additional1;
+                occurrence.Additional2 = model.Additional2;
+                
                 try
                 {
                     _context.Update(occurrence);

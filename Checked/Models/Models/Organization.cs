@@ -1,5 +1,6 @@
 ﻿using Checked.Models.Types;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Checked.Models.Models
 {
@@ -9,11 +10,12 @@ namespace Checked.Models.Models
         {
             Users = new HashSet<ApplicationUser>();
             Occurrences = new HashSet<Occurrence>();
+            TP_Ocorrencias = new HashSet<TP_Ocorrencia>();
         }
 
         public string Id { get; set; }
         [Required]
-        [Display(Name ="Nome da Empresa")]
+        [Display(Name = "Nome da Empresa")]
         public string Name { get; set; }
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "dd/MM/yyyy HH:mm")]
@@ -23,9 +25,12 @@ namespace Checked.Models.Models
         [DisplayFormat(DataFormatString = "dd/MM/yyyy HH:mm")]
         [Display(Name = "Atualizado")]
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
-        
+
         public virtual ICollection<ApplicationUser> Users { get; set; }
         public virtual ICollection<Occurrence> Occurrences { get; set; }
         public virtual ICollection<TP_Ocorrencia> TP_Ocorrencias { get; set; }
+
+        public ApplicationUser? CreatedBy { get; set; }
+        public virtual string CreatedById { get; set; }
     }
 }

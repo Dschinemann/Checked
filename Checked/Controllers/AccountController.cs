@@ -126,7 +126,7 @@ namespace Checked.Controllers
                         {
                             ToEmail = model.Email,
                             Subject = "Email Confirm",
-                            Body = @$"Clique no < a href = '{HtmlEncoder.Default.Encode(confirmationLink)}' > Link </ a > para confirmar"            
+                            Body = @$"Clique no <a href='{HtmlEncoder.Default.Encode(confirmationLink)}'>Link</a> para confirmar"            
                         });
                     }
                     catch (Exception e)
@@ -178,7 +178,7 @@ namespace Checked.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmAccount(string userId, string token)
         {
-            if (userId == null || token == null)
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
             {
                 return RedirectToAction(nameof(Index));
             }
@@ -305,14 +305,20 @@ namespace Checked.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> InviteUserAsync([Bind("Email, OrganizationId, Message")] InviteViewModel model)
+        public async Task<IActionResult> InviteUserAsync([Bind("Email, OrganizationId, Message, Name")] InviteViewModel model)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    string response = await _inviteservice.Invite(new Invite { Email = model.Email, OrganizationId = model.OrganizationId });
                     var user = await _userManager.GetUserAsync(User);
+                    string response = await _inviteservice.Invite(
+                        new Invite { 
+                            Email = model.Email, 
+                            OrganizationId = model.OrganizationId,
+                            CreatedById = user.Id,
+                            Name = model.Name
+                        });                    
                     var org = await _context.Organizations.FindAsync(user.OrganizationId);
                     var inviteLink = Url.Action("CreateUser", "Account", new { organizationId = model.OrganizationId }, Request.Scheme);
                     await _mailService.SendEmailAsync(new EmailRequest()

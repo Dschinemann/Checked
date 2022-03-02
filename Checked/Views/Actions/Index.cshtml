@@ -4,7 +4,7 @@
 @model IEnumerable<Checked.Models.Models.Action>
 @{
     ViewData["Title"] = "Planos";
-        JsonSerializerOptions options = new()
+    JsonSerializerOptions options = new()
             {
                 ReferenceHandler = ReferenceHandler.IgnoreCycles,
                 WriteIndented = true
@@ -25,11 +25,11 @@
         }
 </style>
 <div style="color:white" class="cntr">
-    <div class="header-plan">       
+    <div class="header-plan">
         <div style="display: flex;margin-right:26px; height:100%">
             <div id="piechart"></div>
         </div>
-         <h4>@ViewData["Title"]</h4>
+        <h4>@ViewData["Title"]</h4>
     </div>
     <hr />
     <table style="color:white;font-size:13px" class="table table-hover table-sm align-middle">
@@ -53,7 +53,7 @@
                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                     @Html.DisplayNameFor(model => model.Who)
                 </th>
-                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                     @Html.DisplayNameFor(model => model.When)
                 </th>
                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
@@ -61,6 +61,9 @@
                 </th>
                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                     @Html.DisplayNameFor(model => model.HowMuch)
+                </th>
+                <th>
+                    Plano
                 </th>
                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                     @Html.DisplayNameFor(model => model.TP_Status.Name)
@@ -122,6 +125,9 @@
                     </td>
                     <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                         @Html.DisplayFor(modelItem => item.HowMuch)
+                    </td>
+                    <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                        <a asp-action="Index" asp-controller="Plans" asp-route-planId="@item.PlanId">Plano</a>
                     </td>
                     <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                         @Html.DisplayFor(modelItem => item.TP_Status.Name)

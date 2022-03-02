@@ -9,7 +9,8 @@ namespace Checked.Models.ViewModels
         public string OccurrenceId { get; set; }
         public string Subject { get; set; }
         public string DeadLine { get; set; }
-        public string Accountable { get; set; }
+        public string AccountableId { get; set; }
+        public ApplicationUser Accountable { get;set; }
         public string Objective { get; set; }
 
         public DateTime Goal { get; set; }

@@ -45,6 +45,5 @@ namespace Checked.Controllers.Manager
             return View(name);
         }
 
-    }
-    */
+    }    */
 }
