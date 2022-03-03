@@ -48,7 +48,7 @@
                         <span class="logo_name">Checked</span>
                     </div>
                     <ul class="nav-links">
-                        <li>
+                        <li class="circle">
                             <a asp-action="Index" asp-controller="Dashboard">
                                 <i class='bx bx-line-chart'></i>
                                 <span class="link_name">Dashboard</span>
@@ -57,16 +57,16 @@
                                 <li><a class="link_name" asp-action="Index" asp-controller="Dashboard">Dashboard</a></li>
                             </ul>
                         </li>
-                        <li>
+                        <li class="circle">
                             <div class="iocn-link">
-                                <a href="#">
+                                <a asp-action="Index" asp-controller="Occurrences">
                                     <i class='bx bx-collection'></i>
                                     <span class="link_name">Category</span>
                                 </a>
                                 <i class='bx bxs-chevron-down arrow'></i>
                             </div>
                             <ul class="sub-menu">
-                                <li><a class="link_name" href="#">Navegação</a></li>
+                                <li><a class="link_name" asp-action="Index" asp-controller="Occurrences">Navegação</a></li>
                                 <li><a asp-action="Index" asp-controller="Occurrences">Ocorrências</a></li>
                                 <li><a asp-action="Plans" asp-controller="Plans">Planos</a></li>
                                 <li><a asp-action="Index" asp-controller="Actions">Ações</a></li>
@@ -74,7 +74,7 @@
                         </li>
                         @if (User.IsInRole("Administrador"))
                         {
-                            <li>
+                            <li class="circle">
                                 <a asp-action="InviteUser" asp-controller="Account">
                                     <i class='bx bx-user-plus'></i>
                                     <span class="link_name">Convites</span>
@@ -84,8 +84,8 @@
                                 </ul>
                             </li>
                         }
-                        <li>
-                            <a href="#">
+                        <li class="circle">
+                            <a asp-action="Index" asp-controller="MyTasks">
                                 <i class='bx bx-task'></i>
                                 <span class="link_name">Tarefas</span>
                             </a>
@@ -93,7 +93,7 @@
                                 <li><a asp-action="Index" asp-controller="MyTasks" class="link_name">Tarefas</a></li>
                             </ul>
                         </li>
-                        <li>
+                        <li class="circle">
                             <a href="#">
                                 <i class='bx bx-cog'></i>
                                 <span class="link_name">Settings</span>
@@ -102,7 +102,7 @@
                                 <li><a class="link_name" href="#">Settings</a></li>
                             </ul>
                         </li>
-                        <li>
+                        <li class="circle">
                             <div class="iocn-link">
                                 <a href="#">
                                     <i class='bx bxs-help-circle'></i>
@@ -137,22 +137,27 @@
                     @RenderBody()
                 </section>
                 <script>
-                                let arrow = document.querySelectorAll(".arrow");
+                    let arrow = document.querySelectorAll(".arrow");
                             for (var i = 0; i < arrow.length; i++) {
-                              arrow[i].addEventListener("click", (e)=>{
-                             let arrowParent = e.target.parentElement.parentElement;//selecting main parent of arrow
-                             arrowParent.classList.toggle("showMenu");
-                              });
+                                arrow[i].addEventListener("click", (e)=>{
+                                let arrowParent = e.target.parentElement.parentElement;//selecting main parent of arrow
+                                arrowParent.classList.toggle("showMenu");
+                                });
                             }
                             let sidebar = document.querySelector(".sidebar");
                             let sidebarBtn = document.querySelector(".bx-menu");
+                            let classCircle = document.querySelectorAll(".circle");
 
                             sidebarBtn.addEventListener("click", ()=>{
                               sidebar.classList.toggle("close");
+                              for(i = 0; i< classCircle.length;i++){
+                                  classCircle[i].classList.toggle("discard-circle")
+                              }
                             });
-                                    function logout(){
-                                         document.location = "@Url.Action("Logout","Account")";
-                    }
+
+                            function logout(){
+                                document.location = "@Url.Action("Logout","Account")";
+                            }
                 </script>
             }
         </main>
