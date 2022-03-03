@@ -1,0 +1,36 @@
+﻿p {
+    padding: 0;
+    margin: 0;
+}
+
+.cntr-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.line {
+    max-width: 75vw;
+    padding: 10px;
+    background-color: #0e1a1a;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 0 10px 0 10px;
+    border-bottom: 2px solid white;
+    border-left: 2px solid white;
+}
+
+    .line:hover {
+        background-color: darkslategrey;
+        font-weight: bold;
+    }
+
+.nav-buttons {
+    display: flex;
+    width: 30vw;
+}
+
+    .nav-buttons a {
+        margin: 10px;
+    }
