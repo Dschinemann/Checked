@@ -3,93 +3,72 @@
 @{
     ViewData["Title"] = "Details";
 }
-<div class="cntr" style="color:white">
-    <h1>Details</h1>
-
-    <div style="width:40%">
-        <h4>Action</h4>
-        <hr />
-        <dl class="row">            
-            <dt class="col-sm-2" style="width: max-content;">
-                @Html.DisplayNameFor(model => model.UpdatedAt)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.UpdatedAt)
-            </dd>
-            <div style="border-bottom:1px solid white"></div>
-            <dt class="col-sm-2" style="width: max-content;">
-                @Html.DisplayNameFor(model => model.What)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.What)
-            </dd>
-            <div style="border-bottom:1px solid white"></div>
-            <dt class="col-sm-2" style="width: max-content;">
-                @Html.DisplayNameFor(model => model.Why)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Why)
-            </dd>
-            <div style="border-bottom:1px solid white"></div>
-            <dt class="col-sm-2" style="width: max-content;">
-                @Html.DisplayNameFor(model => model.Where)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Where)
-            </dd>
-            <div style="border-bottom:1px solid white"></div>
-            <dt class="col-sm-2" style="width: max-content;">
-                @Html.DisplayNameFor(model => model.Who)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Who)
-            </dd>
-            <div style="border-bottom:1px solid white"></div>
-            <dt class="col-sm-2" style="width: max-content;">
-                @Html.DisplayNameFor(model => model.Init)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Init)
-            </dd>
-            <div style="border-bottom:1px solid white"></div>
-            <dt class="col-sm-2" style="width: max-content;">
-                @Html.DisplayNameFor(model => model.Finish)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Finish)
-            </dd>
-            <div style="border-bottom:1px solid white"></div>
-            <dt class="col-sm-2" style="width: max-content;">
-                @Html.DisplayNameFor(model => model.NewFinish)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.NewFinish)
-            </dd>
-            <div style="border-bottom:1px solid white"></div>
-            <dt class="col-sm-2" style="width: max-content;">
-                @Html.DisplayNameFor(model => model.How)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.How)
-            </dd>
-            <div style="border-bottom:1px solid white"></div>
-            <dt class="col-sm-2" style="width: max-content;">
-                @Html.DisplayNameFor(model => model.HowMuch)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.HowMuch)
-            </dd>
-            <div style="border-bottom:1px solid white"></div>
-            <dt class="col-sm-2" style="width: max-content;">
-                @Html.DisplayNameFor(model => model.TP_Status)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.TP_Status.Name)
-            </dd>
-        </dl>
-    </div>
+<link rel="stylesheet" href="~/css/details.css" />
+<div class="cntr" style="color:white">   
     <div>
-        <a asp-action="Edit" asp-route-actionId="@Model?.Id" asp-route-OccurrenceId="@Model.OccurrenceId">Editar</a> |
-        <a asp-controller="Plans" asp-route-planId=@Model.PlanId asp-action="Index">Voltar para lista</a>
+        <div style="display:flex;justify-content: space-between;">
+            <h4>Detalhes da ação</h4>
+            <div>
+                <a asp-action="Edit" asp-route-actionId="@Model?.Id" asp-route-OccurrenceId="@Model.OccurrenceId">Editar</a> |
+                <a asp-controller="Plans" asp-route-planId=@Model.PlanId asp-action="Index">Voltar para lista</a>
+            </div>
+        </div>
+        <hr />
+        <div class="cntr">
+            <div class="header-action">
+                <div class="header-details">
+                    <div>
+                        <span>Última atualização:</span>
+                        <span>@Html.DisplayFor(model => model.UpdatedAt)</span>
+                    </div>
+                    <div>
+                        <span>Status:</span>
+                        <span>@Html.DisplayFor(model => model.TP_Status.Name)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="cntr-details">
+                <div class="line">
+                    <p>@Html.DisplayNameFor(model => model.What)</p>
+                    <p>@Html.DisplayFor(model => model.What)</p>
+                </div>
+                <div style="transform: translateX(2%);" class="line">
+                    <p>@Html.DisplayNameFor(model => model.Why)</p>
+                    <p> @Html.DisplayFor(model => model.Why)</p>
+                </div>
+                <div style="transform: translateX(4%);" class="line">
+                    <p>@Html.DisplayNameFor(model => model.Where)</p>
+                    <p>@Html.DisplayFor(model => model.Where)</p>
+                </div>
+                <div style="transform: translateX(6%);" class="line">
+                    <p>@Html.DisplayNameFor(model => model.Who)</p>
+                    <p>@Html.DisplayFor(model => model.Who)</p>
+                </div>
+                <div style="transform: translateX(8%);" class="line">
+                    <p> @Html.DisplayNameFor(model => model.Init)</p>
+                    <p> @Html.DisplayFor(model => model.Init)</p>
+                </div>
+                <div style="transform: translateX(10%);" class="line">
+                    <p>@Html.DisplayNameFor(model => model.Finish)</p>
+                    <p>@Html.DisplayFor(model => model.Finish)</p>
+                </div>
+                <div style="transform: translateX(12%);" class="line">
+                    <p> @Html.DisplayNameFor(model => model.NewFinish)</p>
+                    <p>@Html.DisplayFor(model => model.NewFinish)</p>
+                </div>
+                <div style="transform: translateX(14%);" class="line">
+                    <p>@Html.DisplayNameFor(model => model.How)</p>
+                    <p>@Html.DisplayFor(model => model.How)</p>
+                </div>
+                <div style="transform: translateX(16%);" class="line">
+                    <p>@Html.DisplayNameFor(model => model.HowMuch)</p>
+                    <p>@Html.DisplayFor(model => model.HowMuch)</p>
+                </div>
+                <div style="transform: translateX(18%);" class="line">
+                    <p>@Html.DisplayNameFor(model => model.TP_Status)</p>
+                    <p>@Html.DisplayFor(model => model.TP_Status.Name)</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

@@ -3,99 +3,69 @@
 @{
     ViewData["Title"] = "Details";
 }
-
+<link rel="stylesheet" href="~/css/details.css" />
 <div class="cntr" style="color:white">
-    <h4>Occurrence</h4>
+    <div style="display:flex; justify-content:space-between">
+        <h4>Ocorrência</h4>
+        <div class="nav-buttons">
+            <a class="btn btn-primary col" asp-action="Edit" asp-route-idOccurrence="@Model?.Id">Editar</a>
+            <a class="btn btn-primary col" asp-action="Index">Voltar para lista</a>
+        </div>
+    </div>
     <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Tp_Ocorrencia.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Tp_Ocorrencia.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Additional1)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Additional1)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Additional2)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Additional2)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Harmed)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Harmed)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Document)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Document)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Cost)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Cost)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdatedAt)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.UpdatedAt)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Appraiser)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Appraiser.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Origin)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Origin)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ApplicationUser)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ApplicationUser.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Status.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Status.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Organization)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Organization.Name)
-        </dd>
-    </dl>
-    <div>
-        <a asp-action="Edit" asp-route-idOccurrence="@Model?.Id">Edit</a> |
-        <a asp-action="Index">Back to List</a>
+    <div class="cntr-details">
+        <div class="line">
+            <p>@Html.DisplayNameFor(model => model.Tp_Ocorrencia.Name)</p>
+            <p>@Html.DisplayFor(model => model.Tp_Ocorrencia.Name)</p>
+        </div>
+        <div style="transform: translateX(1%);" class="line">
+            <p> @Html.DisplayNameFor(model => model.Description)</p>
+            <p> @Html.DisplayFor(model => model.Description)</p>
+        </div>
+        <div style="transform: translateX(2%);" class="line">
+            <p> @Html.DisplayNameFor(model => model.Additional1)</p>
+            <p> @Html.DisplayFor(model => model.Additional1)</p>
+        </div>
+        <div style="transform: translateX(3%);" class="line">
+            <p> @Html.DisplayNameFor(model => model.Additional2)</p>
+            <p> @Html.DisplayFor(model => model.Additional2)</p>
+        </div>
+        <div style="transform: translateX(4%);" class="line">
+            <p>@Html.DisplayNameFor(model => model.Harmed)</p>
+            <p> @Html.DisplayFor(model => model.Harmed)</p>
+        </div>
+        <div style="transform: translateX(5%);" class="line">
+            <p>  @Html.DisplayNameFor(model => model.Document)</p>
+            <p> @Html.DisplayFor(model => model.Document)</p>
+        </div>
+        <div style="transform: translateX(6%);" class="line">
+            <p> @Html.DisplayNameFor(model => model.Cost)</p>
+            <p> @Html.DisplayFor(model => model.Cost)</p>
+        </div>
+        <div style="transform: translateX(7%);" class="line">
+            <p>  @Html.DisplayNameFor(model => model.CreatedAt)</p>
+            <p> @Html.DisplayFor(model => model.CreatedAt)</p>
+        </div>
+        <div style="transform: translateX(8%);" class="line">
+            <p> @Html.DisplayNameFor(model => model.UpdatedAt)</p>
+            <p> @Html.DisplayFor(model => model.UpdatedAt)</p>
+        </div>
+        <div style="transform: translateX(9%);" class="line">
+            <p>  @Html.DisplayNameFor(model => model.Appraiser)</p>
+            <p> @Html.DisplayFor(model => model.Appraiser.Name)</p>
+        </div>
+        <div style="transform: translateX(10%);" class="line">
+            <p> @Html.DisplayNameFor(model => model.Origin)</p>
+            <p> @Html.DisplayFor(model => model.Origin)</p>
+        </div>
+        <div style="transform: translateX(11%);" class="line">
+            <p> @Html.DisplayNameFor(model => model.ApplicationUser)</p>
+            <p> @Html.DisplayFor(model => model.ApplicationUser.Name)</p>
+        </div>
+        <div style="transform: translateX(12%);" class="line">
+            <p>  @Html.DisplayNameFor(model => model.Status.Name)</p>
+            <p> @Html.DisplayFor(model => model.Status.Name)</p>
+        </div>
     </div>
 </div>
 
