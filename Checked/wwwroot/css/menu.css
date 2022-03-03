@@ -13,7 +13,7 @@
     top: 0;
     left: 0;
     height: 100%;
-    width: 260px;
+    width: 290px;
     background: #0e1a1a;
     z-index: 100;
     transition: all 0.5s ease;
@@ -199,7 +199,7 @@
     .sidebar .profile-details {
         position: fixed;
         bottom: 0;
-        width: 260px;
+        width: 290px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -222,17 +222,18 @@
     }
 
     .sidebar .profile-details img {
-        height: 52px;
-        width: 52px;
+        height: 50px;
+        width: 50px;
         object-fit: cover;
         border-radius: 16px;
-        margin: 0 14px 0 12px;
+        margin: 0 14px 0 0;
         background: #1d1b31;
         transition: all 0.5s ease;
     }
 
     .sidebar.close .profile-details img {
         padding: 10px;
+        transform: translateX(-10px);
     }
 
     .sidebar .profile-details .profile_name,
@@ -256,7 +257,7 @@
 .home-section {
     position: relative;
     background: #2F4F4F;    
-    left: 260px;
+    left: 290px;
     width: calc(100% - 260px);
     transition: all 0.5s ease;
 }

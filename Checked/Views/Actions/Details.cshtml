@@ -84,12 +84,12 @@
                 @Html.DisplayNameFor(model => model.TP_Status)
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.TP_Status)
+                @Html.DisplayFor(model => model.TP_Status.Name)
             </dd>
         </dl>
     </div>
     <div>
-        <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-        <a asp-controller="Plans" asp-route-planId=@Model.PlanId asp-action="Index">Back to List</a>
+        <a asp-action="Edit" asp-route-actionId="@Model?.Id" asp-route-OccurrenceId="@Model.OccurrenceId">Editar</a> |
+        <a asp-controller="Plans" asp-route-planId=@Model.PlanId asp-action="Index">Voltar para lista</a>
     </div>
 </div>

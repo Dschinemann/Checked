@@ -44,15 +44,16 @@ namespace Checked.Controllers
         {
             if (string.IsNullOrEmpty(actionId))
             {
-                return View(nameof(Error), new { Message = $"Id inválido" });
+                return View(nameof(Error), new ErrorViewModel { Message = $"Id inválido" });
             }
 
             var action = await _context.Actions
                 .Include(a => a.Plan)
+                .Include(a => a.TP_Status)
                 .FirstOrDefaultAsync(m => m.Id == actionId);
             if (action == null)
             {
-                return View(nameof(Error), new { Message = $"Não há ações com este Id: {actionId}" });
+                return View(nameof(Error), new ErrorViewModel { Message = $"Não há ações com este Id: {actionId}" });
             }
 
             return View(action);
@@ -241,6 +242,7 @@ namespace Checked.Controllers
                 }
                 return RedirectToAction("Index", "Plans", new { planId = model.PlanId });
             }
+            ViewBag.Status = new SelectList(_context.TP_Status, "Id", "Name", model.Status);
             return View(model);
         }
 
