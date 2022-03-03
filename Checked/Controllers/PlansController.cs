@@ -47,8 +47,9 @@ namespace Checked.Controllers
             if (actionPlan != null)
             {
                 var actions = await _context.Actions
-                    .Where(c => c.PlanId == planId)
                     .Include(o => o.TP_Status)
+                    .Include(o => o.Who)
+                    .Where(c => c.PlanId == planId)
                     .ToListAsync();
 
                 PlanViewModel model = new PlanViewModel();
@@ -69,8 +70,8 @@ namespace Checked.Controllers
             //ViewBag.OccurrenceId = id;
             var plan = await _context.Plans
                 .Include(o => o.Accountable)
-                .Where(c => c.OccurrenceId == id)
-                .Where(c => c.organizationId == user.OrganizationId)
+                .Where(c => c.OccurrenceId.Equals(id))
+                .Where(c => c.organizationId.Equals(user.OrganizationId))
                 .FirstOrDefaultAsync();
             if (plan == null)
             {
@@ -84,8 +85,9 @@ namespace Checked.Controllers
             else
             {
                 var actions = await _context.Actions
-                    .Where(c => c.PlanId == plan.Id)
+                    .Include(o => o.Who)
                     .Include(o => o.TP_Status)
+                    .Where(c => c.PlanId.Equals(plan.Id))
                     .ToListAsync();
                 PlanViewModel model = new PlanViewModel();
                 model.PlanId = plan.Id;
@@ -105,10 +107,12 @@ namespace Checked.Controllers
         public async Task<IActionResult> Create(string ocurrenceName, string id)
         {
             var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
-            var users = await _context.Users.Where(c => c.OrganizationId.Equals(user.OrganizationId)).ToListAsync();
+            var users = await _context.Users
+                .Where(c => c.OrganizationId.Equals(user.OrganizationId))
+                .ToListAsync();
             CreatePlanViewModel model = new CreatePlanViewModel();
             model.OccurrenceId = id;
-            model.ListUser = new SelectList(users,"Id", "Name",user.Id);
+            model.ListUser = new SelectList(users, "Id", "Name", user.Id);
             model.CreateById = user.Id;
             @ViewData["Occurrence"] = ocurrenceName;
             return View(model);
@@ -120,7 +124,9 @@ namespace Checked.Controllers
         {
             var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
             if (user == null) return NotFound();
-            var users = await _context.Users.Where(c => c.OrganizationId.Equals(user.OrganizationId)).ToListAsync();
+            var users = await _context.Users
+                .Where(c => c.OrganizationId.Equals(user.OrganizationId))
+                .ToListAsync();
             if (ModelState.IsValid)
             {
                 Plan plan = new Plan();
@@ -156,7 +162,9 @@ namespace Checked.Controllers
             {
                 if (planId.Equals("")) return NotFound();
                 var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
-                var users = await _context.Users.Where(c => c.OrganizationId.Equals(user.OrganizationId)).ToListAsync();
+                var users = await _context.Users
+                    .Where(c => c.OrganizationId.Equals(user.OrganizationId))
+                    .ToListAsync();
                 var plan = await _service.GetPlanById(planId);
                 CreatePlanViewModel model = new CreatePlanViewModel
                 {
@@ -167,7 +175,7 @@ namespace Checked.Controllers
                     Subject = plan.Subject,
                     PlanId = plan.Id,
                     OrganizatioId = plan.organizationId,
-                    ListUser = new SelectList(users,"Id","Name",plan.AccountableId)
+                    ListUser = new SelectList(users, "Id", "Name", plan.AccountableId)
                 };
                 var name = await _context.Occurrences
                     .Include(o => o.Tp_Ocorrencia)
@@ -182,7 +190,7 @@ namespace Checked.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([Bind("OccurrenceId,Subject,Goal,AccountableId,Objective, PlanId,OrganizatioId")] CreatePlanViewModel model, string PlanId)
         {
-            if (model.PlanId != PlanId) return RedirectToAction(nameof(Error),new ErrorViewModel { Message = "Id's não conferem" });
+            if (model.PlanId != PlanId) return RedirectToAction(nameof(Error), new ErrorViewModel { Message = "Id's não conferem" });
             var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
             var users = await _context.Users.Where(c => c.OrganizationId.Equals(user.OrganizationId)).ToListAsync();
 
@@ -198,7 +206,7 @@ namespace Checked.Controllers
                     plan.Goal = model.Goal;
                     plan.OccurrenceId = model.OccurrenceId;
                     plan.Subject = model.Subject;
-                    plan.organizationId = model.OrganizatioId;                    
+                    plan.organizationId = model.OrganizatioId;
                     await _service.UpdatePlanAsync(plan);
                     return RedirectToAction(nameof(Plans));
                 }
@@ -222,13 +230,13 @@ namespace Checked.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, Message = message });
         }
 
-        public async Task<IActionResult>Delete(string planId)
+        public async Task<IActionResult> Delete(string planId)
         {
             if (string.IsNullOrEmpty(planId)) return NotFound();
             var model = await _context.Plans
                 .Include(o => o.Accountable)
                 .FirstAsync(c => c.Id.Equals(planId));
-                
+
             ViewBag.actions = await _context.Actions
                 .Include(o => o.TP_Status)
                 .Where(c => c.PlanId.Equals(model.Id))
@@ -241,18 +249,19 @@ namespace Checked.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            if(string.IsNullOrEmpty(id)) return RedirectToAction(nameof(Error), new {message = "Não foi informado um ID válido"});
+            if (string.IsNullOrEmpty(id)) return RedirectToAction(nameof(Error), new { message = "Não foi informado um ID válido" });
             var plan = await _context.Plans.FirstAsync(c => c.Id.Equals(id));
-            var  actions = await _context.Actions.Where(c => c.PlanId.Equals(plan.Id)).ToListAsync();
-            if(plan != null)
+            var actions = await _context.Actions.Where(c => c.PlanId.Equals(plan.Id)).ToListAsync();
+            if (plan != null)
             {
-                if(actions != null)
+                if (actions != null)
                 {
                     try
                     {
                         _context.Actions.RemoveRange(actions);
                         await _context.SaveChangesAsync();
-                    }catch(Exception ex)
+                    }
+                    catch (Exception ex)
                     {
                         return RedirectToAction(nameof(Error), new ErrorViewModel { Message = ex.Message });
                     }
@@ -263,7 +272,8 @@ namespace Checked.Controllers
                     _context.Plans.Remove(plan);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Plans));
-                }catch(Exception e)
+                }
+                catch (Exception e)
                 {
                     return RedirectToAction(nameof(Error), new ErrorViewModel { Message = e.Message });
                 }

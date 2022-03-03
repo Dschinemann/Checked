@@ -37,9 +37,9 @@
                             <span asp-validation-for="Where" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <label asp-for="Who" class="control-label"></label>
-                            <input asp-for="Who" class="form-control" />
-                            <span asp-validation-for="Who" class="text-danger"></span>
+                            <label asp-for="WhoId" class="control-label"></label>
+                            <select asp-for="WhoId" asp-items="@Model.Users" class="form-control"></select>
+                            <span asp-validation-for="WhoId" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <label asp-for="How" class="control-label"></label>
@@ -73,7 +73,7 @@
     </div>
 
     <div>
-        <a asp-controller="Plans" asp-action="Index" asp-route-planId=@Model.PlanId>Back to List</a>
+        <a asp-controller="Plans" asp-action="Index" asp-route-planId=@Model.PlanId>Voltar para lista</a>
     </div>
 </div>
 @section Scripts {

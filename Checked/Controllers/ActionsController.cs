@@ -49,6 +49,7 @@ namespace Checked.Controllers
 
             var action = await _context.Actions
                 .Include(a => a.Plan)
+                .Include(o => o.Who)
                 .Include(a => a.TP_Status)
                 .FirstOrDefaultAsync(m => m.Id == actionId);
             if (action == null)
@@ -62,13 +63,18 @@ namespace Checked.Controllers
         // GET: Actions/Create
         public async Task<IActionResult> Create(string planId, string occurrenceId)
         {
+            var user = await _userManager
+                .FindByIdAsync(User.Identity.GetUserId());
             var plan = await _context.Plans.FirstAsync(c => c.Id.Equals(planId));
+            var users = await _context.Users.Where(o => o.OrganizationId.Equals(user.OrganizationId)).ToListAsync();
+
             CreateActionViewModel model = new CreateActionViewModel();
             model.PlanId = planId;
             model.OccurrenceId = occurrenceId;
             model.Id = Guid.NewGuid().ToString();
             model.StatusId = (int)TP_StatusEnum.Aberto;
             model.Goal = plan.Goal;
+            model.Users = new SelectList(users, "Id", "Name", user.Id);
             return View(model);
         }
 
@@ -77,12 +83,15 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("What,Why,Where,Who,Init,Finish,How,HowMuch, PlanId, OccurrenceId, Id,StatusId, Goal")] CreateActionViewModel model, string planId)
+        public async Task<IActionResult> Create([Bind("What,Why,Where,WhoId,Init,Finish,How,HowMuch, PlanId, OccurrenceId, Id,StatusId, Goal")] CreateActionViewModel model, string planId)
         {
             if (model.PlanId != planId) return View(nameof(Error), new ErrorViewModel { Message = $"Id não localizado" });
 
             var user = await _userManager
                 .FindByIdAsync(User.Identity.GetUserId());
+            var users = await _context.Users
+                .Where(o => o.OrganizationId.Equals(user.OrganizationId))
+                .ToListAsync();
             var plan = await _context.Plans
                 .FirstOrDefaultAsync(c => c.Id == model.PlanId);
             var occurrence = await _context.Occurrences
@@ -106,7 +115,7 @@ namespace Checked.Controllers
                 action.NewFinish = model.NewFinish;
                 action.HowMuch = model.HowMuch;
                 action.What = model.What;
-                action.Who = model.Who;
+                action.WhoId = model.WhoId;
                 action.Why = model.Why;
                 action.TP_StatusId = ((int)TP_StatusEnum.Aberto);
                 action.OccurrenceId = model.OccurrenceId;
@@ -131,6 +140,7 @@ namespace Checked.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index", "Plans", new { planId = model.PlanId });
             }
+            model.Users = new SelectList(users, "Id", "Name", model.WhoId);
             return View(model);
         }
 
@@ -144,8 +154,13 @@ namespace Checked.Controllers
 
             var action = await _context.Actions
                 .Include(c => c.TP_Status)
+                .Include(c => c.Who)
                 .Include(o => o.Plan)
+                .Include(o => o.Who)
                 .FirstOrDefaultAsync(c => c.Id == actionId);
+            var users = await _context.Users
+                .Where(c => c.OrganizationId.Equals(action.OrganizationId))
+                .ToListAsync();
 
             if (action == null)
             {
@@ -163,7 +178,7 @@ namespace Checked.Controllers
                 Finish = action.Finish,
                 NewFinish = action.NewFinish,
                 Where = action.Where,
-                Who = action.Who,
+                Users = new SelectList(users, "Id", "Name", action.Who.Id),
                 Why = action.Why,
                 OccurrenceId = OccurrenceId,
                 StatusId = action.TP_StatusId,
@@ -179,7 +194,7 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string planId, [Bind("Id,What,Why,Where,Who,Init,Finish,NewFinish,How,HowMuch,PlanId,Status,OccurrenceId,Goal")] CreateActionViewModel model)
+        public async Task<IActionResult> Edit(string planId, [Bind("Id,What,Why,Where,WhoId,Init,Finish,NewFinish,How,HowMuch,PlanId,Status,OccurrenceId,Goal")] CreateActionViewModel model)
         {
             if (planId != model.PlanId)
             {
@@ -187,6 +202,9 @@ namespace Checked.Controllers
             }
             var occurrence = await _context.Occurrences
                 .FirstOrDefaultAsync(c => c.Id == model.OccurrenceId);
+            var users = await _context.Users
+                .Where(c => c.OrganizationId.Equals(occurrence.OrganizationId))
+                .ToListAsync();
             if (ModelState.IsValid)
             {
                 try
@@ -197,7 +215,7 @@ namespace Checked.Controllers
                     action.What = model.What;
                     action.Why = model.Why;
                     action.Where = model.Where;
-                    action.Who = model.Who;
+                    action.WhoId = model.WhoId;
                     action.Init = model.Init;
                     action.Finish = model.Finish;
                     action.NewFinish = model.NewFinish;
@@ -242,7 +260,9 @@ namespace Checked.Controllers
                 }
                 return RedirectToAction("Index", "Plans", new { planId = model.PlanId });
             }
+
             ViewBag.Status = new SelectList(_context.TP_Status, "Id", "Name", model.Status);
+            model.Users = new SelectList(users, "Id", "Name", model.WhoId);
             return View(model);
         }
 

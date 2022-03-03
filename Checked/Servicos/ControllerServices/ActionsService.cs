@@ -17,6 +17,7 @@ namespace Checked.Servicos.ControllerServices
         {
             var actions = await _context.Actions
                 .Include(o => o.TP_Status)
+                .Include(o => o.Who)
                 .Where(c => c.OrganizationId.Equals(organizationId))
                 .ToListAsync();
             return actions;

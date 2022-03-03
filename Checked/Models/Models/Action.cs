@@ -1,6 +1,7 @@
 ﻿using Checked.Models.Enums;
 using Checked.Models.Types;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Checked.Models.Models
 {
@@ -39,8 +40,10 @@ namespace Checked.Models.Models
         public string? Why { get; set; }
         [Display(Name = "Where? (Onde?)")]
         public string? Where { get; set; }
+
+        public virtual ApplicationUser Who { get; set; }
         [Display(Name = "Who? (Quem?)")]
-        public string? Who { get; set; }
+        public string WhoId { get; set; }
 
 
         [DataType(DataType.Date)]
