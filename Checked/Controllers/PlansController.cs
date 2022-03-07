@@ -137,6 +137,7 @@ namespace Checked.Controllers
                 plan.Objective = model.Objective;
                 plan.organizationId = user.OrganizationId;
                 plan.CreatedById = user.Id;
+                plan.CreatedAt = DateTime.Now;
                 _context.Add(plan);
                 var oc = await _context.Occurrences.FirstAsync(c => c.Id.Equals(plan.OccurrenceId));
                 oc.PlanId = plan.Id;
@@ -207,6 +208,7 @@ namespace Checked.Controllers
                     plan.OccurrenceId = model.OccurrenceId;
                     plan.Subject = model.Subject;
                     plan.organizationId = model.OrganizatioId;
+                    plan.UpdateAt = DateTime.Now;
                     await _service.UpdatePlanAsync(plan);
                     return RedirectToAction(nameof(Plans));
                 }

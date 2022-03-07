@@ -8,54 +8,29 @@
                     <div class="arrow-card" style="grid-area:B">
                         <i class='bx bx-time-five clock-green'></i>
                         <span>1</span>
-                        <span>Em tempo</span>
-                        <i class='bx bxs-chevron-down arrow-down'></i>
+                        <span>Procedente</span>
+                        <i id="1" class='bx bxs-chevron-down arrow-down oc'></i>
                     </div>
                     <div class="arrow-card" style="grid-area:C">
                         <i class='bx bx-time-five clock-orange'></i>
                         <span>1</span>
-                        <span>Próximo do vencimento</span>
-                        <i class='bx bxs-chevron-down arrow-down'></i>
+                        <span>Não procedente</span>
+                        <i id="2" class='bx bxs-chevron-down arrow-down oc'></i>
                     </div>
                     <div class="arrow-card" style="grid-area:D">
                         <i class='bx bx-time-five clock-red'></i>
                         <span>1</span>
-                        <span>Atrasado</span>
-                        <i class='bx bxs-chevron-down arrow-down'></i>
+                        <span>Não identificado</span>
+                        <i id="3" class='bx bxs-chevron-down arrow-down oc'></i>
+                    </div>
+                    <div class="arrow-card" style="grid-area:E">
+                        <i class='bx bx-time-five clock-red'></i>
+                        <span>1</span>
+                        <span>Em análise</span>
+                        <i id="4" class='bx bxs-chevron-down arrow-down oc'></i>
                     </div>
                 </div>
-                <ul class="sub-item">
-                    <li class="list em-tempo">
-                        <div>
-                            <i class='bx bx-time-five clock-green'></i>
-                            <h6>Em tempo</h6>
-                        </div>
-                        <div class="list-details">
-                            <a href="#">Ocorrencia 1</a>
-                            <a href="#">Ocorrencia 2</a>
-                        </div>
-                    </li>
-                    <li class="list em-tempo">
-                        <div>
-                            <i class='bx bx-time-five clock-orange'></i>
-                            <h6>Próximo do vencimento</h6>
-                        </div>
-                        <div class="list-details">
-                            <a href="#">Ocorrencia 1</a>
-                            <a href="#">Ocorrencia 2</a>
-                        </div>
-                    </li>
-                    <li class="list em-tempo">
-                        <div>
-                            <i class='bx bx-time-five clock-red'></i>
-                            <h6>Atrasado</h6>
-                        </div>
-                        <div class="list-details">
-                            <a href="#">Ocorrencia 1</a>
-                            <a href="#">Ocorrencia 2</a>
-                        </div>
-                    </li>
-                </ul>
+                <ul id="subItensOc" class="sub-item"></ul>
             </li>
             <li style="transform:translateX(5%)" class="task">
                 <div class="task-title">
@@ -64,53 +39,28 @@
                         <i class='bx bx-time-five clock-green'></i>
                         <span>1</span>
                         <span>Em tempo</span>
-                        <i class='bx bxs-chevron-down arrow-down'></i>
+                        <i data-value-init="0" data-value-final="0.5" class='bx bxs-chevron-down arrow-down pl'></i>
                     </div>
                     <div class="arrow-card" style="grid-area:C">
                         <i class='bx bx-time-five clock-orange'></i>
                         <span>1</span>
                         <span>Próximo do vencimento</span>
-                        <i class='bx bxs-chevron-down arrow-down'></i>
+                        <i data-value-init="0.5" data-value-final="1" class='bx bxs-chevron-down arrow-down pl'></i>
                     </div>
                     <div class="arrow-card" style="grid-area:D">
                         <i class='bx bx-time-five clock-red'></i>
                         <span>1</span>
                         <span>Atrasado</span>
-                        <i class='bx bxs-chevron-down arrow-down'></i>
+                        <i data-value-status="atrasado" class='bx bxs-chevron-down arrow-down pl'></i>
+                    </div>
+                    <div class="arrow-card" style="grid-area:E">
+                        <i style="font-size:1.5rem; color:green" class="bx bx-check-double"></i>
+                        <span>1</span>
+                        <span>Finalizado</span>
+                        <i data-value-status="finalizado" class='bx bxs-chevron-down arrow-down pl'></i>
                     </div>
                 </div>
-                <ul class="sub-item">
-                    <li class="list em-tempo">
-                        <div>
-                            <i class='bx bx-time-five clock-green'></i>
-                            <h6>Em tempo</h6>
-                        </div>
-                        <div class="list-details">
-                            <a href="#">Plano 1</a>
-                            <a href="#">Plano 2</a>
-                        </div>
-                    </li>
-                    <li class="list em-tempo">
-                        <div>
-                            <i class='bx bx-time-five clock-orange'></i>
-                            <h6>Próximo do vencimento</h6>
-                        </div>
-                        <div class="list-details">
-                            <a href="#">Plano 1</a>
-                            <a href="#">Plano 2</a>
-                        </div>
-                    </li>
-                    <li class="list em-tempo">
-                        <div>
-                            <i class='bx bx-time-five clock-red'></i>
-                            <h6>Atrasado</h6>
-                        </div>
-                        <div class="list-details">
-                            <a href="#">Plano 1</a>
-                            <a href="#">Plano 2</a>
-                        </div>
-                    </li>
-                </ul>
+                <ul id="subItensPlan" class="sub-item"></ul>
             </li>
             <li style="transform:translateX(10%);" class="task">
                 <div class="task-title">
@@ -119,65 +69,30 @@
                         <i class='bx bx-time-five clock-green'></i>
                         <span>1</span>
                         <span>Em tempo</span>
-                        <i class='bx bxs-chevron-down arrow-down'></i>
+                        <i data-value-init="0" data-value-final="0.5" class='bx bxs-chevron-down arrow-down ac'></i>
                     </div>
                     <div class="arrow-card" style="grid-area:C">
                         <i class='bx bx-time-five clock-orange'></i>
                         <span>1</span>
                         <span>Próximo do vencimento</span>
-                        <i class='bx bxs-chevron-down arrow-down'></i>
+                        <i data-value-init="0.5" data-value-final="1" class='bx bxs-chevron-down arrow-down ac'></i>
                     </div>
                     <div class="arrow-card" style="grid-area:D">
                         <i class='bx bx-time-five clock-red'></i>
                         <span>1</span>
                         <span>Atrasado</span>
-                        <i class='bx bxs-chevron-down arrow-down'></i>
+                        <i data-value-status="atrasado" class='bx bxs-chevron-down arrow-down ac'></i>
+                    </div>
+                    <div class="arrow-card" style="grid-area:E">
+                        <i style="font-size:1.5rem; color:green" class="bx bx-check-double"></i>
+                        <span>1</span>
+                        <span>Finalizado</span>
+                        <i data-value-status="finalizado" class='bx bxs-chevron-down arrow-down ac'></i>
                     </div>
                 </div>
-                <ul class="sub-item">
-                    <li class="list em-tempo">
-                        <div>
-                            <i class='bx bx-time-five clock-green'></i>
-                            <h6>Em tempo</h6>
-                        </div>
-                        <div class="list-details">
-                            <a href="#">Ação 1</a>
-                            <a href="#">Ação 2</a>
-                        </div>
-                    </li>
-                    <li class="list em-tempo">
-                        <div>
-                            <h6>Próximo do vencimento</h6>
-                            <i class='bx bx-time-five clock-orange'></i>
-                        </div>
-                        <div class="list-details">
-                            <a href="#">Ação 1</a>
-                            <a href="#">Ação 2</a>
-                        </div>
-                    </li>
-                    <li class="list em-tempo">
-                        <div>
-                            <i class='bx bx-time-five clock-red'></i>
-                            <h6>Atrasado</h6>
-                        </div>
-                        <div class="list-details">
-                            <a href="#">Ação 1</a>
-                            <a href="#">Ação 2</a>
-                        </div>
-                    </li>
-                </ul>
+                <ul id="subItensAc" class="sub-item"></ul>
             </li>
         </ul>
     </div>
 </div>
-
-<script>
-    let arrows = document.querySelectorAll(".arrow-down");
-    for(let i =0; i<arrows.length;i++){
-        arrows[i].addEventListener("click", e =>{
-            let parent = e.target.parentElement.parentElement.parentElement.children;
-            parent[1].classList.toggle("sub-item-show");
-            console.log(e.target.parentElement)
-        })
-    }
-</script>
+<script type="text/javascript" src="~/js/Tasks.js" />

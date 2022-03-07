@@ -120,7 +120,7 @@
                             <div style="padding:10px" class="profile-details">
                                 <div class="profile-content">
                                     <img src="~/css/Images/avatarpng.png" alt="profileImg">
-                            </div>
+                                </div>
                                 <div class="name-job">
                                     <div class="profile_name">@name</div>
                                     <div class="job">@OrganizationName</div>
@@ -136,29 +136,6 @@
                     </div>
                     @RenderBody()
                 </section>
-                <script>
-                    let arrow = document.querySelectorAll(".arrow");
-                            for (var i = 0; i < arrow.length; i++) {
-                                arrow[i].addEventListener("click", (e)=>{
-                                let arrowParent = e.target.parentElement.parentElement;//selecting main parent of arrow
-                                arrowParent.classList.toggle("showMenu");
-                                });
-                            }
-                            let sidebar = document.querySelector(".sidebar");
-                            let sidebarBtn = document.querySelector(".bx-menu");
-                            let classCircle = document.querySelectorAll(".circle");
-
-                            sidebarBtn.addEventListener("click", ()=>{
-                              sidebar.classList.toggle("close");
-                              for(i = 0; i< classCircle.length;i++){
-                                  classCircle[i].classList.toggle("discard-circle")
-                              }
-                            });
-
-                            function logout(){
-                                document.location = "@Url.Action("Logout","Account")";
-                            }
-                </script>
             }
         </main>
     </div>
@@ -166,6 +143,12 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/menu.js"></script>
+    <script>
+        function logout() {
+            document.location = "@Url.Action("Logout","Account")";
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

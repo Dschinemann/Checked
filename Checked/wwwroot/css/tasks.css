@@ -1,5 +1,5 @@
 ﻿.sub-item {
-    display: none;    
+    /*display: none;    */
 }
 
 .task {
@@ -11,7 +11,7 @@
 .task-title {
     display: grid;
     grid-template-areas:
-        'A B C D';
+        'A B C D E';
     align-items: center;
 }
 

@@ -32,6 +32,9 @@ namespace Checked.Models.Models
         public ApplicationUser CreatedBy { get; set; }
         public virtual string CreatedById { get; set; }
 
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdateAt { get; set; }
+
         public List<Action> Actions { get; set; } = new List<Action>();
 
     }

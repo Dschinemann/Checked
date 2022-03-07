@@ -51,7 +51,7 @@ namespace Checked.Controllers
                 .Include(a => a.Plan)
                 .Include(o => o.Who)
                 .Include(a => a.TP_Status)
-                .FirstOrDefaultAsync(m => m.Id == actionId);
+                .FirstOrDefaultAsync(m => m.Id.Equals(actionId));
             if (action == null)
             {
                 return View(nameof(Error), new ErrorViewModel { Message = $"Não há ações com este Id: {actionId}" });
