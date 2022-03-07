@@ -34,7 +34,7 @@ namespace Checked.Controllers
             }
             var occurrences = await _context.Occurrences
                 .Where(c => c.OrganizationId == user.OrganizationId)
-                .Include(o => o.ApplicationUser)
+                .Include(o => o.Appraiser)
                 .Include(o => o.Tp_Ocorrencia)
                 .Include(o => o.Status)
                 .ToListAsync();
