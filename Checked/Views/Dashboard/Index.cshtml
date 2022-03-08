@@ -67,7 +67,7 @@
             <div>
                 <div class="info-box">
                     <span>Total</span>
-                    <span>@Model.Summary.Count()</span>
+                    <span>@Model.Summary.Sum(o => o.Quantidade)</span>
                 </div>
                 @foreach (var item in @Model.Summary)
                 {

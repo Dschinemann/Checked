@@ -68,7 +68,8 @@
                     var widht = (int)((totaldecorrido / totalDeDiasDaAcao) * 100);
                     if (widht < 25) classe = "";
                     if (widht > 25 && widht < 50) classe = "bg-info";
-                    if (widht > 50 && widht < 75) classe = "bg-warning"; else classe = "bg-danger";
+                    if (widht > 50 && widht < 75) classe = "bg-warning";
+                    if (widht > 75) classe = "bg-danger";
 
                     <tr>
                         <td>@item.What</td>

@@ -25,6 +25,7 @@ builder.Services.AddScoped<ActionsService>();
 builder.Services.AddScoped<DashService>();
 builder.Services.AddScoped<InviteService>();
 builder.Services.AddScoped<PlansService>();
+builder.Services.AddScoped<TaskService>();
 
 //Context
 //"CheckedDbContext": "Server=localhost;Database=CheckedDb;user id =sa;Password=1353;Connection Timeout=120;"

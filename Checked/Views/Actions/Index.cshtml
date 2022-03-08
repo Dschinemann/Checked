@@ -77,9 +77,10 @@
                 var totaldecorrido = DateTime.Today.Subtract(item.Init).TotalDays;
                 string classe = "";
                 var widht = (int)((totaldecorrido / totalDeDiasDaAcao) * 100);
-                if (widht < 25) classe = "";
-                if (widht > 25 && widht < 50) classe = "bg-info";
-                if (widht > 50 && widht < 75) classe = "bg-warning"; else classe = "bg-danger";
+                    if (widht < 25) classe = "";
+                    if (widht > 25 && widht < 50) classe = "bg-info";
+                    if (widht > 50 && widht < 75) classe = "bg-warning";
+                    if (widht > 75) classe = "bg-danger";
 
                 <tr>
                     <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
