@@ -119,7 +119,7 @@ namespace Checked.Controllers
                         }
                     }
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var confirmationLink = Url.Action("ConfirmAccount", "Account", new { userId = user.Id, token = code }, Request.Scheme);
+                    string confirmationLink = Url.Action("ConfirmAccount", "Account", new { userId = user.Id, token = code }, Request.Scheme)??"";
                     try
                     {
                         await _mailService.SendEmailAsync(new EmailRequest()
@@ -228,7 +228,7 @@ namespace Checked.Controllers
                     return View(model);
                 }
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var confirmationLink = Url.Action("ChangePassword", "Account", new { userId = user.Id, token = code }, Request.Scheme);
+                string confirmationLink = Url.Action("ChangePassword", "Account", new { userId = user.Id, token = code }, Request.Scheme)??"";
                 try
                 {
                     await _mailService.SendEmailAsync(new EmailRequest()

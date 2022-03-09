@@ -7,7 +7,7 @@
 @inject CheckedDbContext Context
 @{
     var user = await UserManager.GetUserAsync(User);
-    Organization org = null;
+    Organization org = new Organization();
     string name = String.Empty;
     string OrganizationName = String.Empty;
     if (user != null)
@@ -15,9 +15,9 @@
         name = user.Name;
         if (user.OrganizationId != null)
         {
-            org = await Context.Organizations
+            org = Context.Organizations
             .Where(c => c.Id == user.OrganizationId)
-            .FirstOrDefaultAsync();
+            .First();
             OrganizationName = org.Name;
         }
 

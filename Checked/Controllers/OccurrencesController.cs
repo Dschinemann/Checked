@@ -122,7 +122,7 @@ namespace Checked.Controllers
         // GET: Occurrences/Edit/5
         public async Task<IActionResult> Edit(string? idOccurrence)
         {
-            if (idOccurrence.Equals("") || idOccurrence == null)
+            if (string.IsNullOrEmpty(idOccurrence))
             {
                 return NotFound();
             }
@@ -188,7 +188,7 @@ namespace Checked.Controllers
 
             if (ModelState.IsValid)
             {
-                Occurrence occurrence = await _context.Occurrences.FindAsync(id);
+                Occurrence occurrence = await _context.Occurrences.FirstAsync(c => c.Id.Equals(model.Id));
 
                 occurrence.TP_OcorrenciaId = model.TypeOccurrence;
                 occurrence.Description = model.Description;
