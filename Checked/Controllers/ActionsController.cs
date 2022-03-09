@@ -93,7 +93,7 @@ namespace Checked.Controllers
                 .Where(o => o.OrganizationId.Equals(user.OrganizationId))
                 .ToListAsync();
             var plan = await _context.Plans
-                .FirstOrDefaultAsync(c => c.Id == model.PlanId);
+                .FirstAsync(c => c.Id == model.PlanId);
             var occurrence = await _context.Occurrences
                 .FirstOrDefaultAsync(c => c.Id == model.OccurrenceId);
 
@@ -201,7 +201,7 @@ namespace Checked.Controllers
                 return View(nameof(Error), new ErrorViewModel { Message = $"Id não localizado" });
             }
             var occurrence = await _context.Occurrences
-                .FirstOrDefaultAsync(c => c.Id == model.OccurrenceId);
+                .FirstAsync(c => c.Id == model.OccurrenceId);
             var users = await _context.Users
                 .Where(c => c.OrganizationId.Equals(occurrence.OrganizationId))
                 .ToListAsync();
@@ -209,7 +209,7 @@ namespace Checked.Controllers
             {
                 try
                 {
-                    Models.Models.Action action = await _context.Actions.FindAsync(model.Id);
+                    Models.Models.Action action = await _context.Actions.FirstAsync(c => c.Id.Equals(model.Id));
 
                     action.Id = model.Id;
                     action.What = model.What;
@@ -231,7 +231,7 @@ namespace Checked.Controllers
                     await _context.SaveChangesAsync();
 
                     var existsActionOpen = await _context.Actions
-                    .Where(c => c.OccurrenceId == model.OccurrenceId && c.TP_StatusId != ((int)TP_StatusEnum.Encerrado))
+                    .Where(c => c.OccurrenceId.Equals(model.OccurrenceId) && c.TP_StatusId != ((int)TP_StatusEnum.Encerrado))
                     .AnyAsync();
 
                     if (existsActionOpen)
@@ -247,18 +247,17 @@ namespace Checked.Controllers
 
                     return RedirectToAction("Index", "Plans", new { planId = model.PlanId });
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException e)
                 {
                     if (!ActionExists(model.Id))
                     {
-                        return View(nameof(Error), new { Message = $"Não existe ação com esse ID: {model.Id}" });
+                        return View(nameof(Error), new ErrorViewModel { Message = $"Não existe ação com esse ID: {model.Id}" });
                     }
                     else
                     {
-                        throw;
+                        return View(nameof(Error), new ErrorViewModel  { Message = $"Error code 30: {e.Message}" });
                     }
-                }
-                return RedirectToAction("Index", "Plans", new { planId = model.PlanId });
+                }                
             }
 
             ViewBag.Status = new SelectList(_context.TP_Status, "Id", "Name", model.Status);
@@ -277,7 +276,7 @@ namespace Checked.Controllers
             var action = await _context.Actions
                 .Include(a => a.Plan)
                 .Include(o => o.TP_Status)
-                .FirstOrDefaultAsync(m => m.Id == actionId);
+                .FirstAsync(m => m.Id.Equals(actionId));
             if (action == null)
             {
                 return View(nameof(Error), new { Message = "Não há ações para o plano cadastrado" });
@@ -301,11 +300,8 @@ namespace Checked.Controllers
                 bool existActions = await _context.Actions
                     .Where(c => c.OccurrenceId == action.OccurrenceId)
                     .AnyAsync();
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                 Occurrence oc = await _context.Occurrences
-                        .FirstOrDefaultAsync(c => c.Id == action.OccurrenceId);
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-
+                        .FirstAsync(c => c.Id == action.OccurrenceId);
 
                 var existsActionOpen = await _context.Actions
                     .Where(c => c.OccurrenceId == action.OccurrenceId && c.TP_StatusId != ((int)TP_StatusEnum.Encerrado))

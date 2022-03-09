@@ -50,7 +50,7 @@ namespace Checked.Controllers
         public IActionResult Register()
         {
             ViewBag.Pais = new SelectList(_context.Countries, "Id", "Pais", "Brasil");
-            return View(new RegisterViewModel { StateName="Selecione um estado", CityName="Selecione uma cidade"});
+            return View(new RegisterViewModel { StateName = "Selecione um estado", CityName = "Selecione uma cidade" });
         }
         [AllowAnonymous]
         [HttpGet]
@@ -119,14 +119,14 @@ namespace Checked.Controllers
                         }
                     }
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    string confirmationLink = Url.Action("ConfirmAccount", "Account", new { userId = user.Id, token = code }, Request.Scheme)??"";
+                    string confirmationLink = Url.Action("ConfirmAccount", "Account", new { userId = user.Id, token = code }, Request.Scheme) ?? "";
                     try
                     {
                         await _mailService.SendEmailAsync(new EmailRequest()
                         {
                             ToEmail = model.Email,
                             Subject = "Email Confirm",
-                            Body = @$"Clique no <a href='{HtmlEncoder.Default.Encode(confirmationLink)}'>Link</a> para confirmar"            
+                            Body = @$"Clique no <a href='{HtmlEncoder.Default.Encode(confirmationLink)}'>Link</a> para confirmar"
                         });
                     }
                     catch (Exception e)
@@ -134,7 +134,7 @@ namespace Checked.Controllers
                         ModelState.AddModelError(string.Empty, e.Message);
                     }
 
-                    ViewBag.Message = $"Para Confirmar sua conta clique no link enviado para {model.Email}.";                    
+                    ViewBag.Message = $"Para Confirmar sua conta clique no link enviado para {model.Email}.";
                     return View("Info");
 
                 }
@@ -228,7 +228,7 @@ namespace Checked.Controllers
                     return View(model);
                 }
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                string confirmationLink = Url.Action("ChangePassword", "Account", new { userId = user.Id, token = code }, Request.Scheme)??"";
+                string confirmationLink = Url.Action("ChangePassword", "Account", new { userId = user.Id, token = code }, Request.Scheme) ?? "";
                 try
                 {
                     await _mailService.SendEmailAsync(new EmailRequest()
@@ -314,14 +314,15 @@ namespace Checked.Controllers
                 {
                     var user = await _userManager.GetUserAsync(User);
                     string response = await _inviteservice.Invite(
-                        new Invite { 
-                            Email = model.Email, 
+                        new Invite
+                        {
+                            Email = model.Email,
                             OrganizationId = model.OrganizationId,
                             CreatedById = user.Id,
                             Name = model.Name
-                        });                    
-                    var org = await _context.Organizations.FindAsync(user.OrganizationId);
-                    var inviteLink = Url.Action("CreateUser", "Account", new { organizationId = model.OrganizationId }, Request.Scheme);
+                        });
+                    var org = await _context.Organizations.FirstAsync(c => c.Id.Equals(user.OrganizationId));
+                    string inviteLink = Url.Action("CreateUser", "Account", new { organizationId = model.OrganizationId }, Request.Scheme) ?? "";
                     await _mailService.SendEmailAsync(new EmailRequest()
                     {
                         ToEmail = model.Email,
@@ -411,7 +412,7 @@ namespace Checked.Controllers
         [AllowAnonymous]
         public IActionResult CreateUser(string organizationId)
         {
-            RegisterViewModel model = new RegisterViewModel { organizationId = organizationId, CityName="Selecione uma cidade", StateName = "Selecione um estado" };
+            RegisterViewModel model = new RegisterViewModel { organizationId = organizationId, CityName = "Selecione uma cidade", StateName = "Selecione um estado" };
             return View(model);
         }
 
