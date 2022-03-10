@@ -29,7 +29,7 @@ builder.Services.AddScoped<TaskService>();
 
 //Context
 //"CheckedDbContext": "Server=localhost;Database=CheckedDb;user id =sa;Password=1353;Connection Timeout=120;"
-var connectionString = builder.Configuration.GetConnectionString("CheckedDbContext");
+var connectionString = builder.Configuration.GetConnectionString("CheckedContextConnection");
 builder.Services.AddDbContext<CheckedDbContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()

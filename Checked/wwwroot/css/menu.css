@@ -242,6 +242,11 @@
         font-size: 18px;
         font-weight: 500;
         white-space: nowrap;
+        /**/
+        max-width: 15ch;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .sidebar.close .profile-details i,
