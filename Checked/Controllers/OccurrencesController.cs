@@ -10,6 +10,7 @@ using Checked.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Checked.Models;
 using System.Diagnostics;
+using Checked.Servicos.Email;
 
 namespace Checked.Controllers
 {
@@ -17,11 +18,12 @@ namespace Checked.Controllers
     {
         private readonly CheckedDbContext _context;
         private readonly Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> _userManager;
-
-        public OccurrencesController(CheckedDbContext context, Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager)
+        private readonly IMailService _mailService;
+        public OccurrencesController(CheckedDbContext context, Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager, IMailService mailService)
         {
             _context = context;
             _userManager = userManager;
+            _mailService = mailService;
         }
 
         // GET: Occurrences
@@ -74,7 +76,7 @@ namespace Checked.Controllers
             var users = await _context.Users.Where(c => c.OrganizationId == user.OrganizationId).ToListAsync();
             ViewBag.AppraiserId = new SelectList(users, "Id", "Name", user);
             ViewBag.Types = new SelectList(_context.TP_Ocorrencias, "Id", "Name");
-            return View(new CreateOccurrenceModel() { CreatedById = user.Id});
+            return View(new CreateOccurrenceModel() { CreatedById = user.Id });
         }
 
         // POST: Occurrences/Create
@@ -109,9 +111,24 @@ namespace Checked.Controllers
                 occurrence.Additional1 = model.Additional1;
                 occurrence.Additional2 = model.Additional2;
                 occurrence.CreatedById = user.Id;
-                var typeName = await _context.TP_Ocorrencias.FindAsync(model.TypeOccurrence);                
+                var typeName = await _context.TP_Ocorrencias.FindAsync(model.TypeOccurrence);
                 _context.Occurrences.Add(occurrence);
-                await _context.SaveChangesAsync();
+                string linkOccurrence = Url.Action("Details", "Occurrences", new { idOccurrence = model.Id }, Request.Scheme) ?? "";
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    await _mailService.SendEmailAsync(new EmailRequest()
+                    {
+                        ToEmail = appraiser.Email,
+                        Subject = "Há uma ocorrência aguardando sua avaliação",
+                        Body = Message(linkOccurrence, "Há uma ocorrência aguardando sua avaliação")
+                    });
+                }
+                catch (Exception e)
+                {
+                    return RedirectToAction(nameof(Error), new ErrorViewModel { Message = $"error Code 40: {e.Message}" });
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.AppraiserId = new SelectList(_context.Users, "Id", "Name", model.Appraiser);
@@ -139,17 +156,17 @@ namespace Checked.Controllers
             }
             EditOccurrenceViewModel model = new EditOccurrenceViewModel(
                 occurrence.Id,
-                occurrence.TP_OcorrenciaId, 
-                occurrence.Description, 
-                occurrence.Harmed, 
+                occurrence.TP_OcorrenciaId,
+                occurrence.Description,
+                occurrence.Harmed,
                 occurrence.Document,
                 occurrence.Cost,
                 occurrence.AppraiserId,
-                occurrence.ApplicationUserId, 
+                occurrence.ApplicationUserId,
                 occurrence.Origin,
-                occurrence.OrganizationId, 
-                occurrence.Status, 
-                occurrence.CorrectiveAction                
+                occurrence.OrganizationId,
+                occurrence.Status,
+                occurrence.CorrectiveAction
                 );
             model.Additional1 = occurrence.Additional1;
             model.Additional2 = occurrence.Additional2;
@@ -188,7 +205,9 @@ namespace Checked.Controllers
 
             if (ModelState.IsValid)
             {
-                Occurrence occurrence = await _context.Occurrences.FirstAsync(c => c.Id.Equals(model.Id));
+                Occurrence occurrence = await _context.Occurrences
+                    .Include(o => o.Appraiser)
+                    .FirstAsync(c => c.Id.Equals(model.Id));
 
                 occurrence.TP_OcorrenciaId = model.TypeOccurrence;
                 occurrence.Description = model.Description;
@@ -204,11 +223,18 @@ namespace Checked.Controllers
                 occurrence.CorrectiveAction = model.CorretiveActions;
                 occurrence.Additional1 = model.Additional1;
                 occurrence.Additional2 = model.Additional2;
-                
+                string linkOccurrence = Url.Action("Details", "Occurrences", new { idOccurrence = model.Id }, Request.Scheme) ?? "";
                 try
                 {
                     _context.Update(occurrence);
                     await _context.SaveChangesAsync();
+                    await _mailService.SendEmailAsync(new EmailRequest()
+                    {
+                        ToEmail = occurrence.Appraiser.Email,
+                        Subject = "Há uma ocorrência aguardando sua avaliação",
+                        Body = Message(linkOccurrence, "Há uma ocorrência aguardando sua avaliação")
+                    });
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -289,5 +315,42 @@ namespace Checked.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, Message = message });
         }
+        private string Message(string link, string title)
+        {
+            var path = Path.GetFullPath("wwwroot");
+            string message = @$"
+            <!DOCTYPE html>
+            <html lang='pt-BR'>
+            <head>
+                <meta charset='utf-8'>
+                <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+                <title>Teste</title>
+                <meta name='viewport' content='width=device-width, initial-scale=1'>                
+            </head>
+            
+            <body>
+                <table style='width: 600px;padding: 10px;'>
+                    <tr>
+                        <td>
+                            <img src='{path}/css/Images/header.png' alt='imagem email' />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style='font-family:Verdana, Geneva, Tahoma, sans-serif;color: #1b29b6;text-align: center; font-size: 28px; font-weight: bold;'>
+                            {title}
+                        </td>
+                    </tr>
+                    <tr style='margin-top: 20px;'>
+                        <td
+                            style='font-size: 20px; font-family:Verdana, Geneva, Tahoma, sans-serif; color: #048162;text-align: center;padding: 16px;'>
+                            Clique no <a href='{link}'>Link</a> para mais informações
+                        </td>
+                    </tr>
+                </table>
+            </body>
+            </html>";
+            return message;
+        }
     }
 }
+

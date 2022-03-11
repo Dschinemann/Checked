@@ -9,6 +9,7 @@ using System.Diagnostics;
 using Checked.Servicos.ControllerServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Checked.Servicos.Email;
 
 namespace Checked.Controllers
 {
@@ -17,16 +18,19 @@ namespace Checked.Controllers
         private readonly CheckedDbContext _context;
         private readonly Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> _userManager;
         private readonly PlansService _service;
+        private readonly IMailService _mailService;
 
         public PlansController(
             CheckedDbContext context,
             Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager,
-            PlansService service
+            PlansService service,
+            IMailService mailService
             )
         {
             _context = context;
             _userManager = userManager;
             _service = service;
+            _mailService = mailService;
         }
         public async Task<IActionResult> Plans()
         {
@@ -123,6 +127,7 @@ namespace Checked.Controllers
         public async Task<IActionResult> Create([Bind("Subject,Goal,AccountableId,Objective,OccurrenceId,CreateById")] CreatePlanViewModel model)
         {
             var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
+            var userToEmail = await _userManager.FindByIdAsync(model.AccountableId);
             if (user == null) return NotFound();
             var users = await _context.Users
                 .Where(c => c.OrganizationId.Equals(user.OrganizationId))
@@ -142,9 +147,16 @@ namespace Checked.Controllers
                 var oc = await _context.Occurrences.FirstAsync(c => c.Id.Equals(plan.OccurrenceId));
                 oc.PlanId = plan.Id;
                 _context.Occurrences.Update(oc);
+                string linkAction = Url.Action(nameof(Index), "Plans", new { id = plan.Id }, Request.Scheme) ?? "";
                 try
                 {
                     await _context.SaveChangesAsync();
+                    await _mailService.SendEmailAsync(new EmailRequest()
+                    {
+                        ToEmail = userToEmail.Email,
+                        Subject = "Um novo plano foi criado com seu email",
+                        Body = Message(linkAction, "Você foi adicionado como responsável por um plano de ação")
+                    });
                     return RedirectToAction(nameof(Index), new { id = model.OccurrenceId });
                 }
                 catch (Exception ex)
@@ -197,19 +209,28 @@ namespace Checked.Controllers
 
             if (ModelState.IsValid)
             {
+                Plan plan = await _context.Plans
+                    .Include(o => o.Accountable)
+                    .FirstAsync(c => c.Id.Equals(model.PlanId));
+                plan.Id = model.PlanId;
+                plan.Objective = model.Objective;
+                plan.AccountableId = model.AccountableId;
+                plan.Accountable = await _context.Users.FindAsync(model.AccountableId);
+                plan.Goal = model.Goal;
+                plan.OccurrenceId = model.OccurrenceId;
+                plan.Subject = model.Subject;
+                plan.organizationId = model.OrganizatioId;
+                plan.UpdateAt = DateTime.Now;
+                string linkAction = Url.Action(nameof(Index), "Plans", new { id = plan.Id }, Request.Scheme) ?? "";
                 try
                 {
-                    Plan plan = await _context.Plans.FindAsync(model.PlanId);
-                    plan.Id = model.PlanId;
-                    plan.Objective = model.Objective;
-                    plan.AccountableId = model.AccountableId;
-                    plan.Accountable = await _context.Users.FindAsync(model.AccountableId);
-                    plan.Goal = model.Goal;
-                    plan.OccurrenceId = model.OccurrenceId;
-                    plan.Subject = model.Subject;
-                    plan.organizationId = model.OrganizatioId;
-                    plan.UpdateAt = DateTime.Now;
                     await _service.UpdatePlanAsync(plan);
+                    await _mailService.SendEmailAsync(new EmailRequest()
+                    {
+                        ToEmail = plan.Accountable.Email,
+                        Subject = "Um novo plano foi atualizado com seu email",
+                        Body = Message(linkAction, "Você foi adicionado como responsável por um plano de ação")
+                    });
                     return RedirectToAction(nameof(Plans));
                 }
                 catch (Exception ex)
@@ -282,6 +303,43 @@ namespace Checked.Controllers
 
             };
             return View();
+        }
+
+        private string Message(string link, string title)
+        {
+            var path = Path.GetFullPath("wwwroot");
+            string message = @$"
+            <!DOCTYPE html>
+            <html lang='pt-BR'>
+            <head>
+                <meta charset='utf-8'>
+                <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+                <title>Teste</title>
+                <meta name='viewport' content='width=device-width, initial-scale=1'>                
+            </head>
+            
+            <body>
+                <table style='width: 600px;padding: 10px;'>
+                    <tr>
+                        <td>
+                            <img src='{path}/css/Images/header.png' alt='imagem email' />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style='font-family:Verdana, Geneva, Tahoma, sans-serif;color: #1b29b6;text-align: center; font-size: 28px; font-weight: bold;'>
+                            {title}
+                        </td>
+                    </tr>
+                    <tr style='margin-top: 20px;'>
+                        <td
+                            style='font-size: 20px; font-family:Verdana, Geneva, Tahoma, sans-serif; color: #048162;text-align: center;padding: 16px;'>
+                            Clique no <a href='{link}'>Link</a> para mais informações
+                        </td>
+                    </tr>
+                </table>
+            </body>
+            </html>";
+            return message;
         }
     }
 }

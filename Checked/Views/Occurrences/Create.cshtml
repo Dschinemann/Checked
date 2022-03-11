@@ -52,7 +52,6 @@
                             <input asp-for="Additional2" class="form-control" />
                             <span asp-validation-for="Additional2" class="text-danger"></span>
                         </div>
-
                     </div>
                     <div>
                         <div class="form-group">
@@ -66,12 +65,17 @@
                             <span asp-validation-for="Cost" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <label asp-for="Appraiser" class="control-label"></label>
-                            <select asp-for="Appraiser" class="form-control" asp-items="@ViewBag.AppraiserId"></select>
-                            <span asp-validation-for="Appraiser" class="text-danger"></span>
+                            <div style="display:flex;align-items: end;">
+                                <div>
+                                    <label asp-for="Appraiser" class="control-label"></label>
+                                    <select asp-for="Appraiser" class="form-control" asp-items="@ViewBag.AppraiserId"></select>
+                                    <span asp-validation-for="Appraiser" class="text-danger"></span>
+                                </div>
+                                <a style="background-color:green; font-weight:bold" class="btn" asp-action="InviteUser" asp-controller="Account">+</a>
+                            </div>
                         </div>
                         <div class="form-group">
-                            <input type="submit" value="Create" class="btn btn-primary" />
+                            <input type="submit" value="Salvar" class="btn btn-primary" />
                         </div>
                     </div>
                 </div>

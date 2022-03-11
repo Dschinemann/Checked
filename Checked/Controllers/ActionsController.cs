@@ -10,6 +10,7 @@ using Checked.Servicos.ControllerServices;
 using Microsoft.AspNetCore.Authorization;
 using Checked.Models;
 using System.Diagnostics;
+using Checked.Servicos.Email;
 
 namespace Checked.Controllers
 {
@@ -18,15 +19,19 @@ namespace Checked.Controllers
         private readonly CheckedDbContext _context;
         private readonly Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> _userManager;
         private readonly ActionsService _service;
+        private readonly IMailService _mailService;
+
         public ActionsController(
             CheckedDbContext context,
             Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager,
-            ActionsService service
+            ActionsService service,
+            IMailService mailService
             )
         {
             _context = context;
             _userManager = userManager;
             _service = service;
+            _mailService = mailService;
         }
 
         public async Task<IActionResult> Index()
@@ -93,9 +98,9 @@ namespace Checked.Controllers
                 .Where(o => o.OrganizationId.Equals(user.OrganizationId))
                 .ToListAsync();
             var plan = await _context.Plans
-                .FirstAsync(c => c.Id == model.PlanId);
+                .FirstAsync(c => c.Id.Equals(model.PlanId));
             var occurrence = await _context.Occurrences
-                .FirstOrDefaultAsync(c => c.Id == model.OccurrenceId);
+                .FirstOrDefaultAsync(c => c.Id.Equals(model.OccurrenceId));
 
             if (plan.organizationId != user.OrganizationId)
             {
@@ -104,6 +109,7 @@ namespace Checked.Controllers
 
             if (ModelState.IsValid)
             {
+                var emailWho = await _userManager.FindByIdAsync(model.WhoId);
                 Models.Models.Action action = new Models.Models.Action();
                 action.CreatedAt = DateTime.Now;
                 action.UpdatedAt = DateTime.Now;
@@ -122,7 +128,22 @@ namespace Checked.Controllers
                 action.OrganizationId = user.OrganizationId;
                 action.CreatedById = user.Id;
                 _context.Add(action);
-                await _context.SaveChangesAsync();
+                string linkAction = Url.Action("Index", "Plans", new { id = model.PlanId }, Request.Scheme) ?? "";
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    await _mailService.SendEmailAsync(new EmailRequest()
+                    {
+                        ToEmail = emailWho.Email,
+                        Subject = "Uma nova ação foi criada com seu email",
+                        Body = Message(linkAction, "Você foi adicionado como responsável por uma ação")
+                    });
+                }
+                catch (Exception e)
+                {
+                    return View(nameof(Error), new ErrorViewModel { Message = $"Error code 10: {e.Message}" });
+                }
+                
 
                 var existsActionOpen = await _context.Actions
                     .Where(c => c.OccurrenceId == model.OccurrenceId && c.TP_StatusId != ((int)TP_StatusEnum.Encerrado))
@@ -207,28 +228,37 @@ namespace Checked.Controllers
                 .ToListAsync();
             if (ModelState.IsValid)
             {
+                Models.Models.Action action = await _context.Actions.FirstAsync(c => c.Id.Equals(model.Id));
+                var emailWho = await _userManager.FindByIdAsync(model.WhoId);
+
+                action.Id = model.Id;
+                action.What = model.What;
+                action.Why = model.Why;
+                action.Where = model.Where;
+                action.WhoId = model.WhoId;
+                action.Init = model.Init;
+                action.Finish = model.Finish;
+                action.NewFinish = model.NewFinish;
+                action.How = model.How;
+                action.HowMuch = model.HowMuch;
+                action.UpdatedAt = DateTime.Now;
+                action.PlanId = model.PlanId;
+                action.TP_StatusId = model.Status.Id;
+                action.OccurrenceId = model.OccurrenceId;
+                action.OrganizationId = occurrence.OrganizationId;
+
+                _context.Update(action);
+                string linkAction = Url.Action("Index", "Plans", new { id = model.PlanId }, Request.Scheme) ?? "";
                 try
                 {
-                    Models.Models.Action action = await _context.Actions.FirstAsync(c => c.Id.Equals(model.Id));
-
-                    action.Id = model.Id;
-                    action.What = model.What;
-                    action.Why = model.Why;
-                    action.Where = model.Where;
-                    action.WhoId = model.WhoId;
-                    action.Init = model.Init;
-                    action.Finish = model.Finish;
-                    action.NewFinish = model.NewFinish;
-                    action.How = model.How;
-                    action.HowMuch = model.HowMuch;
-                    action.UpdatedAt = DateTime.Now;
-                    action.PlanId = model.PlanId;
-                    action.TP_StatusId = model.Status.Id;
-                    action.OccurrenceId = model.OccurrenceId;
-                    action.OrganizationId = occurrence.OrganizationId;
-
-                    _context.Update(action);
                     await _context.SaveChangesAsync();
+
+                    await _mailService.SendEmailAsync(new EmailRequest()
+                    {
+                        ToEmail = emailWho.Email,
+                        Subject = "Uma nova ação foi atualizada com seu email",
+                        Body = Message(linkAction, "Você foi adicionado como responsável por uma ação")
+                    });
 
                     var existsActionOpen = await _context.Actions
                     .Where(c => c.OccurrenceId.Equals(model.OccurrenceId) && c.TP_StatusId != ((int)TP_StatusEnum.Encerrado))
@@ -362,6 +392,43 @@ namespace Checked.Controllers
         public IActionResult Error(string message)
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, Message = message });
+        }
+
+        private string Message(string link, string title)
+        {
+            var path = Path.GetFullPath("wwwroot");
+            string message = @$"
+            <!DOCTYPE html>
+            <html lang='pt-BR'>
+            <head>
+                <meta charset='utf-8'>
+                <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+                <title>Teste</title>
+                <meta name='viewport' content='width=device-width, initial-scale=1'>                
+            </head>
+            
+            <body>
+                <table style='width: 600px;padding: 10px;'>
+                    <tr>
+                        <td>
+                            <img src='{path}/css/Images/header.png' alt='imagem email' />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style='font-family:Verdana, Geneva, Tahoma, sans-serif;color: #1b29b6;text-align: center; font-size: 28px; font-weight: bold;'>
+                            {title}
+                        </td>
+                    </tr>
+                    <tr style='margin-top: 20px;'>
+                        <td
+                            style='font-size: 20px; font-family:Verdana, Geneva, Tahoma, sans-serif; color: #048162;text-align: center;padding: 16px;'>
+                            Clique no <a href='{link}'>Link</a> para mais informações
+                        </td>
+                    </tr>
+                </table>
+            </body>
+            </html>";
+            return message;
         }
     }
 }
