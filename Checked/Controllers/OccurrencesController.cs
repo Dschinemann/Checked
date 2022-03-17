@@ -240,14 +240,16 @@ namespace Checked.Controllers
                 {
                     _context.Update(occurrence);
                     await _context.SaveChangesAsync();
+                    string body = Message(linkOccurrence, "Há uma ocorrência aguardando sua avaliação");
+                    var toEmail = await _userManager.FindByIdAsync(model.AppraiserId);
                     try
                     {
                         await _mailService.SendEmailAsync(new EmailRequest()
                         {
-                            ToEmail = occurrence.Appraiser.Email,
+                            ToEmail = toEmail.Email,
                             Subject = "Há uma ocorrência aguardando sua avaliação",
-                            Body = Message(linkOccurrence, "Há uma ocorrência aguardando sua avaliação")
-                        });
+                            Body = body
+                        }); ;
                     }
                     catch (Exception e)
                     {

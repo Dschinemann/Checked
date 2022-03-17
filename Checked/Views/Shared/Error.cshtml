@@ -3,13 +3,15 @@
     ViewData["Title"] = "Error";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">@Model.Message</h2>
+<div style="margin-left:50px; padding:20px">
+    <h1 class="text-danger">Error.</h1>
+    <h2 class="text-danger">@Model.Message</h2>
 
-@if (Model?.ShowRequestId ?? false)
-{
-    <p>
-        <strong>Request ID:</strong> <code>@Model?.RequestId</code>
-    </p>
-}
+    @if (Model?.ShowRequestId ?? false)
+    {
+        <p>
+            <strong>Request ID:</strong> <code>@Model?.RequestId</code>
+        </p>
+    }
 
+</div>
