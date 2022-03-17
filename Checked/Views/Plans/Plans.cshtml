@@ -1,7 +1,11 @@
 ﻿@using Checked.Models.Types
+@using Checked.Models.Models
+@using Microsoft.AspNetCore.Identity
 @model IEnumerable<Checked.Models.Models.Plan>
+@inject UserManager<ApplicationUser> UserManager
 @{
     ViewData["Title"] = "Planos";
+    var user = await UserManager.GetUserAsync(User);
     //@Html.ViewContext.RouteData.Values["id"]
 }
 
@@ -76,7 +80,10 @@
                         @item.Actions.Count(c => c.TP_StatusId == (int)TP_StatusEnum.Encerrado)
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-planId="@item.Id">Editar</a> |
+                        @if (@item.AccountableId.Equals(user.Id) || @item.CreatedById.Equals(user.Id))
+                        {
+                            <a asp-action="Edit" asp-route-planId="@item.Id">Editar |</a>
+                        }
                         <a asp-action="Index" asp-route-planId="@item.Id">Detalhes</a> |
                         <a asp-action="Delete" asp-route-planId="@item.Id">Delete</a>
                     </td>

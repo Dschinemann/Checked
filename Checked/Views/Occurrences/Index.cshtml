@@ -1,8 +1,12 @@
-﻿@model IEnumerable<Checked.Models.Models.Occurrence>
+﻿@using Checked.Models.Models
+@using Microsoft.AspNetCore.Identity
+@model IEnumerable<Checked.Models.Models.Occurrence>
+@inject UserManager<ApplicationUser> UserManager
 
 @{
     ViewData["Title"] = "Index";
     var itens = ViewData["actions"];
+    var user = await UserManager.GetUserAsync(User);
 }
 <div class="cntr">
     <p>
@@ -97,8 +101,11 @@
                         @Html.DisplayFor(modelItem => item.CorrectiveAction)
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-idOccurrence="@item.Id">Editar</a> |
-                        <a asp-action="Details" asp-route-idOccurrence="@item.Id">Detalhes</a> |
+                        @if(@item.AppraiserId.Equals(user.Id) || @item.CreatedById.Equals(user.Id))
+                        {
+                            <a asp-action="Edit" asp-route-idOccurrence="@item.Id">Editar  |</a> 
+                        }
+                                              <a asp-action="Details" asp-route-idOccurrence="@item.Id">Detalhes</a> |
                         <a asp-action="Delete" asp-route-idOccurrence="@item.Id">Delete</a>
                     </td>
                 </tr>

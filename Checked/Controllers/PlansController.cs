@@ -171,14 +171,19 @@ namespace Checked.Controllers
 
         public async Task<IActionResult> Edit(string? planId)
         {
-            if (planId != null)
-            {
-                if (planId.Equals("")) return NotFound();
+            if (!string.IsNullOrEmpty(planId))
+            {                
                 var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
                 var users = await _context.Users
                     .Where(c => c.OrganizationId.Equals(user.OrganizationId))
                     .ToListAsync();
                 var plan = await _service.GetPlanById(planId);
+                bool permitEdit = plan.CreatedById.Equals(user.Id) | plan.AccountableId.Equals(user.Id);
+                if (!permitEdit)
+                {
+                    ViewBag.Message = "Você não tem permissão para alterar o registro";
+                    return View("info");
+                }
                 CreatePlanViewModel model = new CreatePlanViewModel
                 {
                     AccountableId = plan.AccountableId,

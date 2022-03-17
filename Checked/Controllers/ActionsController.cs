@@ -188,6 +188,13 @@ namespace Checked.Controllers
                 return View(nameof(Error), new ErrorViewModel { Message = $"Não existe ação com este Id:{actionId}" });
             }
 
+            bool permitEdit = action.CreatedById.Equals(User.Identity.GetUserId()) | action.WhoId.Equals(User.Identity.GetUserId());
+            if (!permitEdit)
+            {
+                ViewBag.Message = "Você não tem permissão para editar este conteúdo";
+                return View("Info");
+            }
+
             CreateActionViewModel model = new CreateActionViewModel()
             {
                 Id = action.Id,

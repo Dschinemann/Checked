@@ -19,12 +19,14 @@ namespace Checked.Controllers
         private readonly CheckedDbContext _context;
         private readonly Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> _userManager;
         private readonly IMailService _mailService;
+
         public OccurrencesController(CheckedDbContext context, Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager, IMailService mailService)
         {
             _context = context;
             _userManager = userManager;
-            _mailService = mailService;
+            _mailService = mailService;              
         }
+
 
         // GET: Occurrences
         public async Task<IActionResult> Index()
@@ -150,10 +152,20 @@ namespace Checked.Controllers
                 .Include(o => o.Tp_Ocorrencia)
                 .Where(x => x.Id.Equals(idOccurrence))
                 .FirstOrDefaultAsync();
-            if (occurrence == null)
+            if (occurrence != null)
             {
-                return NotFound();
+                bool permitEdit = occurrence.AppraiserId.Equals(User.Identity.GetUserId()) | occurrence.CreatedById.Equals(User.Identity.GetUserId());
+                if (!permitEdit)
+                {
+                    ViewBag.Message = "Você não tem permissão para alterar o registro";
+                    return View("Info");
+                }
             }
+            else
+            {
+                return View(nameof(Error), new ErrorViewModel { Message = "^Não existe ocorrência com esse ID" });
+            }
+            
             EditOccurrenceViewModel model = new EditOccurrenceViewModel(
                 occurrence.Id,
                 occurrence.TP_OcorrenciaId,
@@ -228,13 +240,19 @@ namespace Checked.Controllers
                 {
                     _context.Update(occurrence);
                     await _context.SaveChangesAsync();
-                    await _mailService.SendEmailAsync(new EmailRequest()
+                    try
                     {
-                        ToEmail = occurrence.Appraiser.Email,
-                        Subject = "Há uma ocorrência aguardando sua avaliação",
-                        Body = Message(linkOccurrence, "Há uma ocorrência aguardando sua avaliação")
-                    });
-
+                        await _mailService.SendEmailAsync(new EmailRequest()
+                        {
+                            ToEmail = occurrence.Appraiser.Email,
+                            Subject = "Há uma ocorrência aguardando sua avaliação",
+                            Body = Message(linkOccurrence, "Há uma ocorrência aguardando sua avaliação")
+                        });
+                    }
+                    catch (Exception e)
+                    {
+                        return RedirectToAction(nameof(Error), new ErrorViewModel() { Message = "Não foi possível notificar o usuário! \n Erro code 10  Error: "+ e.Message});
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {

@@ -1,9 +1,13 @@
-﻿@using System.Text.Json
-@using System.Text.Json.Serialization
+﻿@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@using Checked.Models.Models
+@using Microsoft.AspNetCore.Identity
 @model Checked.Models.ViewModels.PlanViewModel;
+@inject UserManager<ApplicationUser> UserManager;
 @{
     DateTime date = new DateTime();
     string goal = "";//@Model.DeadLine.ToString().Equals("01/01/0001 00:00:00") ? "" : @Model.DeadLine;
+    var user = await UserManager.GetUserAsync(User);
     foreach (var item in Model.Actions)
     {
         if (item.NewFinish.CompareTo(date) > 0)
@@ -99,7 +103,10 @@
                         <td>@string.Format("{0:C2}",@item.HowMuch)</td>
                         <td>@item.TP_Status.Name</td>
                         <td>
-                            <a asp-controller="Actions" asp-action="Edit" asp-route-actionId="@item.Id" asp-route-OccurrenceId="@Model.OccurrenceId">Editar</a> |
+                            @if (@item.CreatedById.Equals(user.Id) || @item.WhoId.Equals(user.Id))
+                            {
+                                <a asp-controller="Actions" asp-action="Edit" asp-route-actionId="@item.Id" asp-route-OccurrenceId="@Model.OccurrenceId">Editar |</a>                            }
+                            
                             <a asp-controller="Actions" asp-action="Details" asp-route-actionId="@item.Id">Detalhes</a> |
                             <a asp-controller="Actions" asp-action="Delete" asp-route-actionId="@item.Id">Delete</a>
                         </td>
