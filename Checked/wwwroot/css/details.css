@@ -6,6 +6,7 @@
 .cntr-details {
     display: flex;
     flex-direction: column;
+    padding: 0 50px 26px;
 }
 
 .line {

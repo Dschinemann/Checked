@@ -96,7 +96,9 @@ html {
 }
 
 .cntr {
-    padding: 0 10px 0 19px;
+    padding: 0 10px 0 20px;
+    position: relative;
+    top: 60px;
 }
 
 .cntr a{
