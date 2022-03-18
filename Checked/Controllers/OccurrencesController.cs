@@ -77,7 +77,7 @@ namespace Checked.Controllers
             var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
             var users = await _context.Users.Where(c => c.OrganizationId == user.OrganizationId).ToListAsync();
             ViewBag.AppraiserId = new SelectList(users, "Id", "Name", user);
-            ViewBag.Types = new SelectList(_context.TP_Ocorrencias, "Id", "Name");
+            ViewBag.Types = new SelectList(_context.TP_Ocorrencias.OrderByDescending(c => c.CreatedAt), "Id", "Name");
             return View(new CreateOccurrenceModel() { CreatedById = user.Id });
         }
 
@@ -134,7 +134,7 @@ namespace Checked.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.AppraiserId = new SelectList(_context.Users, "Id", "Name", model.Appraiser);
-            ViewBag.Types = new SelectList(_context.TP_Ocorrencias, "Id", "Name");
+            ViewBag.Types = new SelectList(_context.TP_Ocorrencias.OrderByDescending(c => c.CreatedAt), "Id", "Name");
             return View(model);
         }
 
@@ -195,7 +195,7 @@ namespace Checked.Controllers
                          occurrence.Status
                          );
             ViewBag.Types = new SelectList(
-                _context.TP_Ocorrencias,
+                _context.TP_Ocorrencias.OrderByDescending(c => c.CreatedAt),
                 "Id",
                 "Name",
                 occurrence.TP_OcorrenciaId
@@ -282,7 +282,7 @@ namespace Checked.Controllers
                         model.Status
                         );
             ViewBag.Types = new SelectList(
-                _context.TP_Ocorrencias,
+                _context.TP_Ocorrencias.OrderByDescending(c => c.CreatedAt),
                 "Id",
                 "Name",
                 model.TypeOccurrence

@@ -526,6 +526,9 @@ namespace Checked.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("CreatedById")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");

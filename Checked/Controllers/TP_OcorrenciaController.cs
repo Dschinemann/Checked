@@ -61,16 +61,21 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,OrganizationId,Organization,CreatedById")] TP_Ocorrencia tP_Ocorrencia)
+        public async Task<IActionResult> Create([Bind("Id,Name,OrganizationId,Organization,CreatedById")] TP_Ocorrencia model)
         {
             
             if (ModelState.IsValid)
             {
-                _context.TP_Ocorrencias.Add(tP_Ocorrencia);
+                if(await TP_OcorrenciaExists(0, model.Name))
+                {
+                    ModelState.AddModelError(string.Empty, "Já existe um Tipo com esse nome");
+                    return View(model);
+                }
+                _context.TP_Ocorrencias.Add(model);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Create","Occurrences");
             }
-            return View(tP_Ocorrencia);
+            return View(model);
         }
 
         // GET: TP_Ocorrencia/Edit/5
@@ -110,7 +115,7 @@ namespace Checked.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TP_OcorrenciaExists(tP_Ocorrencia.Id))
+                    if (! await TP_OcorrenciaExists(tP_Ocorrencia.Id, String.Empty))
                     {
                         return NotFound();
                     }
@@ -153,9 +158,18 @@ namespace Checked.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TP_OcorrenciaExists(int id)
+        private async Task<bool> TP_OcorrenciaExists(int id, string? name)
         {
-            return _context.TP_Ocorrencias.Any(e => e.Id == id);
+            if (string.IsNullOrEmpty(name))
+            {
+                return await _context.TP_Ocorrencias.AnyAsync(e => e.Id == id);
+            }
+            else
+            {
+                return await _context.TP_Ocorrencias.AnyAsync(e => e.Name.Equals(name));
+            }
+            
         }
+        
     }
 }
