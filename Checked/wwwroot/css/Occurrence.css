@@ -1,5 +1,5 @@
 ﻿.delete {
-    color: white;
+    
 }
 .col-md-4 form div {
     padding-top: 6px;
@@ -20,8 +20,7 @@
         width: 40vw;
     }
 
-.cntr-occurrence {
-    color: white;
+.cntr-occurrence {    
     height: 85vh;
     display: flex;
     justify-content: space-between;

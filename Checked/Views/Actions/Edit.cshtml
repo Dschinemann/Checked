@@ -5,10 +5,13 @@
 }
 <link rel="stylesheet" href="~/css/actions.css" />
 <div class="cntr create-action">
-    <div>
+    <div style="display:flex;justify-content:space-between;align-items: end;">
         <h4>Action</h4>
-        <hr style="color:white" />
+        <div>
+            <a class="btn btn-primary" asp-controller="Plans" asp-route-planId=@Model.PlanId asp-action="Index">Voltar para Lista</a>
+        </div>       
     </div>
+     <hr />
     <div style="width:100%" class="row">
         <div style="width:100%" class="col-md-4">
             <form asp-action="Edit">
@@ -74,10 +77,6 @@
                 </div>
             </form>
         </div>
-    </div>
-
-    <div>
-        <a asp-controller="Plans" asp-route-planId=@Model.PlanId asp-action="Index">Voltar para Lista</a>
     </div>
 </div>
 @section Scripts {

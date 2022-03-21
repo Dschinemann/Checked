@@ -1,7 +1,8 @@
 ﻿@model Checked.Models.ViewModels.InviteViewModel;
 
 <link rel="stylesheet" href="~/css/Invite.css" />
-<div class="cntr cntr-invite">
+<div class="cntr cntr-invite">  
+     <hr />
     <div style="width:40%;">
         <form method="post">
             <input type="hidden" asp-for="OrganizationId" />
@@ -28,7 +29,7 @@
     </div>
     <div style="width: 50%;">
         <h5>Lista de usuario da empresa</h5>
-        <table style="color:white;font-size:13px" class="table table-hover table-sm align-middle">
+        <table style="font-size:13px;font-weight:600" class="table table-hover table-sm align-middle">
             <thead>
                 <tr>
                     <td>Nome</td>

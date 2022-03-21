@@ -18,8 +18,7 @@ function drawChart() {
         title: 'Ações por status',
         is3D: true,
         //width: '100%',
-        height: `${(windowHight * 20) / 100}`,
-        backgroundColor: '#2F4F4F',
+        height: `${(windowHight * 20) / 100}`,        
         legend: {
             textStyle: {
                 color: 'white',

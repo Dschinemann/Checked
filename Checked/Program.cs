@@ -28,7 +28,8 @@ builder.Services.AddScoped<PlansService>();
 builder.Services.AddScoped<TaskService>();
 
 //Context
-//"CheckedDbContext": "Server=localhost;Database=CheckedDb;user id =sa;Password=1353;Connection Timeout=120;"
+//"CheckedContextConnection": "Server=192.168.0.228;Database=CHECKEDDB;user id=sa;Password=#escalasoft123;Connection Timeout=120;"
+//"CheckedContextConnection": "Server =(localdb)\\MSSQLLocalDB;Database=CHECKEDDB;Trusted_Connection=True; Integrated Security=True"
 var connectionString = builder.Configuration.GetConnectionString("CheckedContextConnection");
 builder.Services.AddDbContext<CheckedDbContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
 

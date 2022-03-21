@@ -229,6 +229,7 @@
         margin: 0 14px 0 0;
         background: #1d1b31;
         transition: all 0.5s ease;
+        cursor:pointer;
     }
 
     .sidebar.close .profile-details img {
@@ -260,8 +261,7 @@
     }
 
 .home-section {
-    position: relative;
-    background: #2F4F4F;    
+    position: relative;       
     left: 290px;
     width: calc(100% - 260px);
     transition: all 0.5s ease;
@@ -281,7 +281,7 @@
 
     .home-section .home-content .bx-menu,
     .home-section .home-content .text {
-        color: #fff;        
+        color: #0e1a1a;
         font-size: 35px;
     }
 

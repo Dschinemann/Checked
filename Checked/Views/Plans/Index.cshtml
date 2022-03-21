@@ -25,7 +25,7 @@
 }
 <script>let action = @Html.Raw(jsonActions)</script>
 <link rel="stylesheet" asp-append-version="true" href="~/css/actions.css" />
-<div class="cntr" style="padding:16px;">
+<div class="cntr">   
     <div class="header-action">
         <div class="header-details">
             <div>
@@ -48,8 +48,9 @@
             <div id="piechart"></div>
         </div>
     </div>
+     <hr />
     <div class="cntr-table-actions">
-        <table style="color:white;font-size:13px" class="table table-hover align-middle">
+        <table style="font-size:13px; font-weight:600" class="table table-hover align-middle">
             <thead>
                 <tr>
                     <td>What? (O que?)</td>

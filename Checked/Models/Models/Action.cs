@@ -25,12 +25,12 @@ namespace Checked.Models.Models
         public DateTime NewFinish { get; set; } = DateTime.Now;
 
         [Required]
-        [Display(Name = "Criado em")]
+        [Display(Name = "Criado em:")]
         [DataType(DataType.DateTime)]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [Required]
-        [Display(Name = "Atualizado em")]
+        [Display(Name = "Atualizado em:")]
         [DataType(DataType.DateTime)]
         public DateTime UpdatedAt { get; set;} = DateTime.Now;
 

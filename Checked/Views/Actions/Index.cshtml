@@ -24,7 +24,7 @@
             align-self: end;
         }
 </style>
-<div style="color:white" class="cntr">
+<div class="cntr">
     <div class="header-plan">
         <div style="display: flex;margin-right:26px; height:100%">
             <div id="piechart"></div>
@@ -32,8 +32,8 @@
         <h4>@ViewData["Title"]</h4>
     </div>
     <hr />
-    <table style="color:white;font-size:13px" class="table table-hover table-sm align-middle">
-        <thead class="table-dark">
+    <table style="font-size:13px;font-weight:600" class="table table-hover table-sm align-middle">
+        <thead class="table-dark sticky-top">
             <tr>
                 <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                     @Html.DisplayNameFor(model => model.CreatedAt)

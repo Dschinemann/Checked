@@ -3,149 +3,155 @@
 @{
     ViewData["Title"] = "Delete";
 }
-<div class="cntr" style="color:white; padding:16px">
-
-    <h3>Deseja deletar este Plano ?</h3>
-    <h4>Se apagar este plano todas as ações que nele estejam vinculadas serão deletadas também!</h4>
+<div class="cntr" style="padding:16px;overflow: auto;height: 90vh;">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="width:80%">
+            <h3 class="text-danger">Deseja deletar este Plano ?</h3>
+            <h4 class="text-danger">Se apagar este plano todas as ações que nele estejam vinculadas serão deletadas também!</h4>
+        </div>
+        <div>
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Id" />
+                <input type="submit" value="Delete" class="btn btn-danger" /> |
+                <a asp-action="Plans">Voltar</a>
+            </form>
+        </div>
+    </div>
     <div>
-        <h4>Plano</h4>
+        <h4 class="text-info">Plano</h4>
         <hr />
         <dl class="row">
-            <dt class="col-sm-2">
+            <dt class="col-sm-4">
                 @Html.DisplayNameFor(model => model.Subject)
             </dt>
-            <dd class="col-sm-10">
+            <dd class="col-sm-8">
                 @Html.DisplayFor(model => model.Subject)
             </dd>
-            <dt class="col-sm-2">
+            <dt class="col-sm-4">
                 @Html.DisplayNameFor(model => model.AccountableId)
             </dt>
-            <dd class="col-sm-10">
+            <dd class="col-sm-8">
                 @Html.DisplayFor(model => model.Accountable.Name)
             </dd>
-            <dt class="col-sm-2">
+            <dt class="col-sm-4">
                 @Html.DisplayNameFor(model => model.Goal)
             </dt>
-            <dd class="col-sm-10">
+            <dd class="col-sm-8">
                 @Html.DisplayFor(model => model.Goal)
             </dd>
-            <dt class="col-sm-2">
+            <dt class="col-sm-4">
                 @Html.DisplayNameFor(model => model.CostTotal)
             </dt>
-            <dd class="col-sm-10">
+            <dd class="col-sm-8">
                 @Html.DisplayFor(model => model.CostTotal)
             </dd>
-            <dt class="col-sm-2">
+            <dt class="col-sm-4">
                 @Html.DisplayNameFor(model => model.Objective)
             </dt>
-            <dd class="col-sm-10">
+            <dd class="col-sm-8">
                 @Html.DisplayFor(model => model.Objective)
             </dd>
         </dl>
-        <h3>Ações que serão apagadas</h3>
-        <table style="color:white;font-size:13px" class="table table-hover table-sm align-middle">
-            <thead>
-                <tr>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        Criado em
-                    </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        Atualizado em
-                    </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        What? (O que?)
-                    </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        Why? (Porquê?)
-                    </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        Where? (Onde?)
-                    </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        Who? (Quem?)
-                    </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        When? (Quando?)
-                    </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        How? (Como?)
-                    </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        How Much? (Quanto Custa?)
-                    </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                        Status
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in @ViewBag.actions)
-                {
-                    var totalDeDiasDaAcao = item.NewFinish.Subtract(item.Init).TotalDays;
-                    var totaldecorrido = DateTime.Today.Subtract(item.Init).TotalDays;
-                    string classe = "";
-                    var widht = (int)((totaldecorrido / totalDeDiasDaAcao) * 100);
-                    if (widht < 25) classe = "";
-                    if (widht > 25 && widht < 50) classe = "bg-info";
-                    if (widht > 50 && widht < 75) classe = "bg-warning"; else classe = "bg-danger";
-
+        <h3 class="text-danger">Ações que serão apagadas!</h3>
+        <div style="max-height:20vh;overflow:auto">
+            <table style="font-size:13px;font-weight:600" class="table table-hover table-sm align-middle">
+                <thead class="table-dark sticky-top">
                     <tr>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                            @String.Format("{0: dd/MM/yyyy HH:mm}", item.CreatedAt)
-                        </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                            @String.Format("{0: dd/MM/yyyy HH:mm}", item.UpdatedAt)
-                        </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                           @item.What
-                        </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                            @item.Why
-                        </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                           @item.Where
-                        </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                             @item.Who
-                        </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4);width:max-content">
-                            <div style="margin-bottom:6px;" class="progress">
-                                <div class="progress-bar progress-bar-striped @classe " role="progressbar" style="width: @widht%" aria-valuenow="@widht" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                            <div style="display:flex;">
-                                <div style="align-items: center;width:max-content;display:flex;flex-direction:column;padding: 0 6px;">
-                                    <span>Início</span>
-                                    <span>@string.Format("{0:d}",@item.Init)</span>
-                                </div>
-                                <div style="align-items: center;width:max-content;display:flex;flex-direction:column;padding: 0 6px;">
-                                    <span>Prazo inicial</span>
-                                    <span>@string.Format("{0:d}",@item.Finish)</span>
-                                </div>
-                                <div style="align-items: center;width:max-content;display:flex;flex-direction:column;padding: 0 6px;">
-                                    <span>Prazo atualizado</span>
-                                    <span> @string.Format("{0:d}",@item.NewFinish)</span>
-                                </div>
-                            </div>
-                        </td>
-
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                             @item.How
-                        </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                           @item.HowMuch
-                        </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                             @item.TP_Status.Name
-                        </td>
+                        <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                            Criado em
+                        </th>
+                        <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                            Atualizado em
+                        </th>
+                        <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                            What? (O que?)
+                        </th>
+                        <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                            Why? (Porquê?)
+                        </th>
+                        <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                            Where? (Onde?)
+                        </th>
+                        <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                            Who? (Quem?)
+                        </th>
+                        <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                            When? (Quando?)
+                        </th>
+                        <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                            How? (Como?)
+                        </th>
+                        <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                            How Much? (Quanto Custa?)
+                        </th>
+                        <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                            Status
+                        </th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var item in @ViewBag.actions)
+                    {
+                        var totalDeDiasDaAcao = item.NewFinish.Subtract(item.Init).TotalDays;
+                        var totaldecorrido = DateTime.Today.Subtract(item.Init).TotalDays;
+                        string classe = "";
+                        var widht = (int)((totaldecorrido / totalDeDiasDaAcao) * 100);
+                        if (widht < 25) classe = "";
+                        if (widht > 25 && widht < 50) classe = "bg-info";
+                        if (widht > 50 && widht < 75) classe = "bg-warning"; else classe = "bg-danger";
 
-        <form asp-action="Delete">
-            <input type="hidden" asp-for="Id" />
-            <input type="submit" value="Delete" class="btn btn-danger" /> |
-            <a asp-action="Plans">Voltar</a>
-        </form>
+                        <tr>
+                            <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                                @String.Format("{0: dd/MM/yyyy HH:mm}", item.CreatedAt)
+                            </td>
+                            <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                                @String.Format("{0: dd/MM/yyyy HH:mm}", item.UpdatedAt)
+                            </td>
+                            <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                                @item.What
+                            </td>
+                            <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                                @item.Why
+                            </td>
+                            <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                                @item.Where
+                            </td>
+                            <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                                @item.Who
+                            </td>
+                            <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4);width:max-content">
+                                <div style="margin-bottom:6px;" class="progress">
+                                    <div class="progress-bar progress-bar-striped @classe " role="progressbar" style="width: @widht%" aria-valuenow="@widht" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div style="display:flex;">
+                                    <div style="align-items: center;width:max-content;display:flex;flex-direction:column;padding: 0 6px;">
+                                        <span>Início</span>
+                                        <span>@string.Format("{0:d}",@item.Init)</span>
+                                    </div>
+                                    <div style="align-items: center;width:max-content;display:flex;flex-direction:column;padding: 0 6px;">
+                                        <span>Prazo inicial</span>
+                                        <span>@string.Format("{0:d}",@item.Finish)</span>
+                                    </div>
+                                    <div style="align-items: center;width:max-content;display:flex;flex-direction:column;padding: 0 6px;">
+                                        <span>Prazo atualizado</span>
+                                        <span> @string.Format("{0:d}",@item.NewFinish)</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                                @item.How
+                            </td>
+                            <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                                @item.HowMuch
+                            </td>
+                            <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                                @item.TP_Status.Name
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

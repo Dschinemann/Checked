@@ -25,6 +25,7 @@ function drawChartPie() {
                 bold: true
             }
         },
+        backgroundColor: "#e5e5e5",
         is3D: true,
         width: (windowWidth * 18) / 100,
         chartArea: {
@@ -49,7 +50,7 @@ function drawChartArea() {
     var options = {
         title: 'Total de gastos com ocorrencias',
         //hAxis: { title: 'Year', titleTextStyle: { color: '#333' } },
-        vAxis: { minValue: 0 },
+        vAxis: { minValue: 0 },        
         chartArea: {
             //width: '0%'
         },
@@ -62,7 +63,7 @@ function drawChartArea() {
 function drawChartComboChart() {
     var data = google.visualization.arrayToDataTable(arrayForComboChart())
     var materialOptions = {
-        width: (windowWidth * 50) / 100,
+        width: (windowWidth * 50) / 100,        
         chart: {
             title: 'Ocorrências',
             subtitle: 'Custo das Ocorrências dos últimos seis meses'

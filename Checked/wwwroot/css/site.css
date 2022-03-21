@@ -1,5 +1,6 @@
 body {
-    background-color: #2F4F4F;
+    width:100%;
+    height:100%;
 }
 
 html {
@@ -96,15 +97,38 @@ html {
 }
 
 .cntr {
-    padding: 0 10px 0 20px;
-    position: relative;
+    padding: 0 30px;
+    position: fixed;
     top: 60px;
-}
-
-.cntr a{
-    color:white;
+    width: 96%;
 }
 
 .table {
-    --bs-table-hover-color: #d4d7d9;
+    --bs-table-hover-color: #4a8787;
+}
+
+.scrollbar {    
+    float: left;
+    height: 80vh;
+    overflow-y: scroll;
+}
+#style-2::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+    background-color: #2f4f4f;
+}
+
+#style-2::-webkit-scrollbar {
+    width: 12px;
+    background-color: #2f4f4f;
+}
+
+#style-2::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #343a40;
+}
+
+.form-group{
+    margin-bottom: 16px;
 }

@@ -7,10 +7,10 @@
         'F F G G G';        
     grid-gap:10px;
 }
-.box{
-    background-color:white;
-    border-radius:10px;
-    padding:16px;
+.box {
+    background-color: #e5e5e5;
+    border-radius: 10px;
+    padding: 16px;
 }
 .info-box {
     display: flex;
@@ -25,8 +25,8 @@
 }
 
 .graphPie {
-    
+    background-color: #e5e5e5;    
 }
 .welcome{
-    color:white;
+    
 }

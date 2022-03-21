@@ -2,8 +2,7 @@
 {
     display:flex;
     justify-content:space-between;
-    align-content:center;
-    color:white;
+    align-content:center;    
 }
 .cntr-table-actions{
     margin-top:16px;
@@ -15,13 +14,13 @@
     color:white
 }
 .header{
-    color:white;
+    
 }
 form label{
-    color:white;
+    
 }
 .create-action div {
-    color: white
+   
 }
 .create-box {
     display:flex;
