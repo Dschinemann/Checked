@@ -143,7 +143,7 @@ namespace Checked.Controllers
                 {
                     return View(nameof(Error), new ErrorViewModel { Message = $"Error code 10: {e.Message}" });
                 }
-                
+
 
                 var existsActionOpen = await _context.Actions
                     .Where(c => c.OccurrenceId == model.OccurrenceId && c.TP_StatusId != ((int)TP_StatusEnum.Encerrado))
@@ -292,9 +292,9 @@ namespace Checked.Controllers
                     }
                     else
                     {
-                        return View(nameof(Error), new ErrorViewModel  { Message = $"Error code 30: {e.Message}" });
+                        return View(nameof(Error), new ErrorViewModel { Message = $"Error code 30: {e.Message}" });
                     }
-                }                
+                }
             }
 
             ViewBag.Status = new SelectList(_context.TP_Status, "Id", "Name", model.Status);
@@ -305,7 +305,7 @@ namespace Checked.Controllers
         // GET: Actions/Delete/5
         public async Task<IActionResult> Delete(string? actionId)
         {
-            if (actionId == null)
+            if (string.IsNullOrEmpty(actionId))
             {
                 return View(nameof(Error), new { Message = "Não foi informado um Id válido" });
             }
@@ -314,23 +314,37 @@ namespace Checked.Controllers
                 .Include(a => a.Plan)
                 .Include(o => o.TP_Status)
                 .FirstAsync(m => m.Id.Equals(actionId));
-            if (action == null)
+            if (action != null)
+            {
+                bool permitEdit = action.CreatedById.Equals(User.Identity.GetUserId()) | action.WhoId.Equals(User.Identity.GetUserId());
+                if (!permitEdit)
+                {
+                    ViewBag.Message = "Você não tem permissão para editar este conteúdo";
+                    return View("Info");
+                }
+                return View(action);
+            }
+            else
             {
                 return View(nameof(Error), new { Message = "Não há ações para o plano cadastrado" });
             }
-
-            return View(action);
         }
 
         // POST: Actions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string Id)
-        {
+        {            
             var action = await _context.Actions.FindAsync(Id);
 
             if (action != null)
             {
+                bool permitEdit = action.CreatedById.Equals(User.Identity.GetUserId()) | action.WhoId.Equals(User.Identity.GetUserId());
+                if (!permitEdit)
+                {
+                    ViewBag.Message = "Você não tem permissão para deletar este conteúdo";
+                    return View("Info");
+                }
                 _context.Actions.Remove(action);
                 await _context.SaveChangesAsync();
 

@@ -264,6 +264,12 @@ namespace Checked.Controllers
             var model = await _context.Plans
                 .Include(o => o.Accountable)
                 .FirstAsync(c => c.Id.Equals(planId));
+            bool permitEdit = model.CreatedById.Equals(User.Identity.GetUserId()) | model.AccountableId.Equals(User.Identity.GetUserId());
+            if (!permitEdit)
+            {
+                ViewBag.Message = "Você não tem permissão para alterar o registro";
+                return View("info");
+            }
 
             ViewBag.actions = await _context.Actions
                 .Include(o => o.TP_Status)
@@ -282,6 +288,12 @@ namespace Checked.Controllers
             var actions = await _context.Actions.Where(c => c.PlanId.Equals(plan.Id)).ToListAsync();
             if (plan != null)
             {
+                bool permitEdit = plan.CreatedById.Equals(User.Identity.GetUserId()) | plan.AccountableId.Equals(User.Identity.GetUserId());
+                if (!permitEdit)
+                {
+                    ViewBag.Message = "Você não tem permissão para alterar o registro";
+                    return View("info");
+                }
                 if (actions != null)
                 {
                     try

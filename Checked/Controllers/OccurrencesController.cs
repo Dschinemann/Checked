@@ -293,11 +293,10 @@ namespace Checked.Controllers
         // GET: Occurrences/Delete/5
         public async Task<IActionResult> Delete(string? idOccurrence)
         {
-            if (idOccurrence == null || idOccurrence.Equals(""))
+            if (string.IsNullOrEmpty(idOccurrence))
             {
-                return NotFound();
+                return View(nameof(Error), new ErrorViewModel() { Message = "Id inválido" });
             }
-
             var occurrence = await _context.Occurrences
                 .Include(o => o.ApplicationUser)
                 .Include(o => o.Appraiser)
@@ -305,12 +304,23 @@ namespace Checked.Controllers
                 .Include(o => o.Tp_Ocorrencia)
                 .FirstOrDefaultAsync(c => c.Id.Equals(idOccurrence));
 
-            if (occurrence == null)
+            if (occurrence != null)
             {
-                return NotFound();
+                bool permitEdit = occurrence.AppraiserId.Equals(User.Identity.GetUserId()) | occurrence.CreatedById.Equals(User.Identity.GetUserId());
+                if (!permitEdit)
+                {
+                    ViewBag.Message = "Você não tem permissão para alterar o registro";
+                    return View("Info");
+                }
+                else
+                {
+                    return View(occurrence);
+                }
             }
-
-            return View(occurrence);
+            else
+            {
+                return View(nameof(Error), new ErrorViewModel() { Message = "Não existe ocorrência com esse ID" });
+            }            
         }
 
         // POST: Occurrences/Delete/5
