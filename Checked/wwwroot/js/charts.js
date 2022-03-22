@@ -68,6 +68,9 @@ function drawChartComboChart() {
             title: 'Ocorrências',
             subtitle: 'Custo das Ocorrências dos últimos seis meses'
         },
+        titleTextStyle: {
+            color: "#d95f02"
+        },
         series: {
             0: { axis: 'distance' }, // Bind series 0 to an axis named 'distance'.
             1: { axis: 'brightness' } // Bind series 1 to an axis named 'brightness'.
@@ -84,6 +87,17 @@ function drawChartComboChart() {
         }
     }
     var chart = new google.charts.Bar(document.getElementById('columnChart'));
+
+    google.visualization.events.addListener(chart, 'ready', function () {
+        var labels = document.getElementsByTagName('text');
+        for (var i = 0; i < labels.length; i++) {
+            if (labels[i].innerHTML === materialOptions.chart.subtitle) {
+                labels[i].style.fill = '#333c46';
+                //labels[i].style.fontFamily = 'Courier';
+                break;
+            }
+        }
+    });
     chart.draw(data, google.charts.Bar.convertOptions(materialOptions))
 };
 

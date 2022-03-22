@@ -21,25 +21,27 @@
 
 <div class="cntr">
     <div class="welcome">
-        <h2 class="hEmpresa">Olá, @Model.UserName</h2>
+        <h2 class="hEmpresa text-primary">Olá, @Model.UserName</h2>
         <div style="display:flex;justify-content:space-between">
-            <p>Aqui esta um resumo das suas ocorrências</p>
+            <p class="text-warning">Aqui esta um resumo das suas ocorrências</p>
             <!-- <p>Filtro</p>-->
         </div>
     </div>
     <hr />
     <div class="dashboard">
         <div class="box" style="grid-area: A">
-            <div class="info-box">
+            <div>
                 <h5>Total de Ocorrencias</h5>
             </div>
-            <div class="info-box">
-                <span>Occurrences</span>
-                <span>@Model.OccurrenceSummary.Count</span>
-            </div>
-            <div class="info-box">
-                <span>Custos</span>
-                <span>@String.Format("{0:C}",@Model.OccurrenceSummary.TotalCost)</span>
+            <div>
+                <div class="info-box">
+                    <span>Occurrences</span>
+                    <span>@Model.OccurrenceSummary.Count</span>
+                </div>
+                <div class="info-box">
+                    <span>Custos</span>
+                    <span>@String.Format("{0:C}",@Model.OccurrenceSummary.TotalCost)</span>
+                </div>
             </div>
         </div>
         <div class="box" style="grid-area: B">
