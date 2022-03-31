@@ -1,10 +1,13 @@
-﻿@model Checked.Models.ViewModels.EditOccurrenceViewModel;
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+
+@model Checked.Models.ViewModels.EditOccurrenceViewModel;
+@inject IViewLocalizer Localizer
 
 @{
     ViewData["Title"] = "Edit";
 }
 <link rel="stylesheet" href="~/css/Occurrence.css" />
-<div class="cntr" style="color:white">
+<div class="cntr">
     <div class="row">
         <hr />
         <div class="col-md-4" style="width:80%">

@@ -18,7 +18,8 @@ namespace Checked.Models.ViewModels
         public string Harmed { get; set; }
         [Display(Name = "Documento/NF")]
         public string? Document { get; set; }
-        [Display(Name = "Custo")]
+
+        [Display(Name = "Custo")]               
         public double Cost { get; set; }
 
         [Display(Name ="Avaliador")]

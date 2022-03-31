@@ -9,6 +9,9 @@ using Checked.Servicos.Email;
 using Checked.Servicos;
 using Checked.Servicos.ControllerServices;
 using Checked.Servicos.InviteService;
+using Microsoft.AspNetCore.Mvc.Razor;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +22,8 @@ builder.Services.AddControllersWithViews(config =>
     .RequireAuthenticatedUser()
     .Build();
     config.Filters.Add(new AuthorizeFilter(policy));
-});
+})
+    .AddViewLocalization();
 
 builder.Services.AddScoped<ActionsService>();
 builder.Services.AddScoped<DashService>();
@@ -37,7 +41,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<CheckedDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddTransient<IMailService,EmailSender>();
+builder.Services.AddTransient<IMailService, EmailSender>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
 
@@ -90,7 +94,22 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+
 app.UseHttpsRedirection();
+
+
+var supportedCultures = new[] { new CultureInfo("pt-BR") };
+var requestLocalizationOptions = new RequestLocalizationOptions()
+{
+    DefaultRequestCulture = new RequestCulture(culture: "pt-BR", uiCulture: "pt-BR"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+}
+.SetDefaultCulture("pt-BR");
+
+app.UseRequestLocalization(requestLocalizationOptions);
+
+
 app.UseStaticFiles();
 
 app.UseRouting();

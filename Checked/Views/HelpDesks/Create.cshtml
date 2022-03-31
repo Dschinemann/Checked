@@ -4,8 +4,12 @@
     ViewData["Title"] = "Create";
 }
 <div class="cntr">
-
-    <h4>HelpDesk</h4>
+    <div style="display:flex;justify-content:space-between;align-items: flex-end;">
+        <h4>HelpDesk</h4>
+        <div>
+            <a class="btn btn-primary" asp-action="Index">Voltar</a>
+        </div>
+    </div>
     <hr />
     <div class="row">
         <div class="col-md-4">
@@ -34,13 +38,9 @@
         </div>
     </div>
 
-    <div>
-        <a asp-action="Index">Voltar</a>
-    </div>
-
     @section Scripts {
     @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-}
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     }
 </div>
