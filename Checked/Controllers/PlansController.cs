@@ -10,6 +10,8 @@ using Checked.Servicos.ControllerServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Checked.Servicos.Email;
+using System.Net.Mail;
+using System.Net.Mime;
 
 namespace Checked.Controllers
 {
@@ -155,7 +157,7 @@ namespace Checked.Controllers
                     {
                         ToEmail = userToEmail.Email,
                         Subject = "Um novo plano foi criado com seu email",
-                        Body = Message(linkAction, "Você foi adicionado como responsável por um plano de ação")
+                        View = Message(linkAction, "Você foi adicionado como responsável por um plano de ação")
                     });
                     return RedirectToAction(nameof(Index), new { id = model.OccurrenceId });
                 }
@@ -234,7 +236,7 @@ namespace Checked.Controllers
                     {
                         ToEmail = plan.Accountable.Email,
                         Subject = "Um novo plano foi atualizado com seu email",
-                        Body = Message(linkAction, "Você foi adicionado como responsável por um plano de ação")
+                        View = Message(linkAction, "Você foi adicionado como responsável por um plano de ação")
                     });
                     return RedirectToAction(nameof(Plans));
                 }
@@ -322,7 +324,7 @@ namespace Checked.Controllers
             return View();
         }
 
-        private string Message(string link, string title)
+        private AlternateView Message(string link, string title)
         {
             var path = Path.GetFullPath("wwwroot");
             string message = @$"
@@ -356,7 +358,12 @@ namespace Checked.Controllers
                 </table>
             </body>
             </html>";
-            return message;
+            AlternateView alternateView = AlternateView.CreateAlternateViewFromString(message, null, MediaTypeNames.Text.Html);
+            LinkedResource pic1 = new LinkedResource($"{path}/css/Images/header.png", MediaTypeNames.Image.Jpeg);
+            pic1.ContentId = "Pic1";
+            alternateView.LinkedResources.Add(pic1);
+
+            return alternateView;
         }
     }
 }

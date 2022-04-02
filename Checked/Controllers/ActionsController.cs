@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 using Checked.Models;
 using System.Diagnostics;
 using Checked.Servicos.Email;
+using System.Net.Mail;
+using System.Net.Mime;
 
 namespace Checked.Controllers
 {
@@ -136,7 +138,7 @@ namespace Checked.Controllers
                     {
                         ToEmail = emailWho.Email,
                         Subject = "Uma nova ação foi criada com seu email",
-                        Body = Message(linkAction, "Você foi adicionado como responsável por uma ação")
+                        View = Message(linkAction, "Você foi adicionado como responsável por uma ação")
                     });
                 }
                 catch (Exception e)
@@ -264,7 +266,7 @@ namespace Checked.Controllers
                     {
                         ToEmail = emailWho.Email,
                         Subject = "Uma nova ação foi atualizada com seu email",
-                        Body = Message(linkAction, "Você foi adicionado como responsável por uma ação")
+                        View = Message(linkAction, "Você foi adicionado como responsável por uma ação")
                     });
 
                     var existsActionOpen = await _context.Actions
@@ -415,7 +417,7 @@ namespace Checked.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, Message = message });
         }
 
-        private string Message(string link, string title)
+        private AlternateView Message(string link, string title)
         {
             var path = Path.GetFullPath("wwwroot");
             string message = @$"
@@ -432,7 +434,7 @@ namespace Checked.Controllers
                 <table style='width: 600px;padding: 10px;'>
                     <tr>
                         <td>
-                            <img src='{path}/css/Images/header.png' alt='imagem email' />
+                           <img src='cid:Pic1'>
                         </td>
                     </tr>
                     <tr>
@@ -449,7 +451,12 @@ namespace Checked.Controllers
                 </table>
             </body>
             </html>";
-            return message;
+            AlternateView alternateView = AlternateView.CreateAlternateViewFromString(message, null, MediaTypeNames.Text.Html);
+            LinkedResource pic1 = new LinkedResource($"{path}/css/Images/header.png", MediaTypeNames.Image.Jpeg);
+            pic1.ContentId = "Pic1";
+            alternateView.LinkedResources.Add(pic1);
+
+            return alternateView;
         }
     }
 }
