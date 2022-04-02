@@ -1,4 +1,6 @@
-﻿namespace Checked.Models.ViewModels
+﻿using Checked.Models.Models;
+
+namespace Checked.Models.ViewModels
 {
     public class TaskViewModel
     {
@@ -16,6 +18,8 @@
         public int AcProxVencimento { get; set; }
         public int AcAtrasado { get; set; }
         public int AcFinalizado { get; set; }
+
+        public List<Occurrence> Occurrences = new List<Occurrence>();      
 
     }
 }

@@ -1,101 +1,65 @@
-﻿@model Checked.Models.ViewModels.TaskViewModel;
+﻿@using Checked.Models.Types
+@model System.Collections.Generic.Dictionary<string,List<string>>
 
-<link rel="stylesheet" href="~/css/tasks.css" />
-<div style="position:relative" class="cntr">
-    <hr />
-    <div>
-        <ul>
-            <li class="task">
-                <div class="task-title">
-                    <h5 style="grid-area:A;">Ocorrências</h5>
-                    <div class="arrow-card" style="grid-area:B">
-                        <i class='bx bx-time-five clock-green'></i>
-                        <span>@Model.OcProcedente</span>
-                        <span>Procedente</span>
-                        <i id="1" class='bx bxs-chevron-down arrow-down oc'></i>
-                    </div>
-                    <div class="arrow-card" style="grid-area:C">
-                        <i class='bx bx-time-five clock-orange'></i>
-                        <span>@Model.OcNãoProcedente</span>
-                        <span>Não procedente</span>
-                        <i id="2" class='bx bxs-chevron-down arrow-down oc'></i>
-                    </div>
-                    <div class="arrow-card" style="grid-area:D">
-                        <i class='bx bx-time-five clock-red'></i>
-                        <span>@Model.OcNaoIdentificado</span>
-                        <span>Não identificado</span>
-                        <i id="3" class='bx bxs-chevron-down arrow-down oc'></i>
-                    </div>
-                    <div class="arrow-card" style="grid-area:E">
-                        <i class='bx bx-time-five clock-red'></i>
-                        <span>@Model.OcEmAnalise</span>
-                        <span>Em análise</span>
-                        <i id="4" class='bx bxs-chevron-down arrow-down oc'></i>
-                    </div>
+<head>
+    <link rel="stylesheet" href="~/css/tasks.css" />
+</head>
+<div style="height:100%">
+    <div class="header-filtro">
+        <a href="#" role="button"><i id="iconFilter" class='bx bx-filter-alt'></i></a>
+        <div id="menuNav" class="menuNav" style="display:none">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" checked>
+                <label class="form-check-label" for="flexRadioDefault1">
+                    Ocorrências
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="plans">
+                <label class="form-check-label" for="flexRadioDefault2">
+                    Planos
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="actions">
+                <label class="form-check-label" for="flexRadioDefault3">
+                    Ações
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="others" >
+                <label class="form-check-label" for="flexRadioDefault4">
+                    Outros
+                </label>
+            </div>
+        </div>
+
+    </div>
+    <div id="panels" class="panels">
+        @foreach (var item in Model)
+        {
+            <section>
+                <div class="header-section">
+                    <h3 class="text-capitalize">@item.Key</h3>
                 </div>
-                <ul id="subItensOc" class="sub-item"></ul>
-            </li>
-            <li style="transform:translateX(5%)" class="task">
-                <div class="task-title">
-                    <h5 style="grid-area:A;">Planos</h5>
-                    <div class="arrow-card" style="grid-area:B">
-                        <i class='bx bx-time-five clock-green'></i>
-                        <span>@Model.PlEmTempo</span>
-                        <span>Em tempo</span>
-                        <i data-value-init="0" data-value-final="0.5" class='bx bxs-chevron-down arrow-down pl'></i>
+                @foreach (var element in @item.Value)
+                {
+                    var teste = element.Split(",");
+                    <div class="panels-section">
+                        <div class="title">
+                            <h4 class="text-capitalize">@teste[0]</h4>
+                        </div>
+                        <div>
+                            <p class="descricao text-capitalize ">
+                                @teste[1]
+                            </p>
+                        </div>
                     </div>
-                    <div class="arrow-card" style="grid-area:C">
-                        <i class='bx bx-time-five clock-orange'></i>
-                        <span>@Model.PlProxVencimento</span>
-                        <span>Próximo do vencimento</span>
-                        <i data-value-init="0.5" data-value-final="1" class='bx bxs-chevron-down arrow-down pl'></i>
-                    </div>
-                    <div class="arrow-card" style="grid-area:D">
-                        <i class='bx bx-time-five clock-red'></i>
-                        <span>@Model.PlAtrasado</span>
-                        <span>Atrasado</span>
-                        <i data-value-status="atrasado" class='bx bxs-chevron-down arrow-down pl'></i>
-                    </div>
-                    <div class="arrow-card" style="grid-area:E">
-                        <i class="bx bx-check-double"></i>
-                        <span>@Model.PlFinalizado</span>
-                        <span>Finalizado</span>
-                        <i data-value-status="finalizado" class='bx bxs-chevron-down arrow-down pl'></i>
-                    </div>
-                </div>
-                <ul id="subItensPlan" class="sub-item"></ul>
-            </li>
-            <li style="transform:translateX(10%);" class="task">
-                <div class="task-title">
-                    <h5 style="grid-area:A;">Ações</h5>
-                    <div class="arrow-card" style="grid-area:B">
-                        <i class='bx bx-time-five clock-green'></i>
-                        <span>@Model.AcEmTempo</span>
-                        <span>Em tempo</span>
-                        <i data-value-init="0" data-value-final="0.5" class='bx bxs-chevron-down arrow-down ac'></i>
-                    </div>
-                    <div class="arrow-card" style="grid-area:C">
-                        <i class='bx bx-time-five clock-orange'></i>
-                        <span>@Model.AcProxVencimento</span>
-                        <span>Próximo do vencimento</span>
-                        <i data-value-init="0.5" data-value-final="1" class='bx bxs-chevron-down arrow-down ac'></i>
-                    </div>
-                    <div class="arrow-card" style="grid-area:D">
-                        <i class='bx bx-time-five clock-red'></i>
-                        <span>@Model.AcAtrasado</span>
-                        <span>Atrasado</span>
-                        <i data-value-status="atrasado" class='bx bxs-chevron-down arrow-down ac'></i>
-                    </div>
-                    <div class="arrow-card" style="grid-area:E">
-                        <i class="bx bx-check-double"></i>
-                        <span>@Model.AcFinalizado</span>
-                        <span>Finalizado</span>
-                        <i data-value-status="finalizado" class='bx bxs-chevron-down arrow-down ac'></i>
-                    </div>
-                </div>
-                <ul id="subItensAc" class="sub-item"></ul>
-            </li>
-        </ul>
+                }
+
+            </section>
+        }
     </div>
 </div>
-<script type="text/javascript" src="~/js/Tasks.js" />
+<div id="mascara" style="display:none" class="mascara"></div>
+<script type="text/javascript" src="~/js/Tasks.js"></script>

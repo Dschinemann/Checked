@@ -35,7 +35,7 @@ namespace Checked.Models.Models
         public DateTime UpdatedAt { get; set;} = DateTime.Now;
 
         [Display(Name = "What? (O que?)")]
-        public string?  What { get; set; }
+        public string  What { get; set; }
         [Display(Name = "Why? (Porquê?)")]
         public string? Why { get; set; }
         [Display(Name = "Where? (Onde?)")]

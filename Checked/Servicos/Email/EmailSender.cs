@@ -19,7 +19,8 @@ namespace Checked.Servicos
         {
             MailMessage message = new MailMessage();
             SmtpClient smtp = new SmtpClient();
-            
+
+            message.AlternateViews.Add(mailRequest.View);
             message.From = new MailAddress(_mailSettings.Mail, _mailSettings.DisplayName);
             message.To.Add(new MailAddress(mailRequest.ToEmail));
             message.Subject = mailRequest.Subject;
@@ -42,7 +43,7 @@ namespace Checked.Servicos
             }
 
             message.IsBodyHtml = true;
-            message.Body = mailRequest.Body;
+            //message.Body = mailRequest.Body;
             smtp.Port = _mailSettings.Port;
             smtp.Host = _mailSettings.Host;
             smtp.EnableSsl = true;

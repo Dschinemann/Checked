@@ -28,7 +28,7 @@ namespace Checked.Models.Types
     {
         Procedente = 1,
         Nao_Procedente = 2,
-        Nao_Identificao = 3,
+        Nao_Identificado = 3,
         EmAnalise = 4
     }
 

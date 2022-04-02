@@ -1,256 +1,91 @@
-﻿let arrows = document.querySelectorAll(".oc");
-for (let i = 0; i < arrows.length; i++) {
-    arrows[i].addEventListener("click", e => {
-        arrowDown(e);
-        if (e.target.style.transform == "rotate(180deg)") {
-            e.target.style.transform = ""
-            removerLista();
-            return;
-        }
-        fetch(`MyTasks/GetOccurrencePerStatus?status=${e.target.id}`)
+﻿let iconFilter = document.getElementById("iconFilter");
+const menuNav = document.getElementById("menuNav");
+const mascara = document.getElementById("mascara");
+const header = document.querySelectorAll(".header-section");
+
+iconFilter.addEventListener("click", (e) => {
+
+    if (menuNav.style.display == "none") {
+        header.forEach(c => {
+            c.style.position = "initial";
+        })
+        mascara.style.display = "block"
+        menuNav.style.display = "block"
+    } else {
+        header.forEach(c => {
+            c.style.position = "sticky";
+        })
+        menuNav.style.display = "none";
+        mascara.style.display = "none";
+    }
+})
+
+let radios = document.querySelectorAll(".form-check-input");
+
+radios.forEach(ele => {
+    ele.addEventListener('change', e => {
+
+        fetch(`MyTasks/GetTaskPerType?type=${e.target.id}`)
             .then(response => response.json())
-            .then(data => displayOccurrencesPerStatus(data, e))
-            .catch(error => console.error(error))
+            .then(data => displayPlans(data, e))
+            .catch(error => console.log(error))
+
+        header.forEach(c => {
+            c.style.position = "sticky";
+        })
+        menuNav.style.display = "none";
+        mascara.style.display = "none";
     })
-}
+})
 
-function displayOccurrencesPerStatus(data, element) {
-    clock = element.target.parentElement.childNodes[1].classList.value
-    text = element.target.parentElement.childNodes[5].innerHTML
-    let ul = document.getElementById("subItensOc");
-    removerLista();
-    element.target.style.transform = "rotate(180deg)";
-    if (data.length == 0) {
-        let li = document.createElement("li");
-        let div1 = document.createElement("div");
-        let div2 = document.createElement("div");
-        let i = document.createElement("i")
-        let h6 = document.createElement("h6");
-        let span = document.createElement("span");
+function displayPlans(data, e) {
+    if (data == null) return;
 
-        i.classList.value = clock;
+    const panels = document.getElementById("panels");
+    panels.innerHTML = "";
 
-        li.classList.add("list")
-        li.classList.add("em-tempo")
-
-        h6.innerHTML = text;
-        div1.appendChild(i)
-        div1.appendChild(h6)
-        li.appendChild(div1);
-
-
-        span.innerHTML = `Não há registros com esse status: ${text}`;
-        div2.classList.add("list-details")
-        div2.appendChild(span)
-        li.appendChild(div2);
-
-        ul.appendChild(li);
+    if (data.error) {
+        const h3 = document.createElement("h3");
+        h3.innerText = data.error;
+        h3.className = "text-error";
+        panels.appendChild(h3);
+        return
     }
-    data.forEach(e => {
-        let li = document.createElement("li");
-        let div1 = document.createElement("div");
-        let div2 = document.createElement("div");
-        let i = document.createElement("i")
-        let h6 = document.createElement("h6");
-        let a = document.createElement("a");
 
-        i.classList.value = clock;
+    for (const prop in data) {
+        const sections = document.createElement("section");
+        const headerSection = document.createElement("div");
+        headerSection.className = "header-section";
+        const h3 = document.createElement("h3");
+        h3.innerText = prop;
+        h3.className = "text-capitalize";
+        headerSection.appendChild(h3);
 
-        li.classList.add("list")
-        li.classList.add("em-tempo")
+        sections.appendChild(headerSection);
 
-        h6.innerHTML = text;
-        div1.appendChild(i)
-        div1.appendChild(h6)
-        li.appendChild(div1);
+        let boxes = data[prop][0].split(",");
 
-        a.href = `/Occurrences/Details?idOccurrence=${e.id}`
-        a.innerHTML = "<span style='font-weight: bold'>Descrição:</span>" +
-            e.description + "   |   <span style='font-weight: bold'>Prejudicado:</span>    " +
-            e.harmed + "   |     <span style='font-weight: bold'>Custo:</span>    " +
-            e.cost + "   |     <span style='font-weight: bold'>Origem:</span> " +
-            e.origin;
-        div2.classList.add("list-details")
-        div2.appendChild(a)
-        li.appendChild(div2);
+        const divPanels = document.createElement("div");
+        divPanels.className = "panels-section";
 
-        ul.appendChild(li);
-    })
-}
+        const divTitulo = document.createElement("div");
+        divTitulo.className = "title";
 
-function displayPlansPerStatus(data, element) {
-    clock = element.target.parentElement.childNodes[1].classList.value
-    text = element.target.parentElement.childNodes[5].innerHTML
-    let ul = document.getElementById("subItensPlan");
-    removerLista();
-    element.target.style.transform = "rotate(180deg)";
-    if (data.length == 0) {
-        let li = document.createElement("li");
-        let div1 = document.createElement("div");
-        let div2 = document.createElement("div");
-        let i = document.createElement("i")
-        let h6 = document.createElement("h6");
-        let span = document.createElement("span");
+        const h4 = document.createElement("h4");
+        h4.innerText = boxes[0]
 
-        i.classList.value = clock;
+        divTitulo.appendChild(h4);
+        divPanels.appendChild(divTitulo)
 
-        li.classList.add("list")
-        li.classList.add("em-tempo")
-
-        h6.innerHTML = text;
-        div1.appendChild(i)
-        div1.appendChild(h6)
-        li.appendChild(div1);
+        const divDescricao = document.createElement("div");
+        const p = document.createElement("p");
+        p.innerText = boxes[1]
+        divDescricao.appendChild(p);
+        divPanels.appendChild(divDescricao);
+        sections.appendChild(divPanels);
 
 
-        span.innerHTML = `Não há registros com esse status: ${text}`;
-        div2.classList.add("list-details")
-        div2.appendChild(span)
-        li.appendChild(div2);
-
-        ul.appendChild(li);
+        panels.appendChild(sections);
     }
-    data.forEach(e => {
-        let li = document.createElement("li");
-        let div1 = document.createElement("div");
-        let div2 = document.createElement("div");
-        let i = document.createElement("i")
-        let h6 = document.createElement("h6");
-        let a = document.createElement("a");
 
-        i.classList.value = clock;
-
-        li.classList.add("list")
-        li.classList.add("em-tempo")
-
-        h6.innerHTML = text;
-        div1.appendChild(i)
-        div1.appendChild(h6)
-        li.appendChild(div1);
-
-        a.href = `/Plans/Index?planId=${e.Id}`
-        a.innerHTML = "<span style='font-weight: bold'>Assunto:</span> " +
-            e.Subject + "   |    <span style='font-weight: bold'>Objetivo:</span>    " +
-            e.Objective + "   |    <span style='font-weight: bold'>Prazo:</span>   " +
-            new Intl.DateTimeFormat("pt-BR").format(new Date(e.Goal))
-        div2.classList.add("list-details")
-        div2.appendChild(a)
-        li.appendChild(div2);
-
-        ul.appendChild(li);
-    })
-}
-
-let arrowsPlans = document.querySelectorAll(".pl");
-for (let i = 0; i < arrowsPlans.length; i++) {
-    arrowsPlans[i].addEventListener("click", e => {
-        arrowDown(e);
-        if (e.target.style.transform == "rotate(180deg)") {
-            e.target.style.transform = ""
-            removerLista();
-            return;
-        }
-        let status = e.target.dataset["valueStatus"] == undefined ? "" : e.target.dataset["valueStatus"];
-        fetch(`MyTasks/GetPlansPerStatus?initial=${e.target.dataset["valueInit"]}&final=${e.target.dataset["valueFinal"]}&status=${status}`)
-            .then(response => response.json())
-            .then(data => displayPlansPerStatus(data, e))
-            .catch(error => console.error(error))
-    })
-}
-
-
-function displayActionsPerStatus(data, element) {
-    clock = element.target.parentElement.childNodes[1].classList.value
-    text = element.target.parentElement.childNodes[5].innerHTML
-    let ul = document.getElementById("subItensAc");
-    removerLista();
-    element.target.style.transform = "rotate(180deg)";
-    if (data.length == 0) {
-        let li = document.createElement("li");
-        let div1 = document.createElement("div");
-        let div2 = document.createElement("div");
-        let i = document.createElement("i")
-        let h6 = document.createElement("h6");
-        let span = document.createElement("span");
-
-        i.classList.value = clock;
-
-        li.classList.add("list")
-        li.classList.add("em-tempo")
-
-        h6.innerHTML = text;
-        div1.appendChild(i)
-        div1.appendChild(h6)
-        li.appendChild(div1);
-
-
-        span.innerHTML = `Não há registros com esse status: ${text}`;
-        div2.classList.add("list-details")
-        div2.appendChild(span)
-        li.appendChild(div2);
-
-        ul.appendChild(li);
-    }
-    data.forEach(e => {
-        let li = document.createElement("li");
-        let div1 = document.createElement("div");
-        let div2 = document.createElement("div");
-        let i = document.createElement("i")
-        let h6 = document.createElement("h6");
-        let a = document.createElement("a");
-
-        i.classList.value = clock;
-
-        li.classList.add("list")
-        li.classList.add("em-tempo")
-
-        h6.innerHTML = text;
-        div1.appendChild(i)
-        div1.appendChild(h6)
-        li.appendChild(div1);
-
-        a.href = `/Actions/Details?actionId=${e.id}`
-        a.innerHTML = "<span style='font-weight: bold'>What:</span> " +
-            e.what + "   |    <span style='font-weight: bold'>Where:</span>     " +
-            e.where + "   |    <span style='font-weight: bold'>How:</span>    " +
-            e.how + "   |   <span style='font-weight: bold'>Finalizar até:</span> " +
-            new Intl.DateTimeFormat("pt-BR").format(new Date(e.newFinish))
-        div2.classList.add("list-details")
-        div2.appendChild(a)
-        li.appendChild(div2);
-
-        ul.appendChild(li);
-    })
-}
-
-let arrowsActions = document.querySelectorAll(".ac");
-for (let i = 0; i < arrowsActions.length; i++) {
-    arrowsActions[i].addEventListener("click", e => {
-        arrowDown(e);
-        if (e.target.style.transform == "rotate(180deg)") {
-            e.target.style.transform = ""
-            removerLista();
-            return;
-        }
-        let status = e.target.dataset["valueStatus"] == undefined ? "" : e.target.dataset["valueStatus"];
-        fetch(`MyTasks/GetActionsPerStatus?initial=${e.target.dataset["valueInit"]}&final=${e.target.dataset["valueFinal"]}&status=${status}`)
-            .then(response => response.json())
-            .then(data => displayActionsPerStatus(data, e))
-            .catch(error => console.error(error))
-    })
-}
-
-function removerLista() {
-    let li = document.querySelectorAll(".list")
-    for (let item of li) {
-        item.remove();
-    }
-}
-function arrowDown(element) {
-    let arrows = document.querySelectorAll(".arrow-down");
-    for (let item of arrows) {        
-            if (element.target != item) {
-                item.style.transform = "";
-            }
-    }
 }

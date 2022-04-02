@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 using Checked.Models;
 using System.Diagnostics;
 using Checked.Servicos.Email;
+using System.Net.Mail;
+using System.Net.Mime;
 
 namespace Checked.Controllers
 {
@@ -123,7 +125,7 @@ namespace Checked.Controllers
                     {
                         ToEmail = appraiser.Email,
                         Subject = "Há uma ocorrência aguardando sua avaliação",
-                        Body = Message(linkOccurrence, "Há uma ocorrência aguardando sua avaliação")
+                        View = Message(linkOccurrence, "Há uma ocorrência aguardando sua avaliação")
                     });
                 }
                 catch (Exception e)
@@ -240,7 +242,7 @@ namespace Checked.Controllers
                 {
                     _context.Update(occurrence);
                     await _context.SaveChangesAsync();
-                    string body = Message(linkOccurrence, "Há uma ocorrência aguardando sua avaliação");
+                    AlternateView view = Message(linkOccurrence, "Há uma ocorrência aguardando sua avaliação");
                     var toEmail = await _userManager.FindByIdAsync(model.AppraiserId);
                     try
                     {
@@ -248,7 +250,7 @@ namespace Checked.Controllers
                         {
                             ToEmail = toEmail.Email,
                             Subject = "Há uma ocorrência aguardando sua avaliação",
-                            Body = body
+                            View = view                            
                         }); ;
                     }
                     catch (Exception e)
@@ -345,8 +347,9 @@ namespace Checked.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, Message = message });
         }
-        private string Message(string link, string title)
+        private AlternateView Message(string link, string title)
         {
+            // <img src='{path}/css/Images/header.png' alt='imagem email' />
             var path = Path.GetFullPath("wwwroot");
             string message = @$"
             <!DOCTYPE html>
@@ -362,8 +365,8 @@ namespace Checked.Controllers
                 <table style='width: 600px;padding: 10px;'>
                     <tr>
                         <td>
-                            <img src='{path}/css/Images/header.png' alt='imagem email' />
-                        </td>
+                            <img src='cid:Pic1'>
+                         </td>
                     </tr>
                     <tr>
                         <td style='font-family:Verdana, Geneva, Tahoma, sans-serif;color: #1b29b6;text-align: center; font-size: 28px; font-weight: bold;'>
@@ -379,7 +382,13 @@ namespace Checked.Controllers
                 </table>
             </body>
             </html>";
-            return message;
+
+            AlternateView alternateView = AlternateView.CreateAlternateViewFromString(message,null,MediaTypeNames.Text.Html);
+            LinkedResource pic1 = new LinkedResource($"{path}/css/Images/header.png", MediaTypeNames.Image.Jpeg);
+            pic1.ContentId = "Pic1";
+            alternateView.LinkedResources.Add(pic1);
+
+            return alternateView;
         }
     }
 }
