@@ -24,7 +24,11 @@ namespace Checked.Controllers
         [AllowAnonymous]
         public IActionResult Index()
         {
-            return View();
+            return new PartialViewResult()
+            {
+                ViewName = "_LoginPartial"
+            };
+            
         }
 
         public IActionResult Privacy()

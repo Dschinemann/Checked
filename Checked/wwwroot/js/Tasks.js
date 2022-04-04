@@ -27,7 +27,7 @@ radios.forEach(ele => {
 
         fetch(`MyTasks/GetTaskPerType?type=${e.target.id}`)
             .then(response => response.json())
-            .then(data => displayPlans(data, e))
+            .then(data => displayData(data, e))
             .catch(error => console.log(error))
 
         header.forEach(c => {
@@ -38,7 +38,7 @@ radios.forEach(ele => {
     })
 })
 
-function displayPlans(data, e) {
+function displayData(data, e) {
     if (data == null) return;
 
     const panels = document.getElementById("panels");

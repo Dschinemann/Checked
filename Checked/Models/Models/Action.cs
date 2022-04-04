@@ -11,7 +11,7 @@ namespace Checked.Models.Models
 
         [Required]
         [DataType(DataType.Date)]
-        [Display(Name ="Início")]
+        [Display(Name = "Início")]
         public DateTime Init { get; set; }
 
         [Required]
@@ -22,6 +22,7 @@ namespace Checked.Models.Models
         [Required]
         [Display(Name = "Novo Prazo")]
         [DataType(DataType.Date)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime NewFinish { get; set; } = DateTime.Now;
 
         [Required]
