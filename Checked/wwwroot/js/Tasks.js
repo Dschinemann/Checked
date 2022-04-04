@@ -53,37 +53,48 @@ function displayData(data, e) {
     }
 
     for (const prop in data) {
+
+        let countPanels = data[prop].length;
+
         const sections = document.createElement("section");
         const headerSection = document.createElement("div");
         headerSection.className = "header-section";
         const h3 = document.createElement("h3");
+        const h3Count = document.createElement("h3");
         h3.innerText = prop;
         h3.className = "text-capitalize";
+
+        h3Count.innerText = countPanels;
         headerSection.appendChild(h3);
+        headerSection.appendChild(h3Count);
 
-        sections.appendChild(headerSection);
+        sections.appendChild(headerSection);        
+        
 
-        let boxes = data[prop][0].split(",");
+        if (countPanels) {
+            for (let x = 0; x < countPanels; x++) {
+                let boxes = data[prop][x].split(",");
 
-        const divPanels = document.createElement("div");
-        divPanels.className = "panels-section";
+                const divPanels = document.createElement("div");
+                divPanels.className = "panels-section";
 
-        const divTitulo = document.createElement("div");
-        divTitulo.className = "title";
+                const divTitulo = document.createElement("div");
+                divTitulo.className = "title";
 
-        const h4 = document.createElement("h4");
-        h4.innerText = boxes[0]
+                const h4 = document.createElement("h4");
+                h4.innerText = boxes[0]
 
-        divTitulo.appendChild(h4);
-        divPanels.appendChild(divTitulo)
+                divTitulo.appendChild(h4);
+                divPanels.appendChild(divTitulo)
 
-        const divDescricao = document.createElement("div");
-        const p = document.createElement("p");
-        p.innerText = boxes[1]
-        divDescricao.appendChild(p);
-        divPanels.appendChild(divDescricao);
-        sections.appendChild(divPanels);
-
+                const divDescricao = document.createElement("div");
+                const p = document.createElement("p");
+                p.innerText = boxes[1]
+                divDescricao.appendChild(p);
+                divPanels.appendChild(divDescricao);
+                sections.appendChild(divPanels);
+            }
+        }
 
         panels.appendChild(sections);
     }

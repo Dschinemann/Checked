@@ -40,7 +40,8 @@
         {
             <section>
                 <div class="header-section">
-                    <h4 class="text-capitalize">@item.Key</h4>
+                    <h3 class="text-capitalize">@item.Key</h3>
+                    <h3>@item.Value.Count()</h3>
                 </div>
                 @foreach (var element in @item.Value)
                 {
