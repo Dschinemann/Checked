@@ -32,6 +32,8 @@ builder.Services.AddScoped<PlansService>();
 builder.Services.AddScoped<TaskService>();
 
 
+// CheckedContextConnectionDeveloper
+
 var connectionString = builder.Configuration.GetConnectionString("CheckedContextConnection");
 builder.Services.AddDbContext<CheckedDbContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
 
