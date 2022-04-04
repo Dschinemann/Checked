@@ -11,7 +11,7 @@ body {
 }
 
 .header-filtro {
-    background-color: red;
+    background-color: #8d5858;
     height: 60px;
     position: fixed;
     display: flex;
