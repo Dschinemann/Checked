@@ -1,12 +1,13 @@
 ﻿.delete {
-    
 }
+
 .col-md-4 form div {
     padding-top: 6px;
 }
-.col-md-4 form{
-    display:flex;
-    justify-content:space-between;
+
+.col-md-4 form {
+    display: flex;
+    justify-content: space-between;
 }
 
 
@@ -20,9 +21,66 @@
         width: 40vw;
     }
 
-.cntr-occurrence {    
+.cntr-occurrence {
     height: 85vh;
     display: flex;
     justify-content: space-between;
     flex-direction: column;
+}
+
+.cntr-navegation {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    justify-content:space-between;
+}
+
+    .cntr-navegation div {       
+        display: flex;        
+        align-items: center;
+    }
+
+#filterOccurrence {
+    font-size: 30px;
+    margin: 10px;
+    cursor:pointer;
+}
+
+
+/*Filtro*/
+
+.form-pesquisa {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top:0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.627);
+}
+
+.form-itens {
+    width: 70vw;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    border: 1px solid rgba(35, 33, 33, 0.393);
+    padding: 16px;
+    border-radius: 20px;
+    background-color: #fff;
+}
+
+.size-box {
+    width: 100%;
+}
+
+.button-search {
+    display: flex;
+    justify-content: end;
+    margin-top: 20%;
+}
+
+.display-off {
+    display: flex;
 }

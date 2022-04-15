@@ -29,7 +29,7 @@ namespace Checked.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
-            return View(await _context.helpDesks
+            return View(await _context.HelpDesks
                 .Where(c => c.UserId.Equals(user.Id))
                 .ToListAsync()
                 );
@@ -43,7 +43,7 @@ namespace Checked.Controllers
                 return NotFound();
             }
 
-            var helpDesk = await _context.helpDesks
+            var helpDesk = await _context.HelpDesks
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (helpDesk == null)
             {
@@ -74,7 +74,7 @@ namespace Checked.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.helpDesks.Add(helpDesk);
+                _context.HelpDesks.Add(helpDesk);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -89,7 +89,7 @@ namespace Checked.Controllers
                 return NotFound();
             }
 
-            var helpDesk = await _context.helpDesks.FindAsync(id);
+            var helpDesk = await _context.HelpDesks.FindAsync(id);
             if (helpDesk == null)
             {
                 return NotFound();
@@ -140,7 +140,7 @@ namespace Checked.Controllers
                 return NotFound();
             }
 
-            var helpDesk = await _context.helpDesks
+            var helpDesk = await _context.HelpDesks
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (helpDesk == null)
             {
@@ -155,15 +155,15 @@ namespace Checked.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var helpDesk = await _context.helpDesks.FindAsync(id);
-            _context.helpDesks.Remove(helpDesk);
+            var helpDesk = await _context.HelpDesks.FindAsync(id);
+            _context.HelpDesks.Remove(helpDesk);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool HelpDeskExists(int id)
         {
-            return _context.helpDesks.Any(e => e.Id == id);
+            return _context.HelpDesks.Any(e => e.Id == id);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

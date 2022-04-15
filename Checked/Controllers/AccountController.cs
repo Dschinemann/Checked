@@ -571,6 +571,16 @@ namespace Checked.Controllers
             alternateView.LinkedResources.Add(pic1);
             return alternateView;
         }
+
+        public async Task<JsonResult> GetUsersPerOrganization(string organizationId)
+        {
+            var result = await _context.Users.Where(c => c.OrganizationId.Equals(organizationId)).Select(c => new ApplicationUser()
+            {
+                Id=c.Id,
+                Name=c.Name
+            }).ToListAsync();
+            return Json(result);
+        }
     }
 
 }

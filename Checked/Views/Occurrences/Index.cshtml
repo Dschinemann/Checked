@@ -7,10 +7,36 @@
     ViewData["Title"] = "Index";
     var itens = ViewData["actions"];
     var user = await UserManager.GetUserAsync(User);
+    var numeroDePaginas = (ViewBag.NumeroDePaginas / 5) + 1;
 }
+<header>
+    <link rel="stylesheet" href="~/css/Occurrence.css" />
+    <script>const numeroDePaginas = @numeroDePaginas</script>
+    <script type="module" src="~/js/occurrences.js" async></script>
+    <script type="module" src="~/js/modules/network.js"></script>
+
+</header>
 <div class="cntr">
-    <div style="margin-bottom:5px; width:50vh">
-        <a class="btn btn-primary" asp-action="Create">Criar nova Ocorrência</a>
+    <div class="cntr-navegation">
+        <a class="btn btn-primary" role="button" asp-action="Create">Criar nova Ocorrência</a>
+        <div>
+            <i id="filterOccurrence" class='bx bx-filter-alt'></i>
+            <nav aria-label="Page navigation example">
+                <ul style="margin:0" class="pagination">
+                    <li class="page-item"><button id="increment" class="page-link">Previous</button></li>
+                    <li class="page-item">
+                        <a class="page-link number-page" data-page="0" href="#">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link number-page" data-page="1" href="#">2</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link number-page" data-page="2" href="#">3</a>
+                    </li>
+                    <li class="page-item"><button id="decrement" class="page-link">Next</button></li>
+                </ul>
+            </nav>
+        </div>
     </div>
     <div class="scrollbar" id="style-2">
         <table style="font-size:13px;font-weight: 600;" class="table table-hover table-sm align-middle">
@@ -58,7 +84,7 @@
                     <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); "></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id=body-table-occurrence>
                 @foreach (var item in Model)
                 {
                     <tr>
@@ -90,7 +116,7 @@
                             @Html.DisplayFor(modelItem => item.Origin)
                         </td>
                         <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
-                            <a asp-action="Index" asp-controller="Plans" asp-route-id="@item.Id">Action Plan</a>
+                            <a asp-action="Index" asp-controller="Plans" asp-route-id="@item.Id">Plano de ação</a>
                         </td>
                         <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
                             @Html.DisplayFor(modelItem => item.StatusActions)
@@ -102,16 +128,9 @@
                             @Html.DisplayFor(modelItem => item.CorrectiveAction)
                         </td>
                         <td>
-                            @if (@item.AppraiserId.Equals(user.Id) || @item.CreatedById.Equals(user.Id))
-                            {
-                                <a asp-action="Edit" asp-route-idOccurrence="@item.Id">Editar  |</a>
-                                <a asp-action="Details" asp-route-idOccurrence="@item.Id">Detalhes |</a>
-                                <a asp-action="Delete" asp-route-idOccurrence="@item.Id">Delete</a>
-                            }
-                            else
-                            {
-                                <a asp-action="Details" asp-route-idOccurrence="@item.Id">Detalhes</a>
-                            }
+                            <a asp-action="Edit" asp-route-idOccurrence="@item.Id">Editar  |</a>
+                            <a asp-action="Details" asp-route-idOccurrence="@item.Id">Detalhes |</a>
+                            <a asp-action="Delete" asp-route-idOccurrence="@item.Id">Delete</a>
                         </td>
                     </tr>
                 }
@@ -119,3 +138,4 @@
         </table>
     </div>
 </div>
+

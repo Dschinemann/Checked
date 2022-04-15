@@ -1,6 +1,7 @@
 ﻿using Checked.Data;
 using Checked.Models.Models;
 using Checked.Models.Types;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Checked.Servicos.ControllerServices
@@ -8,20 +9,35 @@ namespace Checked.Servicos.ControllerServices
     public class TaskService
     {
         private readonly CheckedDbContext _context;
-        public TaskService(CheckedDbContext context)
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        public TaskService(CheckedDbContext context, RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _roleManager = roleManager;
+            _userManager = userManager;
         }
 
         public async Task<Dictionary<string, List<string>>> GetOccurrencesAsync(ApplicationUser user)
         {
+            var role = await _userManager.GetRolesAsync(user);
+            bool ehAdiministrador = role.Any(c => c.Equals("Administrador"));
             var result = await _context.Occurrences
-                .Include(o => o.Status)
-                .Include(o => o.Tp_Ocorrencia)
-                .Where(c => c.OrganizationId.Equals(user.OrganizationId))
-                .Where(c => c.AppraiserId.Equals(user.Id))
-                .Include(o => o.Tp_Ocorrencia)
-                .ToListAsync();
+                   .Include(o => o.Status)
+                   .Include(o => o.Tp_Ocorrencia)
+                   .Include(o => o.Tp_Ocorrencia)
+                   .ToListAsync();
+
+
+            if (ehAdiministrador)
+            {
+                result = result.Where(c => c.OrganizationId.Equals(user.OrganizationId)).ToList();
+            }
+            else
+            {
+                result = result.Where(c => c.AppraiserId.Equals(user.Id)).ToList();
+            }
+
 
             Dictionary<string, List<string>> keyValuePairs = new Dictionary<string, List<string>>();
 
@@ -47,13 +63,24 @@ namespace Checked.Servicos.ControllerServices
 
         public async Task<Dictionary<string, List<string>>> GetPlansAsync(ApplicationUser user)
         {
+            var roles = await _userManager.GetRolesAsync(user);
+            bool ehAdiministrador = roles.Any(c => c.Equals("Administrador"));
+
             Dictionary<string, List<string>> keyValuePairs = new Dictionary<string, List<string>>();
 
             var result = await _context.Plans
                 .Include(o => o.Actions)
-                .Where(c => c.organizationId.Equals(user.OrganizationId))
-                .Where(c => c.AccountableId.Equals(user.Id))
                 .ToListAsync();
+
+            if (ehAdiministrador)
+            {
+                result = result.Where(c => c.organizationId.Equals(user.OrganizationId)).ToList();
+            }
+            else
+            {
+                result = result.Where(c => c.AccountableId.Equals(user.Id)).ToList();
+            }
+
 
             foreach (var item in result)
             {
@@ -123,12 +150,23 @@ namespace Checked.Servicos.ControllerServices
 
         public async Task<Dictionary<string, List<string>>> GetActionsAsync(ApplicationUser user)
         {
+            var roles = await _userManager.GetRolesAsync(user);
+            bool ehAdiministrador = roles.Any(c => c.Equals("Administrador"));
+
             Dictionary<string, List<string>> keyValuePairs = new Dictionary<string, List<string>>();
 
             var result = await _context.Actions
-                .Include(o => o.TP_Status)
-                .Where(c => c.WhoId.Equals(user.Id))
+                .Include(o => o.TP_Status)                
                 .ToListAsync();
+
+            if (ehAdiministrador)
+            {
+                result = result.Where(c => c.OrganizationId.Equals(user.OrganizationId)).ToList();
+            }
+            else
+            {
+                result = result.Where(c => c.Who.Equals(user.Id)).ToList();
+            }
 
             foreach (var item in result)
             {

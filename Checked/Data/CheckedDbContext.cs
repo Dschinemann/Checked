@@ -46,7 +46,7 @@ namespace Checked.Data
         public DbSet<City> Cities { get; set; }
         public DbSet<Country> Countries { get; set; }
         
-        public DbSet<HelpDesk> helpDesks { get; set; }
+        public DbSet<HelpDesk> HelpDesks { get; set; }
 
     }
 }

@@ -13,6 +13,11 @@ using System.Diagnostics;
 using Checked.Servicos.Email;
 using System.Net.Mail;
 using System.Net.Mime;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Globalization;
+using Checked.Models.Types;
+using Checked.Models.FilterModels;
 
 namespace Checked.Controllers
 {
@@ -26,26 +31,39 @@ namespace Checked.Controllers
         {
             _context = context;
             _userManager = userManager;
-            _mailService = mailService;              
+            _mailService = mailService;
         }
 
 
         // GET: Occurrences
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pagina)
         {
             var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
             if (user.OrganizationId == null)
             {
                 return RedirectToAction("Create", "Organizations");
             }
-            var occurrences = await _context.Occurrences
+            var occurrences = _context.Occurrences
                 .Where(c => c.OrganizationId == user.OrganizationId)
                 .Include(o => o.Appraiser)
                 .Include(o => o.Tp_Ocorrencia)
                 .Include(o => o.Status)
-                .ToListAsync();
+                .OrderByDescending(c => c.CreatedAt)
+                .Skip(5 * pagina)
+                .Take(5);
 
-            return View(occurrences);
+
+            if (!pagina.Equals(0))
+            {
+                JsonSerializerOptions options = new()
+                {
+                    ReferenceHandler = ReferenceHandler.IgnoreCycles,
+                    WriteIndented = false
+                };
+                return Json(await occurrences.ToListAsync(), options);
+            }
+            ViewBag.NumeroDePaginas = await _context.Occurrences.Where(c => c.OrganizationId == user.OrganizationId).CountAsync();
+            return View(await occurrences.ToListAsync());
         }
 
         // GET: Occurrences/Details/5
@@ -167,7 +185,7 @@ namespace Checked.Controllers
             {
                 return View(nameof(Error), new ErrorViewModel { Message = "^Não existe ocorrência com esse ID" });
             }
-            
+
             EditOccurrenceViewModel model = new EditOccurrenceViewModel(
                 occurrence.Id,
                 occurrence.TP_OcorrenciaId,
@@ -250,12 +268,12 @@ namespace Checked.Controllers
                         {
                             ToEmail = toEmail.Email,
                             Subject = "Há uma ocorrência aguardando sua avaliação",
-                            View = view                            
+                            View = view
                         }); ;
                     }
                     catch (Exception e)
                     {
-                        return RedirectToAction(nameof(Error), new ErrorViewModel() { Message = "Não foi possível notificar o usuário! \n Erro code 10  Error: "+ e.Message});
+                        return RedirectToAction(nameof(Error), new ErrorViewModel() { Message = "Não foi possível notificar o usuário! \n Erro code 10  Error: " + e.Message });
                     }
                 }
                 catch (DbUpdateConcurrencyException)
@@ -322,7 +340,7 @@ namespace Checked.Controllers
             else
             {
                 return View(nameof(Error), new ErrorViewModel() { Message = "Não existe ocorrência com esse ID" });
-            }            
+            }
         }
 
         // POST: Occurrences/Delete/5
@@ -383,12 +401,67 @@ namespace Checked.Controllers
             </body>
             </html>";
 
-            AlternateView alternateView = AlternateView.CreateAlternateViewFromString(message,null,MediaTypeNames.Text.Html);
+            AlternateView alternateView = AlternateView.CreateAlternateViewFromString(message, null, MediaTypeNames.Text.Html);
             LinkedResource pic1 = new LinkedResource($"{path}/css/Images/header.png", MediaTypeNames.Image.Jpeg);
             pic1.ContentId = "Pic1";
             alternateView.LinkedResources.Add(pic1);
 
             return alternateView;
+        }
+
+        public async Task<IActionResult> Filters([Bind("TP_OcorrenciaId,Description,Harmed,Document,Additional1,Additional2,Cost,AppraiserId,Origin,StatusId,StatusActions,CorrectiveAction")] OccurrencesFilter model)
+        {
+            List<string> sqlFilters = new List<string>();           
+
+            var props = model.GetType().GetProperties();
+            foreach(var prop in props)
+            {
+                if(prop.GetValue (model, null) != null)
+                {
+                    if (!(prop.Name.Equals("CreatedAt") || prop.Name.Equals("UpdatedAt")))
+                    {
+                        var testea = prop.PropertyType.Name;
+                        if (prop.PropertyType.Name.Equals("Int32") || prop.PropertyType.Name.Equals("Double"))
+                        {
+                            sqlFilters.Add($"and {prop.Name} = {prop.GetValue(model, null)}");
+                        }
+                        else
+                        {
+                            sqlFilters.Add($"and {prop.Name}  like '%{prop.GetValue(model, null)}%'");
+                        }
+                        
+                    }                   
+                }
+            }
+            if(sqlFilters.Count > 0)
+            {
+                var occurrences = await _context.Occurrences
+                    .FromSqlRaw($"Select * from dbo.Occurrences where 1=1{String.Join(" ", sqlFilters)}")
+                    .Include(o => o.Appraiser)
+                    .Include(o => o.Tp_Ocorrencia)
+                    .Include(o => o.Status)
+                    .Include(o => o.Tp_Ocorrencia)
+                    .ToListAsync();
+                JsonSerializerOptions options = new()
+                {
+                    ReferenceHandler = ReferenceHandler.IgnoreCycles,
+                    WriteIndented = false
+                };
+                return Json(occurrences, options);
+            }
+            return Json("");
+        }
+        public async Task<JsonResult> GetTypesOccurrencesPerOrganization(string organizationId)
+        {
+            var result = await _context.TP_Ocorrencias
+                .Where(c => c.OrganizationId.Equals(organizationId))
+                .Select(c => new TP_Ocorrencia()
+                {
+                    Id = c.Id,
+                    Name = c.Name
+                })
+                .ToListAsync();
+            return Json(result);
         }
     }
 }
