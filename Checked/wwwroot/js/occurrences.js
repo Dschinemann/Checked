@@ -12,17 +12,20 @@ elements.forEach((element, index) => {
 })
 
 buttonIncrement.addEventListener("click", e => {
-    e.preventDefault();
-    elements.forEach((element, index) => {
-        const page = Number(elements[index].innerHTML) - 3;
-        element.innerHTML = page
-        element.setAttribute("data-page", page)
+    e.preventDefault();    
+    if (elements[0].innerText > 1) {
+        elements.forEach((element, index) => {
+            const page = Number(elements[index].innerText) - 3;
+            element.innerText = page
+            element.setAttribute("data-page", page)
 
-    })
+        })
+    }
 })
 
 buttonDecrement.addEventListener("click", e => {
     e.preventDefault();
+    if (numeroDePaginas < 3) return;
     elements.forEach((element, index) => {
         const page = Number(elements[index].innerHTML) + 3;
         element.innerHTML = page;
@@ -255,7 +258,7 @@ function displaySelectUsers(users) {
     const select = document.querySelector("#AppraiserId");
     for (let ele of users) {
         let option = `<option value="${ele["id"]}">${ele["name"]}</option>`
-        select.insertAdjacentHTML('beforeend',option);
+        select.insertAdjacentHTML('beforeend', option);
     }
 };
 
