@@ -34,9 +34,27 @@ namespace Checked.Controllers
             _mailService = mailService;
         }
 
+        public async Task<IActionResult> GetOccurrencesPerPage(int pagina)
+        {
+            var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
+            var occurrences = _context.Occurrences
+                .Where(c => c.OrganizationId == user.OrganizationId)
+                .Include(o => o.Appraiser)
+                .Include(o => o.Tp_Ocorrencia)
+                .Include(o => o.Status)
+                .OrderByDescending(c => c.CreatedAt)
+                .Skip(5 * pagina)
+                .Take(5);
+            JsonSerializerOptions options = new()
+            {
+                ReferenceHandler = ReferenceHandler.IgnoreCycles,
+                WriteIndented = false
+            };
+            return Json(await occurrences.ToListAsync(), options);
+        }
 
         // GET: Occurrences
-        public async Task<IActionResult> Index(int pagina)
+        public async Task<IActionResult> Index()
         {
             var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
             if (user.OrganizationId == null)
@@ -48,20 +66,7 @@ namespace Checked.Controllers
                 .Include(o => o.Appraiser)
                 .Include(o => o.Tp_Ocorrencia)
                 .Include(o => o.Status)
-                .OrderByDescending(c => c.CreatedAt)
-                .Skip(5 * pagina)
-                .Take(5);
-
-
-            if (!pagina.Equals(0))
-            {
-                JsonSerializerOptions options = new()
-                {
-                    ReferenceHandler = ReferenceHandler.IgnoreCycles,
-                    WriteIndented = false
-                };
-                return Json(await occurrences.ToListAsync(), options);
-            }
+                .OrderByDescending(c => c.CreatedAt);
             ViewBag.NumeroDePaginas = await _context.Occurrences.Where(c => c.OrganizationId == user.OrganizationId).CountAsync();
             return View(await occurrences.ToListAsync());
         }
@@ -411,12 +416,12 @@ namespace Checked.Controllers
 
         public async Task<IActionResult> Filters([Bind("TP_OcorrenciaId,Description,Harmed,Document,Additional1,Additional2,Cost,AppraiserId,Origin,StatusId,StatusActions,CorrectiveAction")] OccurrencesFilter model)
         {
-            List<string> sqlFilters = new List<string>();           
+            List<string> sqlFilters = new List<string>();
 
             var props = model.GetType().GetProperties();
-            foreach(var prop in props)
+            foreach (var prop in props)
             {
-                if(prop.GetValue (model, null) != null)
+                if (prop.GetValue(model, null) != null)
                 {
                     if (!(prop.Name.Equals("CreatedAt") || prop.Name.Equals("UpdatedAt")))
                     {
@@ -429,11 +434,11 @@ namespace Checked.Controllers
                         {
                             sqlFilters.Add($"and {prop.Name}  like '%{prop.GetValue(model, null)}%'");
                         }
-                        
-                    }                   
+
+                    }
                 }
             }
-            if(sqlFilters.Count > 0)
+            if (sqlFilters.Count > 0)
             {
                 var occurrences = await _context.Occurrences
                     .FromSqlRaw($"Select * from dbo.Occurrences where 1=1{String.Join(" ", sqlFilters)}")

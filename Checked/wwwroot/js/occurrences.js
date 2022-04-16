@@ -1,7 +1,7 @@
-﻿const buttonIncrement = document.getElementById("increment");
-const buttonDecrement = document.getElementById("decrement");
+﻿const buttonIncrement = document.querySelector("#increment");
+const buttonDecrement = document.querySelector("#decrement");
 const elements = document.querySelectorAll(".number-page");
-const buttonFiltro = document.getElementById("filterOccurrence");
+const buttonFiltro = document.querySelector("#filterOccurrence");
 import getDataFromAPI from "./modules/network.js";
 
 
@@ -37,7 +37,7 @@ function buscarOcorrencias(e) {
     if (numeroDePaginas <= 2) {
         return;
     }
-    fetch(`Occurrences/Index?pagina=${e.target.getAttribute("data-page")}`)
+    fetch(`Occurrences/GetOccurrencesPerPage?pagina=${e.target.getAttribute("data-page")}`)
         .then(response => response.json())
         .then(data => displayDataOccurrences(data, e))
         .catch(error => console.log(error))
