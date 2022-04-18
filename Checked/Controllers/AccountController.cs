@@ -574,7 +574,8 @@ namespace Checked.Controllers
 
         public async Task<JsonResult> GetUsersPerOrganization(string organizationId)
         {
-            var result = await _context.Users.Where(c => c.OrganizationId.Equals(organizationId)).Select(c => new ApplicationUser()
+            var user = await _userManager.GetUserAsync(User);
+            var result = await _context.Users.Where(c => c.OrganizationId.Equals(user.OrganizationId)).Select(c => new ApplicationUser()
             {
                 Id=c.Id,
                 Name=c.Name

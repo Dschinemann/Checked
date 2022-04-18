@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNet.Identity;
 using Checked.Data;
 using Checked.Models.Models;
 using Checked.Models.ViewModels;
-using Checked.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Checked.Models;
 using System.Diagnostics;
@@ -15,9 +13,10 @@ using System.Net.Mail;
 using System.Net.Mime;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Globalization;
 using Checked.Models.Types;
 using Checked.Models.FilterModels;
+using System;
+using System.Globalization;
 
 namespace Checked.Controllers
 {
@@ -66,7 +65,8 @@ namespace Checked.Controllers
                 .Include(o => o.Appraiser)
                 .Include(o => o.Tp_Ocorrencia)
                 .Include(o => o.Status)
-                .OrderByDescending(c => c.CreatedAt);
+                .OrderByDescending(c => c.CreatedAt)
+                .Take(5);
             ViewBag.NumeroDePaginas = await _context.Occurrences.Where(c => c.OrganizationId == user.OrganizationId).CountAsync();
             return View(await occurrences.ToListAsync());
         }
@@ -417,18 +417,21 @@ namespace Checked.Controllers
         public async Task<IActionResult> Filters([Bind("TP_OcorrenciaId,Description,Harmed,Document,Additional1,Additional2,Cost,AppraiserId,Origin,StatusId,StatusActions,CorrectiveAction")] OccurrencesFilter model)
         {
             List<string> sqlFilters = new List<string>();
-
             var props = model.GetType().GetProperties();
+            CultureInfo culture = new CultureInfo("en-US");
             foreach (var prop in props)
             {
                 if (prop.GetValue(model, null) != null)
                 {
                     if (!(prop.Name.Equals("CreatedAt") || prop.Name.Equals("UpdatedAt")))
                     {
-                        var testea = prop.PropertyType.Name;
-                        if (prop.PropertyType.Name.Equals("Int32") || prop.PropertyType.Name.Equals("Double"))
+                        if (prop.Name.Equals("StatusId") || prop.Name.Equals("TP_OcorrenciaId"))
                         {
-                            sqlFilters.Add($"and {prop.Name} = {prop.GetValue(model, null)}");
+                            sqlFilters.Add($"and {prop.Name} = '{prop.GetValue(model, null)}'");
+                        }else if (prop.Name.Equals("Cost"))
+                        {
+                            var value = (double)prop.GetValue(model, null);
+                            sqlFilters.Add($"and {prop.Name} = '{value.ToString(CultureInfo.InvariantCulture)}'");
                         }
                         else
                         {
@@ -458,14 +461,21 @@ namespace Checked.Controllers
         }
         public async Task<JsonResult> GetTypesOccurrencesPerOrganization(string organizationId)
         {
+            var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
             var result = await _context.TP_Ocorrencias
-                .Where(c => c.OrganizationId.Equals(organizationId))
+                .Where(c => c.OrganizationId.Equals(user.OrganizationId))
                 .Select(c => new TP_Ocorrencia()
                 {
                     Id = c.Id,
                     Name = c.Name
                 })
                 .ToListAsync();
+            return Json(result);
+        }
+
+        public async Task<IActionResult> GetStatusOcurrence(string organization)
+        {
+            var result = await _context.TP_StatusOccurences.ToListAsync();
             return Json(result);
         }
     }

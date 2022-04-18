@@ -45,14 +45,14 @@
                 </div>
                 @foreach (var element in @item.Value)
                 {
-                    var teste = element.Split(",");
-                    <div class="panels-section">
+                    var tituloDescricao = element.Split(",");
+                    <div data-id = "@tituloDescricao[2]" class="panels-section">
                         <div class="title">
-                            <h4 class="text-capitalize">@teste[0]</h4>
+                            <h4 class="text-capitalize">@tituloDescricao[0]</h4>
                         </div>
                         <div>
                             <p class="descricao text-capitalize ">
-                                @teste[1]
+                                @tituloDescricao[1]
                             </p>
                         </div>
                     </div>

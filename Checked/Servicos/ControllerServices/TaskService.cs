@@ -26,6 +26,14 @@ namespace Checked.Servicos.ControllerServices
                    .Include(o => o.Status)
                    .Include(o => o.Tp_Ocorrencia)
                    .Include(o => o.Tp_Ocorrencia)
+                   .Select(s => new Occurrence()
+                   {
+                       Id = s.Id,
+                       Tp_Ocorrencia = new TP_Ocorrencia() { Name = s.Tp_Ocorrencia.Name},
+                       Description = s.Description,
+                       OrganizationId = s.OrganizationId,
+                       Status = new TP_StatusOccurence() { Name = s.Status.Name},
+                   })
                    .ToListAsync();
 
 
@@ -47,13 +55,13 @@ namespace Checked.Servicos.ControllerServices
                 {
                     List<string> obj = new List<string>();
                     keyValuePairs.TryGetValue(item.Status.Name, out obj);
-                    obj.Add($"{item.Tp_Ocorrencia.Name.ToLower()},{item.Description.ToLower()}");
+                    obj.Add($"{item.Tp_Ocorrencia.Name.ToLower()},{item.Description.ToLower()},{item.Id}");
                     keyValuePairs[item.Status.Name] = obj;
                 }
                 else
                 {
                     List<string> obj = new List<string>();
-                    obj.Add($"{item.Tp_Ocorrencia.Name.ToLower()},{item.Description.ToLower()}");
+                    obj.Add($"{item.Tp_Ocorrencia.Name.ToLower()},{item.Description.ToLower()},{item.Id}");
                     keyValuePairs.Add(item.Status.Name, obj);
                 }
             }
@@ -97,13 +105,13 @@ namespace Checked.Servicos.ControllerServices
                         {
                             List<string> obj = new List<string>();
                             keyValuePairs.TryGetValue("Atrasado", out obj);
-                            obj.Add($"{item.Subject.ToLower()},{item.Objective.ToLower()}");
+                            obj.Add($"{item.Subject.ToLower()},{item.Objective.ToLower()},{item.Id}");
                             keyValuePairs["Atrasado"] = obj;
                         }
                         else
                         {
                             List<string> obj = new List<string>();
-                            obj.Add($"{item.Subject.ToLower()},{item.Objective.ToLower()}");
+                            obj.Add($"{item.Subject.ToLower()},{item.Objective.ToLower()},{item.Id}");
                             keyValuePairs.Add("Atrasado", obj);
                         }
                     }
@@ -114,13 +122,13 @@ namespace Checked.Servicos.ControllerServices
                         {
                             List<string> obj = new List<string>();
                             keyValuePairs.TryGetValue("Em tempo", out obj);
-                            obj.Add($"{item.Subject.ToLower()},{item.Objective.ToLower()}");
+                            obj.Add($"{item.Subject.ToLower()},{item.Objective.ToLower()},{item.Id}");
                             keyValuePairs["Em tempo"] = obj;
                         }
                         else
                         {
                             List<string> obj = new List<string>();
-                            obj.Add($"{item.Subject.ToLower()},{item.Objective.ToLower()}");
+                            obj.Add($"{item.Subject.ToLower()},{item.Objective.ToLower()},{item.Id}");
                             keyValuePairs.Add("Em tempo", obj);
                         }
                     }
@@ -131,13 +139,13 @@ namespace Checked.Servicos.ControllerServices
                         {
                             List<string> obj = new List<string>();
                             keyValuePairs.TryGetValue("Próximo do Vencimento", out obj);
-                            obj.Add($"{item.Subject.ToLower()},{item.Objective.ToLower()}");
+                            obj.Add($"{item.Subject.ToLower()},{item.Objective.ToLower()},{item.Id}");
                             keyValuePairs["Próximo do Vencimento"] = obj;
                         }
                         else
                         {
                             List<string> obj = new List<string>();
-                            obj.Add($"{item.Subject.ToLower()},{item.Objective.ToLower()}");
+                            obj.Add($"{item.Subject.ToLower()},{item.Objective.ToLower()},{item.Id}");
                             keyValuePairs.Add("Próximo do Vencimento", obj);
                         }
                     }
@@ -176,13 +184,13 @@ namespace Checked.Servicos.ControllerServices
                     {
                         List<string> obj = new List<string>();
                         keyValuePairs.TryGetValue("Encerrado", out obj);
-                        obj.Add($"{item.What.ToLower()},{item.NewFinish}");
+                        obj.Add($"{item.What.ToLower()},{item.NewFinish},{item.Id}");
                         keyValuePairs["Encerrado"] = obj;
                     }
                     else
                     {
                         List<string> obj = new List<string>();
-                        obj.Add($"{item.What.ToLower()},{item.NewFinish}");
+                        obj.Add($"{item.What.ToLower()},{item.NewFinish},{item.Id}");
                         keyValuePairs.Add("Encerrado", obj);
                     }
                 }
@@ -198,13 +206,13 @@ namespace Checked.Servicos.ControllerServices
                     {
                         List<string> obj = new List<string>();
                         keyValuePairs.TryGetValue("Atrasado", out obj);
-                        obj.Add($"{item.What.ToLower()},{item.NewFinish}");
+                        obj.Add($"{item.What.ToLower()},{item.NewFinish},{item.Id}");
                         keyValuePairs["Atrasado"] = obj;
                     }
                     else
                     {
                         List<string> obj = new List<string>();
-                        obj.Add($"{item.What.ToLower()},{item.NewFinish}");
+                        obj.Add($"{item.What.ToLower()},{item.NewFinish},{item.Id}");
                         keyValuePairs.Add("Atrasado", obj);
                     }
                 }
@@ -215,13 +223,13 @@ namespace Checked.Servicos.ControllerServices
                     {
                         List<string> obj = new List<string>();
                         keyValuePairs.TryGetValue("Em tempo", out obj);
-                        obj.Add($"{item.What.ToLower()},Vencimento em: {item.NewFinish}");
+                        obj.Add($"{item.What.ToLower()},Vencimento em: {item.NewFinish},{item.Id}");
                         keyValuePairs["Em tempo"] = obj;
                     }
                     else
                     {
                         List<string> obj = new List<string>();
-                        obj.Add($"{item.What.ToLower()},{item.NewFinish}");
+                        obj.Add($"{item.What.ToLower()},{item.NewFinish},{item.Id}");
                         keyValuePairs.Add("Em tempo", obj);
                     }
                 }
@@ -232,13 +240,13 @@ namespace Checked.Servicos.ControllerServices
                     {
                         List<string> obj = new List<string>();
                         keyValuePairs.TryGetValue("Próximo do Vencimento", out obj);
-                        obj.Add($"{item.What.ToLower()},{item.NewFinish}");
+                        obj.Add($"{item.What.ToLower()},{item.NewFinish},{item.Id}");
                         keyValuePairs["Próximo do Vencimento"] = obj;
                     }
                     else
                     {
                         List<string> obj = new List<string>();
-                        obj.Add($"{item.What.ToLower()},{item.NewFinish}");
+                        obj.Add($"{item.What.ToLower()},{item.NewFinish},{item.Id}");
                         keyValuePairs.Add("Próximo do Vencimento", obj);
                     }
                 }

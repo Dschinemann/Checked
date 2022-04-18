@@ -2,6 +2,11 @@
 const menuNav = document.getElementById("menuNav");
 const mascara = document.getElementById("mascara");
 const header = document.querySelectorAll(".header-section");
+const panels = document.querySelectorAll(".panels-section");
+
+panels.forEach(ele => {
+    ele.addEventListener("click", consultarDetalhes )
+})
 
 iconFilter.addEventListener("click", (e) => {
 
@@ -77,6 +82,7 @@ function displayData(data, e) {
 
                 const divPanels = document.createElement("div");
                 divPanels.className = "panels-section";
+                divPanels.setAttribute("data-id", boxes[2])
 
                 const divTitulo = document.createElement("div");
                 divTitulo.className = "title";
@@ -93,10 +99,15 @@ function displayData(data, e) {
                 divDescricao.appendChild(p);
                 divPanels.appendChild(divDescricao);
                 sections.appendChild(divPanels);
+                divPanels.addEventListener("click", consultarDetalhes)
             }
         }
 
         panels.appendChild(sections);
     }
 
+}
+
+function consultarDetalhes(event) {
+    fetch("/Occurrences/Details")    
 }

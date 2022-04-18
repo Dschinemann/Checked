@@ -27,6 +27,7 @@ buttonDecrement.addEventListener("click", e => {
     e.preventDefault();
     if (numeroDePaginas < 3) return;
     elements.forEach((element, index) => {
+        if (elements[2].innerText >= numeroDePaginas) return
         const page = Number(elements[index].innerHTML) + 3;
         element.innerHTML = page;
         element.setAttribute("data-page", page)
@@ -48,6 +49,10 @@ const buscarOcorrenciasComFiltro = (query) => {
         .then(response => response.json())
         .then(data => displayDataOccurrences(data))
         .catch(error => console.log(error))
+    const navigationPages = document.querySelector("#page-navigation");
+    if (navigationPages) {
+        navigationPages.remove();
+    }    
 }
 
 
@@ -81,8 +86,8 @@ function displayDataOccurrences(data, e) {
                 <td>${data[item]["CorrectiveAction"] ?? "N/D"}</td>
                 <td>
                     <a href="Occurrences/Edit?idOccurrence=${data[item]["Id"]}">Editar |</a>
-                    <a href="Occurrences/Edit?idOccurrence=${data[item]["Id"]}">Detalhes |</a>
-                    <a href="Occurrences/Edit?idOccurrence=${data[item]["Id"]}">Delete</a>
+                    <a href="Occurrences/Details?idOccurrence=${data[item]["Id"]}">Detalhes |</a>
+                    <a href="Occurrences/Delete?idOccurrence=${data[item]["Id"]}">Delete</a>
                 </td>
             `;
 
@@ -119,6 +124,10 @@ buttonFiltro.addEventListener("click", (e) => {
         buscarOcorrenciasComFiltro(query);
         closeForm(e.target)
     })
+    const buttonCLoseFormPesquisa = document.querySelector("#closeForm");
+    buttonCLoseFormPesquisa.addEventListener("click", (btn) => {
+        divPesquisa.remove()
+    })
 
 })
 
@@ -139,8 +148,7 @@ const formFilter = () => {
             <select type="text"
                    class="form-control"
                    id="TP_OcorrenciaId"
-                   name="TP_OcorrenciaId"
-                   placeholder="Tipo" >
+                   name="TP_OcorrenciaId">
             <option selected></option>
         </select>
         </div>
@@ -200,8 +208,7 @@ const formFilter = () => {
             <select type="text"
                    class="form-control"
                    id="AppraiserId"
-                   name="AppraiserId"
-                   placeholder="Avaliador">
+                   name="AppraiserId">
         <option selected></option>
         </select>
         </div>
@@ -223,11 +230,12 @@ const formFilter = () => {
         </div>
         <div class="mb-3">
             <label for="formGroupExampleInput" class="form-label">Status</label>
-            <input type="text"
+            <select type="text"
                    class="form-control"
                    id="StatusId"
-                   name="StatusId"
-                   placeholder="Status" />
+                   name="StatusId">
+            <option selected></option>
+            </select>
         </div>
         <div class="mb-3">
             <label for="formGroupExampleInput" class="form-label">Ação corretiva</label>
@@ -241,17 +249,19 @@ const formFilter = () => {
             <button id="submitFilter" type="submit" class="btn btn-primary">Procurar</button>
         </div>
     </div>
-    <i id="closeForm" onClick=closeForm(this) style="font-size: 2rem;color: red;cursor:pointer;height: fit-content;" class='bx bxs-x-circle'></i>
+    <i id="closeForm" style="font-size: 2rem;color: red;cursor:pointer;height: fit-content;" class='bx bxs-x-circle'></i>
 </form>
     `
     return form;
 }
 
 async function carregarSelects() {
-    const users = await getDataFromAPI("/Account/GetUsersPerOrganization?organizationId=ac60ba3b-dd8a-45ca-a572-59901b0986ef");
+    const users = await getDataFromAPI("/Account/GetUsersPerOrganization");
     displaySelectUsers(users);
-    const types = await getDataFromAPI("/Occurrences/GetTypesOccurrencesPerOrganization?organizationId=ac60ba3b-dd8a-45ca-a572-59901b0986ef");
+    const types = await getDataFromAPI("/Occurrences/GetTypesOccurrencesPerOrganization");
     displaySelectTypes(types)
+    const status = await getDataFromAPI("/Occurrences/GetStatusOcurrence");
+    displaySelectStatus(status)
 }
 
 function displaySelectUsers(users) {
@@ -265,6 +275,15 @@ function displaySelectUsers(users) {
 function displaySelectTypes(types) {
     const select = document.querySelector("#TP_OcorrenciaId");
     for (let ele of types) {
+        let option = `<option value="${ele["id"]}">${ele["name"]}</option>`
+        select.insertAdjacentHTML('beforeend', option);
+    }
+};
+
+function displaySelectStatus(status) {
+    console .log(status)
+    const select = document.querySelector("#StatusId");
+    for (let ele of status) {
         let option = `<option value="${ele["id"]}">${ele["name"]}</option>`
         select.insertAdjacentHTML('beforeend', option);
     }
