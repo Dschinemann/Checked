@@ -414,7 +414,7 @@ namespace Checked.Controllers
             return alternateView;
         }
 
-        public async Task<IActionResult> Filters([Bind("TP_OcorrenciaId,Description,Harmed,Document,Additional1,Additional2,Cost,AppraiserId,Origin,StatusId,StatusActions,CorrectiveAction")] OccurrencesFilter model)
+        public async Task<IActionResult> Filters([Bind("TP_OcorrenciaId,Description,Harmed,Document,Additional1,Additional2,Cost,AppraiserId,Origin,StatusId,StatusActions,CorrectiveAction,StartDate,EndDate,TipoFiltroData")] OccurrencesFilter model)
         {
             List<string> sqlFilters = new List<string>();
             var props = model.GetType().GetProperties();

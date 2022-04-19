@@ -50,18 +50,19 @@
 /*Filtro*/
 
 .form-pesquisa {
-    width: 100%;
+    width: inherit;
     height: 100%;
     position: fixed;
-    top:0;
+    top: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.627);
 }
 
+
 .form-itens {
-    width: 70vw;
+    width: 90%;
     display: flex;
     justify-content: space-between;
     flex-direction: row;
@@ -78,9 +79,33 @@
 .button-search {
     display: flex;
     justify-content: end;
-    margin-top: 20%;
 }
 
-.display-off {
+.display-onOff {
     display: flex;
 }
+
+.cntr-datas {
+    padding: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.422);
+    border-radius: 10px;
+    height: 100%;
+    transform: translate(0px,-50px);
+}
+
+.datas {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+}
+
+    .datas i {
+        font-size: 2rem;
+        color: red;
+        cursor: pointer;
+        height: fit-content;
+        transform: translate(51px, -44px);
+        background-color: white;
+        padding: 10px;
+        border-radius: 50%;
+    }

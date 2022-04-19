@@ -14,5 +14,10 @@
         public int? StatusId { get; set; }
         public string? StatusActions { get; set; }
         public string? CorrectiveAction { get; set; }
+
+        public string? TipoFiltroData { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+
     }
 }

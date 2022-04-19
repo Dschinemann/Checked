@@ -12,7 +12,7 @@ elements.forEach((element, index) => {
 })
 
 buttonIncrement.addEventListener("click", e => {
-    e.preventDefault();    
+    e.preventDefault();
     if (elements[0].innerText > 1) {
         elements.forEach((element, index) => {
             const page = Number(elements[index].innerText) - 3;
@@ -52,7 +52,7 @@ const buscarOcorrenciasComFiltro = (query) => {
     const navigationPages = document.querySelector("#page-navigation");
     if (navigationPages) {
         navigationPages.remove();
-    }    
+    }
 }
 
 
@@ -112,20 +112,36 @@ buttonFiltro.addEventListener("click", (e) => {
         e.preventDefault();
         let form = new FormData(document.querySelector(".form-itens"));
         let query = "?";
-        for (let value of form.keys()) {
-            if (form.get(value)) {
-                if (value === "Cost") {
-                    query = query + value + "=" + form.get(value).replace(",", ".") + "&";
-                } else {
-                    query = query + value + "=" + form.get(value) + "&"
-                }
+        for (let key of form.keys()) {
+            if (form.get(key)) {
+                if (key === "Cost") {
+                    query = query + key + "=" + form.get(key).replace(",", ".") + "&";
+                } else
+                    if (key === "TipoFiltroData") {
+                        if (form.get("TipoFiltroData") != 0) {
+                            if (form.get("EndDate")) {
+                                query = query + key + "=" + form.get(key) + "&StartDate=" + form.get("StartDate") + "&EndDate=" + form.get("EndDate")
+                            } else {
+                                alert("Informe uma data final valida");
+                                return;
+                            }
+                        } else if (form.get("EndDate") || form.get("StartDate")) {
+                            alert("Informe o tipo de filtro de data");
+                            return;
+                        }
+                    } else if (key === "EndDate" || key === "StartDate") {
+                        continue;
+                    } else {
+                        query = query + key + "=" + form.get(key) + "&"
+                    }
             }
         }
         buscarOcorrenciasComFiltro(query);
         closeForm(e.target)
     })
+
     const buttonCLoseFormPesquisa = document.querySelector("#closeForm");
-    buttonCLoseFormPesquisa.addEventListener("click", (btn) => {
+    buttonCLoseFormPesquisa.addEventListener("click", () => {
         divPesquisa.remove()
     })
 
@@ -141,116 +157,186 @@ function closeForm(button) {
 
 const formFilter = () => {
     const form = `
-        <form class="form-itens">
-        <div style="width: 46%">
-        <div class="mb-3 size-box">
+              <form class="form-itens">
+        <div style="width: 35%">
+          <div class="mb-3 size-box">
             <label for="formGroupExampleInput" class="form-label">Tipo</label>
-            <select type="text"
-                   class="form-control"
-                   id="TP_OcorrenciaId"
-                   name="TP_OcorrenciaId">
-            <option selected></option>
-        </select>
-        </div>
-        <div class="mb-3">
-            <label for="formGroupExampleInput" class="form-label">Descrição</label>
-            <input type="text"
-                   class="form-control"
-                   id="Description"
-                   name="Description"
-                   placeholder="Descrição" />
-        </div>
-        <div class="mb-3">
-            <label for="formGroupExampleInput" class="form-label">Informação adicional</label>
-            <input type="text"
-                   class="form-control"
-                   id="Additional1"
-                   name="Additional1"
-                   placeholder="Informação adicional1" />
-        </div>
-        <div class="mb-3">
-            <label for="formGroupExampleInput" class="form-label">Informação adicional</label>
-            <input type="text"
-                   class="form-control"
-                   name="Additional2"
-                   id="Additional2"
-                   placeholder="Informação adicional2" />
-        </div>
-        <div class="mb-3">
-            <label for="formGroupExampleInput" class="form-label">Prejudicado</label>
-            <input type="text"
-                   class="form-control"
-                   name="Harmed"
-                   id="Harmed"
-                   placeholder="Prejudicado" />
-        </div>
-        <div class="mb-3">
-            <label for="formGroupExampleInput" class="form-label">Documento</label>
-            <input type="text"
-                   class="form-control"
-                   name="Document"
-                   id="Document"
-                   placeholder="Documento" />
-        </div>
-    </div>
-
-    <div style="width: 46%">
-        <div class="mb-3">
-            <label for="formGroupExampleInput" class="form-label">Custo</label>
-            <input type="text"
-                   class="form-control"
-                   id="Cost"
-                   name="Cost"
-                   placeholder="Custo" />
-        </div>
-        <div class="mb-3">
-            <label for="formGroupExampleInput" class="form-label">Avaliador</label>
-            <select type="text"
-                   class="form-control"
-                   id="AppraiserId"
-                   name="AppraiserId">
-        <option selected></option>
-        </select>
-        </div>
-        <div class="mb-3">
-            <label for="formGroupExampleInput" class="form-label">Origem</label>
-            <input type="text"
-                   class="form-control"
-                   id="Origin"
-                   name="Origin"
-                   placeholder="Origem" />
-        </div>
-        <div class="mb-3">
-            <label for="formGroupExampleInput" class="form-label">Status das ações</label>
-            <input type="text"
-                   class="form-control"
-                   id="StatusActions"
-                   name="StatusActions"
-                   placeholder="Status das ações" />
-        </div>
-        <div class="mb-3">
-            <label for="formGroupExampleInput" class="form-label">Status</label>
-            <select type="text"
-                   class="form-control"
-                   id="StatusId"
-                   name="StatusId">
-            <option selected></option>
+            <select
+              type="text"
+              class="form-control"
+              id="TP_OcorrenciaId"
+              name="TP_OcorrenciaId"
+            >
+              <option selected></option>
             </select>
+          </div>
+          <div class="mb-3">
+            <label for="formGroupExampleInput" class="form-label"
+              >Descrição</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="Description"
+              name="Description"
+              placeholder="Descrição"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="formGroupExampleInput" class="form-label"
+              >Informação adicional</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="Additional1"
+              name="Additional1"
+              placeholder="Informação adicional1"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="formGroupExampleInput" class="form-label"
+              >Informação adicional</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              name="Additional2"
+              id="Additional2"
+              placeholder="Informação adicional2"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="formGroupExampleInput" class="form-label"
+              >Prejudicado</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              name="Harmed"
+              id="Harmed"
+              placeholder="Prejudicado"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="formGroupExampleInput" class="form-label"
+              >Documento</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              name="Document"
+              id="Document"
+              placeholder="Documento"
+            />
+          </div>
         </div>
-        <div class="mb-3">
-            <label for="formGroupExampleInput" class="form-label">Ação corretiva</label>
-            <input type="text"
-                   class="form-control"
-                   id="CorrectiveAction"
-                   name="CorrectiveAction"
-                   placeholder="Ação corretiva" />
+
+        <div style="width: 35%">
+          <div class="mb-3">
+            <label for="formGroupExampleInput" class="form-label">Custo</label>
+            <input
+              type="text"
+              class="form-control"
+              id="Cost"
+              name="Cost"
+              placeholder="Custo"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="formGroupExampleInput" class="form-label"
+              >Avaliador</label
+            >
+            <select
+              type="text"
+              class="form-control"
+              id="AppraiserId"
+              name="AppraiserId"
+            >
+              <option selected></option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="formGroupExampleInput" class="form-label">Origem</label>
+            <input
+              type="text"
+              class="form-control"
+              id="Origin"
+              name="Origin"
+              placeholder="Origem"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="formGroupExampleInput" class="form-label"
+              >Status das ações</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="StatusActions"
+              name="StatusActions"
+              placeholder="Status das ações"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="formGroupExampleInput" class="form-label">Status</label>
+            <select
+              type="text"
+              class="form-control"
+              id="StatusId"
+              name="StatusId"
+            >
+              <option selected></option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="formGroupExampleInput" class="form-label"
+              >Ação corretiva</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="CorrectiveAction"
+              name="CorrectiveAction"
+              placeholder="Ação corretiva"
+            />
+          </div>
         </div>
-        <div class="button-search">
-            <button id="submitFilter" type="submit" class="btn btn-primary">Procurar</button>
+        <div class="datas">
+          <div>
+            <i id="closeForm" class="bx bxs-x-circle"></i>
+          </div>
+          <div class="cntr-datas">
+            <div>
+              <div class="mb-3">
+                <label for="tipoFiltroData" class="form-label"
+                  >Filtro de data</label
+                >
+                <select class="form-control" id="TipoFiltroData" name="TipoFiltroData">
+                  <option value='0' selected>Selecione um tipo de filtro de data</option>
+                  <option value='1'>Por cadastro da ocorrencia</option>
+                  <option value='2'>Por data da ocorrência</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <div class="mb-3">
+                <label for="dataInicial" class="form-label">Data inicial</label>
+                <input type="date" name="StartDate" class="form-control" id="StartDate" />
+              </div>
+              <div class="mb-3">
+                <label for="dataFinal" class="form-label">Data Final</label>
+                <input type="date" name="EndDate" class="form-control" id="EndDate" />
+              </div>
+            </div>
+          </div>
+          <div class="button-search">
+            <button id="submitFilter" type="submit" class="btn btn-primary">
+              Procurar
+            </button>
+          </div>
         </div>
-    </div>
-    <i id="closeForm" style="font-size: 2rem;color: red;cursor:pointer;height: fit-content;" class='bx bxs-x-circle'></i>
-</form>
+      </form>
     `
     return form;
 }
@@ -281,7 +367,6 @@ function displaySelectTypes(types) {
 };
 
 function displaySelectStatus(status) {
-    console .log(status)
     const select = document.querySelector("#StatusId");
     for (let ele of status) {
         let option = `<option value="${ele["id"]}">${ele["name"]}</option>`
