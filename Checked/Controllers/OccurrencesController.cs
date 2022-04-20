@@ -453,6 +453,7 @@ namespace Checked.Controllers
                         {
                             var value = (double)prop.GetValue(model, null);
                             sqlFilters.Add($"and {prop.Name} = '{value.ToString(CultureInfo.InvariantCulture)}'");
+                            continue;
                         }
                         if(prop.Name.Equals("StartDate") || prop.Name.Equals("EndDate"))
                         {
@@ -473,6 +474,7 @@ namespace Checked.Controllers
                     .Include(o => o.Tp_Ocorrencia)
                     .Include(o => o.Status)
                     .Include(o => o.Tp_Ocorrencia)
+                    .OrderByDescending(d => d.CreatedAt)
                     .ToListAsync();
                 JsonSerializerOptions options = new()
                 {
