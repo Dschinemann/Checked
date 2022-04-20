@@ -36,5 +36,8 @@ namespace Checked.Models.ViewModels
         public string? Additional2 { get; set; }
 
         public string CreatedById { get; set; }
+
+        [Display(Name = "Data da ocorrência")]
+        public DateTime DataOccurrence { get; set; }
     }
 }

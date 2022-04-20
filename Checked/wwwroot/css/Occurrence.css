@@ -10,6 +10,11 @@
     justify-content: space-between;
 }
 
+.buttons-header {
+    display: flex;
+    justify-content: space-between;
+    width: 23%;
+}
 
 .create-box-occurrence {
     width: 100%;
@@ -32,18 +37,18 @@
     display: flex;
     align-items: center;
     margin: 10px 0;
-    justify-content:space-between;
+    justify-content: space-between;
 }
 
-    .cntr-navegation div {       
-        display: flex;        
+    .cntr-navegation div {
+        display: flex;
         align-items: center;
     }
 
 #filterOccurrence {
     font-size: 30px;
     margin: 10px;
-    cursor:pointer;
+    cursor: pointer;
 }
 
 

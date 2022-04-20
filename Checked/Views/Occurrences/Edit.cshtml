@@ -8,10 +8,23 @@
 }
 <link rel="stylesheet" href="~/css/Occurrence.css" />
 <div class="cntr">
+    <div style="display:flex;justify-content:space-between">
+        <div>
+            <h4>Ocorrência</h4>
+        </div>
+        <div class="buttons-header">
+            <div>
+                <a role="button" class="btn btn-primary" asp-action="Index">Voltar</a>
+            </div>
+            <div class="form-group">
+                <input form="editOccurrence" type="submit" value="Salvar alterações" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
     <div class="row">
         <hr />
         <div class="col-md-4" style="width:80%">
-            <form asp-action="Edit">
+            <form id="editOccurrence" asp-action="Edit">
                 <div style="width:40%">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input type="hidden" asp-for="Id" />
@@ -24,6 +37,11 @@
                             <span asp-validation-for="TypeOccurrence" class="text-danger"></span>
                         </div>
                         <a style="background-color:green; font-weight:bold" class="btn" asp-action="Create" asp-controller="TP_Ocorrencia">+</a>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="DataOccurrence" class="control-label"></label>
+                        <input asp-for="DataOccurrence" class="form-control" />
+                        <span asp-validation-for="DataOccurrence" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Description" class="control-label"></label>
@@ -45,13 +63,13 @@
                         <input asp-for="Additional1" class="form-control" />
                         <span asp-validation-for="Additional1" class="text-danger"></span>
                     </div>
+                </div>
+                <div style="width:40%">
                     <div class="form-group">
                         <label asp-for="Additional2" class="control-label"></label>
                         <input asp-for="Additional2" class="form-control" />
                         <span asp-validation-for="Additional2" class="text-danger"></span>
                     </div>
-                </div>
-                <div style="width:40%">
                     <div class="form-group">
                         <label asp-for="Cost" class="control-label"></label>
                         <input asp-for="Cost" class="form-control" />
@@ -77,17 +95,9 @@
                         <select asp-for="Status.Id" asp-items="@ViewBag.Status" class="form-control"></select>
                         <span asp-validation-for="Status.Id" class="text-danger"></span>
                     </div>
-
-                    <div class="form-group">
-                        <input type="submit" value="Salvar alterações" class="btn btn-primary" />
-                    </div>
                 </div>
             </form>
         </div>
-    </div>
-
-    <div>
-        <a asp-action="Index">Voltar</a>
     </div>
 </div>
 

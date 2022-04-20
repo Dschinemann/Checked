@@ -1,4 +1,6 @@
-﻿namespace Checked.Models.FilterModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Checked.Models.FilterModels
 {
     public class OccurrencesFilter
     {
@@ -15,8 +17,11 @@
         public string? StatusActions { get; set; }
         public string? CorrectiveAction { get; set; }
 
-        public string? TipoFiltroData { get; set; }
+        public int? TipoFiltroData { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
         public DateTime? StartDate { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
         public DateTime? EndDate { get; set; }
 
     }

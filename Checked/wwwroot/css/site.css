@@ -93,7 +93,7 @@ html {
 
 .cntr {
     padding: 0 30px;
-    position: fixed;
+    position: relative;
     top: 60px;
     width: 96%;
 }
@@ -126,4 +126,8 @@ html {
 
 .form-group{
     margin-bottom: 16px;
+}
+
+.sticky-top{
+    z-index:0;
 }

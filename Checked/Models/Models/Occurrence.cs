@@ -75,6 +75,11 @@ namespace Checked.Models.Models
         public ApplicationUser CreatedBy { get; set; }
         public virtual string CreatedById { get; set; }
 
+        [Display(Name = "Data da ocorrência")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
+        public DateTime DateOccurrence{ get; set; } = DateTime.Now;
+
 
         public Occurrence()
         {

@@ -40,6 +40,10 @@ namespace Checked.Models.ViewModels
         [Display(Name = "Informação Adicional 02")]
         public string? Additional2 { get; set; }
 
+
+        [Display(Name = "Data da ocorrência")]
+        public DateTime DataOccurrence { get; set; }
+
         public EditOccurrenceViewModel(
             string id, 
             int type, 

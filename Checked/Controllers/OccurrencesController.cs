@@ -111,7 +111,7 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Description,Harmed,Document,Cost,Appraiser,Origin,Id,TypeOccurrence,Additional2,Additional1,CreatedById")] CreateOccurrenceModel model)
+        public async Task<IActionResult> Create([Bind("Description,Harmed,Document,Cost,Appraiser,Origin,Id,TypeOccurrence,Additional2,Additional1,CreatedById,DataOccurrence")] CreateOccurrenceModel model)
         {
             if (ModelState.IsValid)
             {
@@ -138,6 +138,7 @@ namespace Checked.Controllers
                 occurrence.Additional1 = model.Additional1;
                 occurrence.Additional2 = model.Additional2;
                 occurrence.CreatedById = user.Id;
+                occurrence.DateOccurrence = model.DataOccurrence;
                 var typeName = await _context.TP_Ocorrencias.FindAsync(model.TypeOccurrence);
                 _context.Occurrences.Add(occurrence);
                 string linkOccurrence = Url.Action("Details", "Occurrences", new { idOccurrence = model.Id }, Request.Scheme) ?? "";
@@ -207,6 +208,7 @@ namespace Checked.Controllers
                 );
             model.Additional1 = occurrence.Additional1;
             model.Additional2 = occurrence.Additional2;
+            model.DataOccurrence = occurrence.DateOccurrence;
             ViewBag.AppraiserId = new SelectList(
                          _context.Users.Where(x => x.OrganizationId == occurrence.OrganizationId),
                          "Id",
@@ -233,7 +235,7 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("TypeOccurrence,Description,Harmed,Document,Cost,AppraiserId,Origin,Id,Appraiser,ApplicationUserId,OrganizationId,CorretiveActions,Status,Status.Name,Additional1,Additional2")] EditOccurrenceViewModel model)
+        public async Task<IActionResult> Edit(string id, [Bind("TypeOccurrence,Description,Harmed,Document,Cost,AppraiserId,Origin,Id,Appraiser,ApplicationUserId,OrganizationId,CorretiveActions,Status,Status.Name,Additional1,Additional2,DataOccurrence")] EditOccurrenceViewModel model)
         {
             if (id != model.Id)
             {
@@ -260,6 +262,7 @@ namespace Checked.Controllers
                 occurrence.CorrectiveAction = model.CorretiveActions;
                 occurrence.Additional1 = model.Additional1;
                 occurrence.Additional2 = model.Additional2;
+                occurrence.DateOccurrence = model.DataOccurrence;
                 string linkOccurrence = Url.Action("Details", "Occurrences", new { idOccurrence = model.Id }, Request.Scheme) ?? "";
                 try
                 {
@@ -423,27 +426,48 @@ namespace Checked.Controllers
             {
                 if (prop.GetValue(model, null) != null)
                 {
-                    if (!(prop.Name.Equals("CreatedAt") || prop.Name.Equals("UpdatedAt")))
+                    if (!prop.Name.Equals("UpdatedAt"))
                     {
+                        if (prop.Name.Equals("TipoFiltroData"))
+                        {
+                            if ((int)prop.GetValue(model, null) == 1)
+                            {
+                                DateTime starDate = model.StartDate??new DateTime();
+                                DateTime endDate = (DateTime)model.EndDate;
+                                sqlFilters.Add($"and CreatedAt between '{starDate.ToString(culture)}' and '{endDate.ToString(culture)}'");
+                            }
+                            else
+                            {
+                                DateTime starDate = (DateTime)model.StartDate;
+                                DateTime endDate = (DateTime)model.EndDate;
+                                sqlFilters.Add($"and DateOccurrence between '{starDate.ToString(culture)}' and '{endDate.ToString(culture)}'");
+                            }
+                            continue;
+                        }
+
                         if (prop.Name.Equals("StatusId") || prop.Name.Equals("TP_OcorrenciaId"))
                         {
                             sqlFilters.Add($"and {prop.Name} = '{prop.GetValue(model, null)}'");
-                        }else if (prop.Name.Equals("Cost"))
+                        }
+                        else if (prop.Name.Equals("Cost"))
                         {
                             var value = (double)prop.GetValue(model, null);
                             sqlFilters.Add($"and {prop.Name} = '{value.ToString(CultureInfo.InvariantCulture)}'");
+                        }
+                        if(prop.Name.Equals("StartDate") || prop.Name.Equals("EndDate"))
+                        {
+                            continue;
                         }
                         else
                         {
                             sqlFilters.Add($"and {prop.Name}  like '%{prop.GetValue(model, null)}%'");
                         }
-
                     }
                 }
             }
             if (sqlFilters.Count > 0)
             {
-                var occurrences = await _context.Occurrences
+                List<Occurrence> occurrences = await _context.Occurrences
                     .FromSqlRaw($"Select * from dbo.Occurrences where 1=1{String.Join(" ", sqlFilters)}")
                     .Include(o => o.Appraiser)
                     .Include(o => o.Tp_Ocorrencia)

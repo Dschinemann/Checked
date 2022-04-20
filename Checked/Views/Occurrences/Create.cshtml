@@ -9,16 +9,19 @@
         <div>
             <h4>Ocorrência</h4>
         </div>
-        <div>
+        <div class="buttons-header">
             <div>
                 <a class="btn btn-primary" asp-action="Index">Voltar para lista</a>
+            </div>
+            <div>
+                <input form="create-occurrence" type="submit" value="Salvar" class="btn btn-primary" />
             </div>
         </div>
     </div>
     <div class="row" style="width:100%">
         <div class="col-md-4" style="width:100%">
             <hr />
-            <form asp-action="Create">
+            <form id="create-occurrence" asp-action="Create">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="Id" />
                 <input type="hidden" asp-for="CreatedById" />
@@ -35,6 +38,11 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label asp-for="DataOccurrence" class="control-label"></label>
+                            <input asp-for="DataOccurrence" class="form-control" />
+                            <span asp-validation-for="DataOccurrence" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
                             <label asp-for="Description" class="control-label"></label>
                             <input asp-for="Description" class="form-control" />
                             <span asp-validation-for="Description" class="text-danger"></span>
@@ -49,13 +57,13 @@
                             <input asp-for="Document" class="form-control" />
                             <span asp-validation-for="Document" class="text-danger"></span>
                         </div>
+                    </div>
+                    <div>
                         <div class="form-group">
                             <label asp-for="Additional1" class="control-label"></label>
                             <input asp-for="Additional1" class="form-control" />
                             <span asp-validation-for="Additional1" class="text-danger"></span>
                         </div>
-                    </div>
-                    <div>
                         <div class="form-group">
                             <label asp-for="Additional2" class="control-label"></label>
                             <input asp-for="Additional2" class="form-control" />
@@ -80,9 +88,6 @@
                                 </div>
                                 <a style="background-color:green; font-weight:bold" class="btn" asp-action="InviteUser" asp-controller="Account">+</a>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <input type="submit" value="Salvar" class="btn btn-primary" />
                         </div>
                     </div>
                 </div>

@@ -44,15 +44,18 @@ function buscarOcorrencias(e) {
         .catch(error => console.log(error))
 }
 
-const buscarOcorrenciasComFiltro = (query) => {
+const buscarOcorrenciasComFiltro = (query, button) => {
     fetch(`Occurrences/Filters${query}`)
         .then(response => response.json())
-        .then(data => displayDataOccurrences(data))
+        .then(data => {
+            displayDataOccurrences(data);
+            closeForm(button)
+        })
         .catch(error => console.log(error))
     const navigationPages = document.querySelector("#page-navigation");
     if (navigationPages) {
         navigationPages.remove();
-    }
+    }    
 }
 
 
@@ -72,6 +75,8 @@ function displayDataOccurrences(data, e) {
         for (let element in data[item]) {
             tr.innerHTML = `
                 <td>${data[item]["Tp_Ocorrencia"]["Name"]}</td>
+                <td>${new Intl.DateTimeFormat('pt-BR').format(new Date(data[item]["CreatedAt"]))}</td>
+                <td>${new Intl.DateTimeFormat('pt-BR').format(new Date(data[item]["DateOccurrence"]))}</td>
                 <td>${data[item]["Description"]}</td>
                 <td>${data[item]["Additional1"] ?? "N/D"}</td>
                 <td>${data[item]["Additional2"] ?? "N/D"}</td>
@@ -136,8 +141,8 @@ buttonFiltro.addEventListener("click", (e) => {
                     }
             }
         }
-        buscarOcorrenciasComFiltro(query);
-        closeForm(e.target)
+        buttonFilter.innerHTML = "<span class=\"spinner-grow spinner-grow-sm\" role=\"status\" aria-hidden=\"true\"></span>  Carregando..."
+        buscarOcorrenciasComFiltro(query, e.target);        
     })
 
     const buttonCLoseFormPesquisa = document.querySelector("#closeForm");
@@ -322,17 +327,17 @@ const formFilter = () => {
             <div>
               <div class="mb-3">
                 <label for="dataInicial" class="form-label">Data inicial</label>
-                <input type="date" name="StartDate" class="form-control" id="StartDate" />
+                <input type="datetime-local" name="StartDate" class="form-control" id="StartDate" />
               </div>
               <div class="mb-3">
                 <label for="dataFinal" class="form-label">Data Final</label>
-                <input type="date" name="EndDate" class="form-control" id="EndDate" />
+                <input type="datetime-local" name="EndDate" class="form-control" id="EndDate" />
               </div>
             </div>
           </div>
           <div class="button-search">
-            <button id="submitFilter" type="submit" class="btn btn-primary">
-              Procurar
+            <button id="submitFilter" type="submit" class="btn btn-primary">             
+                Procurar
             </button>
           </div>
         </div>
