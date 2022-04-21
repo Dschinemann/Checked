@@ -38,7 +38,7 @@
     <div id="panels" class="panels">
         @foreach (var item in Model)
         {
-            <section>
+            <section data-type="@item.Value[0].Split(",")[3]" ondrop="drop_handler(event)">
                 <div class="header-section">
                     <h3 class="text-capitalize">@item.Key</h3>
                     <h3>@item.Value.Count()</h3>
@@ -46,7 +46,7 @@
                 @foreach (var element in @item.Value)
                 {
                     var tituloDescricao = element.Split(",");
-                    <div data-id = "@tituloDescricao[2]" class="panels-section">
+                    <div draggable="true" id="@tituloDescricao[2]" class="panels-section">
                         <div class="title">
                             <h4 class="text-capitalize">@tituloDescricao[0]</h4>
                         </div>

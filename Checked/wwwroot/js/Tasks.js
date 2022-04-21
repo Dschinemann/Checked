@@ -111,3 +111,33 @@ function displayData(data, e) {
 function consultarDetalhes(event) {
     fetch("/Occurrences/Details")    
 }
+
+/*Drag and drop*/
+
+const panelSections = document.querySelectorAll(".panels-section");
+panelSections.forEach(element => {
+    element.addEventListener("dragstart", (event) => {        
+        event.dataTransfer.setData("id",event.target.id)
+    })
+})
+
+const sections = document.querySelectorAll("section");
+sections.forEach(section => {
+    section.addEventListener("dragover", (event) => {
+        event.preventDefault();
+    })
+})
+
+function drop_handler(event) {
+    event.preventDefault();
+    let data = event.dataTransfer.getData("id");
+    if (event.toElement.localName === "section") {
+        event.target.appendChild(document.getElementById(data));
+        updateItem(data, event);
+    }
+}
+
+function updateItem(id, node) {
+    let status = node.target.querySelector(".text-capitalize").innerText;
+    let tipoElemento = node.target.dataset.type;    
+}
