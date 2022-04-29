@@ -11,7 +11,7 @@ body {
 }
 
 .header-filtro {
-    background-color: #8d5858;
+    /*background-color: #8d5858;*/
     height: 60px;
     position: fixed;
     display: flex;
@@ -31,13 +31,13 @@ body {
 
 .panels {
     display: flex;
-    background-color: rgb(167 157 157);
+    /*background-color: rgb(167 157 157);*/
     min-height: 100%;
 }
 
     .panels section {
         border-right: 5px solid rgba(33, 32, 32,0.6);
-        max-width: 30vw;
+        width: 30vw;
         margin-top: 60px;
         padding-bottom: 16px;
     }
@@ -64,21 +64,22 @@ body {
         margin-top: 10px;
     }
 
-    .descricao {
-        line-height: 1.8rem;
-        text-decoration: underline;
-        text-align: justify;
-    }
-
-.title {    
-    padding: 0px 5px 0 5px;    
+.descricao {
+    line-height: 1.8rem;
+    text-decoration: underline;
+    text-align: justify;
 }
+
+.title {
+    padding: 0px 5px 0 5px;
+}
+
     .title h4 {
         font-family: 'Indie Flower', cursive;
     }
 
 .header-section {
-    background-color: #6ba9a9;
+    background-color: #6ba9a96b;
     position: sticky;
     height: 35px;
     text-align: center;
@@ -87,18 +88,20 @@ body {
     justify-content: space-between;
     padding: 5px 10px 0 10px;
 }
-    .header-section h3{
+
+    .header-section h3 {
         font-size: 1.5rem
     }
 
-    .menuNav {
-        position: fixed;
-        background-color: #fff;
-        top: 33px;
-        right: 118px;
-        border-radius: 10px;
-        padding: 16px;
-    }
+.menuNav {
+    position: fixed;
+    background-color: #fff;
+    top: 33px;
+    right: 118px;
+    border-radius: 10px;
+    padding: 16px;
+}
+
 .mascara {
     position: fixed;
     background-color: #00000091;
@@ -106,7 +109,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 2;    
+    z-index: 2;
 }
 
 .text-error {
@@ -114,4 +117,19 @@ body {
     position: fixed;
     margin-left: 10px;
     color: #043e70;
+}
+
+.headerTask {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 85%;
+}
+
+    .headerTask h1 {
+        margin: 0;
+    }
+
+#titulo-header {
+    font-size: 1.5rem;
 }

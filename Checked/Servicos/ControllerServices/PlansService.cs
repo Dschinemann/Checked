@@ -28,7 +28,7 @@ namespace Checked.Servicos.ControllerServices
                 .Include(o => o.Occurrence)                
                 .FirstAsync(o => o.Id == id);
         }
-        public async Task UpdatePlanAsync(Plan plan)
+        public async System.Threading.Tasks.Task UpdatePlanAsync(Plan plan)
         {
             if (plan != null)
             {

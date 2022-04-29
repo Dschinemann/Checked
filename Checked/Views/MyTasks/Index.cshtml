@@ -3,10 +3,20 @@
 
 <head>
     <link rel="stylesheet" href="~/css/tasks.css" />
+    <script type="text/javascript" src="~/js/Tasks.js" async></script>
 </head>
+<div>
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "keyToken" }))
+    {
+        @Html.AntiForgeryToken()
+    }
+</div>
 <div style="height:100%">
     <div class="header-filtro">
-        <i id="iconFilter" class='bx bx-filter-alt'></i>
+        <div class="headerTask">
+            <h1 id="titulo-header">Ocorrências</h1>
+            <i id="iconFilter" class='bx bx-filter-alt'></i>            
+        </div>        
         <div id="menuNav" class="menuNav" style="display:none">
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="flexRadioDefault" checked>
@@ -27,7 +37,7 @@
                 </label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="others" >
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="others">
                 <label class="form-check-label" for="flexRadioDefault4">
                     Outros
                 </label>
@@ -38,15 +48,17 @@
     <div id="panels" class="panels">
         @foreach (var item in Model)
         {
-            <section data-type="@item.Value[0].Split(",")[3]" ondrop="drop_handler(event)">
+            var detalhes = @item.Value.Count <=0? new string[5]:@item.Value[0].Split(",");
+            <section data-type="@detalhes[3]" ondrop="drop_handler(event)">
                 <div class="header-section">
                     <h3 class="text-capitalize">@item.Key</h3>
-                    <h3>@item.Value.Count()</h3>
+                    <h3 class="countElements">@item.Value.Count()</h3>
                 </div>
                 @foreach (var element in @item.Value)
                 {
                     var tituloDescricao = element.Split(",");
-                    <div draggable="true" id="@tituloDescricao[2]" class="panels-section">
+                    <form action="@Url.Action("Edit",@detalhes[3])"   draggable="true" id="@tituloDescricao[2]" class="panels-section">
+                        <input type="hidden" name="@tituloDescricao[4]" value = @tituloDescricao[2] />
                         <div class="title">
                             <h4 class="text-capitalize">@tituloDescricao[0]</h4>
                         </div>
@@ -55,7 +67,7 @@
                                 @tituloDescricao[1]
                             </p>
                         </div>
-                    </div>
+                    </form>
                 }
 
             </section>
@@ -63,4 +75,3 @@
     </div>
 </div>
 <div id="mascara" style="display:none" class="mascara"></div>
-<script type="text/javascript" src="~/js/Tasks.js"></script>

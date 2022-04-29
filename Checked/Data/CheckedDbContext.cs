@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Checked.Models.Models;
 using Checked.Models.Types;
 using Checked.Models.ViewModels;
+using Checked.Models.Statics;
 
 namespace Checked.Data
 {
@@ -47,6 +48,9 @@ namespace Checked.Data
         public DbSet<Country> Countries { get; set; }
         
         public DbSet<HelpDesk> HelpDesks { get; set; }
+
+        public DbSet<TP_TaskStatus> TP_TaskStatus { get; set; }
+        public DbSet<Models.Models.Task> Tasks { get; set; }
 
     }
 }
