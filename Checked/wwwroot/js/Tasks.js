@@ -79,7 +79,7 @@ function displayData(data, e) {
         const sections = document.createElement("section");
         sections.setAttribute("ondrop", "drop_handler(event)");
         const headerSection = document.createElement("div");
-        headerSection.className = "header-section";
+        headerSection.className = "header-section sticky-top";
         const h3 = document.createElement("h3");
         const h3Count = document.createElement("h3");
         h3.innerText = prop;

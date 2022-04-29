@@ -11,7 +11,7 @@
         @Html.AntiForgeryToken()
     }
 </div>
-<div style="height:100%">
+<div>
     <div class="header-filtro">
         <div class="headerTask">
             <h1 id="titulo-header">Ocorrências</h1>
@@ -50,7 +50,7 @@
         {
             var detalhes = @item.Value.Count <=0? new string[5]:@item.Value[0].Split(",");
             <section data-type="@detalhes[3]" ondrop="drop_handler(event)">
-                <div class="header-section">
+                <div class="header-section sticky-top">
                     <h3 class="text-capitalize">@item.Key</h3>
                     <h3 class="countElements">@item.Value.Count()</h3>
                 </div>
