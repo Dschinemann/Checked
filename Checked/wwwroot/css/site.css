@@ -101,20 +101,21 @@ html {
     --bs-table-hover-color: #4a8787;
 }
 
-.scrollbar {    
+.scrollbar {
     float: left;
     height: 80vh;
     overflow-y: scroll;
+    width: 91vw;
 }
 #style-2::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     border-radius: 10px;
-    background-color: #2f4f4f;
+    background-color: rgb(22 33 33 / 0%);
 }
 
 #style-2::-webkit-scrollbar {
     width: 12px;
-    background-color: #2f4f4f;
+    background-color: rgb(22 33 33 / 0%);
 }
 
 #style-2::-webkit-scrollbar-thumb {
