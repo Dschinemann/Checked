@@ -38,13 +38,13 @@ namespace Checked.Controllers
 
         /*
         * Login
-        */
+        *
         [AllowAnonymous]
         [HttpGet]
         public IActionResult Login()
         {
-            return View("Index");
-        }
+            //return View("Index");           
+        }*/
 
         [AllowAnonymous]
         [HttpPost]

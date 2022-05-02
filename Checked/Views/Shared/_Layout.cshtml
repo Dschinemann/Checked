@@ -38,10 +38,10 @@
     <!-- Created by CodingLab |www.youtube.com/CodingLabYT-->
 </head>
 <body>
-    <div style="height:100%">
-        <main style="height:100%" role="main">
-            @if (SignInManager.IsSignedIn(User))
-            {
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <div style="height:100%">
+            <main style="height:100%" role="main">
                 <div class="sidebar close">
                     <div class="logo-details">
                         <i class='bx bx-check-double'></i>
@@ -136,12 +136,14 @@
                     </div>
                     @RenderBody()
                 </section>
-            }            
-        </main>
-    </div>
+
+            </main>
+        </div>
+    }
     @if (!SignInManager.IsSignedIn(User))
     {
         <partial name="_LoginPartial" />
+        @RenderBody()
     }
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
