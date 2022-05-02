@@ -55,7 +55,7 @@ const buscarOcorrenciasComFiltro = (query, button) => {
     const navigationPages = document.querySelector("#page-navigation");
     if (navigationPages) {
         navigationPages.remove();
-    }    
+    }
 }
 
 
@@ -142,7 +142,7 @@ buttonFiltro.addEventListener("click", (e) => {
             }
         }
         buttonFilter.innerHTML = "<span class=\"spinner-grow spinner-grow-sm\" role=\"status\" aria-hidden=\"true\"></span>  Carregando..."
-        buscarOcorrenciasComFiltro(query, e.target);        
+        buscarOcorrenciasComFiltro(query, e.target);
     })
 
     const buttonCLoseFormPesquisa = document.querySelector("#closeForm");
@@ -378,3 +378,38 @@ function displaySelectStatus(status) {
         select.insertAdjacentHTML('beforeend', option);
     }
 };
+
+//tooltip
+
+const td = document.querySelectorAll("td,th");
+
+td.forEach(element => {
+    element.addEventListener("mouseenter", tooltipInfo)
+});
+
+td.forEach(element => {
+    element.addEventListener("mouseout", removeToolTip)
+});
+
+
+function tooltipInfo(event) {
+    let windowWidth = window.innerWidth;
+    let LeftOrRight = event.clientX > (windowWidth - 200) ? "right" : "left";
+    let position = event.clientX > (windowWidth - 200) ? 16 : event.clientX;
+    //console.log("cliente"+event.clientX)
+    //console.log("teste" + (windowWidth - 100) )
+    let text = event.target.innerText;
+    const div = document.createElement("div");
+    div.setAttribute("id", "infoTip")
+    div.innerHTML = `
+        <span class="toolTipSpan text-wrap text-break" style="top:${event.clientY}px;${LeftOrRight}:${position}px">${text}</span>
+    `
+    event.target.appendChild(div);
+
+}
+
+function removeToolTip(event) {
+    if (document.querySelector("#infoTip")) {
+        document.querySelector("#infoTip").remove();
+    }
+}

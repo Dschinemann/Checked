@@ -42,101 +42,101 @@
         <table style="font-size:13px;font-weight: 600;" class="table table-hover table-sm align-middle">
             <thead class="table-dark sticky-top">
                 <tr>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                    <th class="tableCell">
                         @Html.DisplayNameFor(model => model.Tp_Ocorrencia.Name)
                     </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                    <th class="tableCell">
                         @Html.DisplayNameFor(model => model.CreatedAt)
                     </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                    <th class="tableCell">
                         @Html.DisplayNameFor(model => model.DateOccurrence)
                     </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                    <th class="tableCell">
                         @Html.DisplayNameFor(model => model.Description)
                     </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                    <th class="tableCell">
                         @Html.DisplayNameFor(model => model.Additional1)
                     </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                    <th class="tableCell">
                         @Html.DisplayNameFor(model => model.Additional2)
                     </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                    <th class="tableCell">
                         @Html.DisplayNameFor(model => model.Harmed)
                     </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                    <th class="tableCell">
                         @Html.DisplayNameFor(model => model.Document)
                     </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                    <th class="tableCell">
                         @Html.DisplayNameFor(model => model.Cost)
                     </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                    <th class="tableCell">
                         @Html.DisplayNameFor(model => model.Appraiser)
                     </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                    <th class="tableCell">
                         @Html.DisplayNameFor(model => model.Origin)
                     </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                    <th class="tableCell">
                         Plano de Ação
                     </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                    <th class="tableCell">
                         @Html.DisplayNameFor(model => model.StatusActions)
                     </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                    <th class="tableCell">
                         @Html.DisplayNameFor(model => model.Status)
                     </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                    <th class="tableCell">
                         @Html.DisplayNameFor(model => model.CorrectiveAction)
                     </th>
-                    <th style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); "></th>
+                    <th class="tableCell"></th>
                 </tr>
             </thead>
             <tbody id=body-table-occurrence>
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                        <td class="tableCell">
                             @Html.DisplayFor(modelItem => item.Tp_Ocorrencia.Name)
                         </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                        <td class="tableCell">
                             @Html.DisplayFor(modelItem => item.CreatedAt)
                         </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                        <td class="tableCell">
                             @Html.DisplayFor(modelItem => item.DateOccurrence)
                         </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                        <td class="tableCell">
                             @Html.DisplayFor(modelItem => item.Description)
                         </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                        <td class="tableCell">
                             @Html.DisplayFor(modelItem => item.Additional1)
                         </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                        <td class="tableCell">
                             @Html.DisplayFor(modelItem => item.Additional1)
                         </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                        <td class="tableCell">
                             @Html.DisplayFor(modelItem => item.Harmed)
                         </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                        <td class="tableCell">
                             @Html.DisplayFor(modelItem => item.Document)
                         </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                        <td class="tableCell">
                             @Html.DisplayFor(modelItem => item.Cost)
                         </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                        <td class="tableCell">
                             @Html.DisplayFor(modelItem => item.Appraiser.Name)
                         </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                        <td class="tableCell">
                             @Html.DisplayFor(modelItem => item.Origin)
                         </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                        <td class="tableCell">
                             <a asp-action="Index" asp-controller="Plans" asp-route-id="@item.Id">Plano de ação</a>
                         </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                        <td class="tableCell">
                             @Html.DisplayFor(modelItem => item.StatusActions)
                         </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                        <td class="tableCell">
                             @Html.DisplayFor(modelItem => item.Status.Name)
                         </td>
-                        <td style="border-right:1px solid; border-right-color: rgb(247, 239, 251, .4); ">
+                        <td class="tableCell">
                             @Html.DisplayFor(modelItem => item.CorrectiveAction)
                         </td>
                         <td>

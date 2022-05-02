@@ -113,3 +113,22 @@
         padding: 10px;
         border-radius: 50%;
     }
+
+.tableCell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border-right: 1px solid;
+    border-right-color: rgb(247, 239, 251, .4);
+    max-width: 7vw;
+}
+
+.toolTipSpan {
+    position: fixed;
+    background-color: blue;
+    color: white;
+    z-index: 3;
+    padding: 5px;
+    border-radius: 7px;
+    width: 200px;
+}
