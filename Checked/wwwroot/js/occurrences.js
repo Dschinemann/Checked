@@ -74,32 +74,31 @@ function displayDataOccurrences(data, e) {
 
         for (let element in data[item]) {
             tr.innerHTML = `
-                <td>${data[item]["Tp_Ocorrencia"]["Name"]}</td>
-                <td>${new Intl.DateTimeFormat('pt-BR').format(new Date(data[item]["CreatedAt"]))}</td>
-                <td>${new Intl.DateTimeFormat('pt-BR').format(new Date(data[item]["DateOccurrence"]))}</td>
-                <td>${data[item]["Description"]}</td>
-                <td>${data[item]["Additional1"] ?? "N/D"}</td>
-                <td>${data[item]["Additional2"] ?? "N/D"}</td>
-                <td>${data[item]["Harmed"]}</td>
-                <td>${data[item]["Document"]}</td>
-                <td>${new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(data[item]["Cost"])}</td>
-                <td>${data[item]["Appraiser"]["Name"]}</td>
-                <td>${data[item]["Origin"]}</td>
-                <td><a href="Plans/Index/${data[item]["Id"]}">Plano de ação</a></td>
-                <td>${data[item]["StatusActions"]}</td>
-                <td>${data[item]["Status"]["Name"]}</td>
-                <td>${data[item]["CorrectiveAction"] ?? "N/D"}</td>
-                <td>
+                <td class="tableCell">${data[item]["Tp_Ocorrencia"]["Name"]}</td>
+                <td class="tableCell">${new Intl.DateTimeFormat('pt-BR').format(new Date(data[item]["CreatedAt"]))}</td>
+                <td class="tableCell">${new Intl.DateTimeFormat('pt-BR').format(new Date(data[item]["DateOccurrence"]))}</td>
+                <td class="tableCell">${data[item]["Description"]}</td>
+                <td class="tableCell">${data[item]["Additional1"] ?? "N/D"}</td>
+                <td class="tableCell">${data[item]["Additional2"] ?? "N/D"}</td>
+                <td class="tableCell">${data[item]["Harmed"]}</td>
+                <td class="tableCell">${data[item]["Document"]}</td>
+                <td class="tableCell">${new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(data[item]["Cost"])}</td>
+                <td class="tableCell">${data[item]["Appraiser"]["Name"]}</td>
+                <td class="tableCell">${data[item]["Origin"]}</td>
+                <td class="tableCell"><a href="Plans/Index/${data[item]["Id"]}">Plano de ação</a></td>
+                <td class="tableCell">${data[item]["StatusActions"]}</td>
+                <td class="tableCell">${data[item]["Status"]["Name"]}</td>
+                <td class="tableCell">${data[item]["CorrectiveAction"] ?? "N/D"}</td>
+                <td class="tableCell">
                     <a href="Occurrences/Edit?idOccurrence=${data[item]["Id"]}">Editar |</a>
                     <a href="Occurrences/Details?idOccurrence=${data[item]["Id"]}">Detalhes |</a>
                     <a href="Occurrences/Delete?idOccurrence=${data[item]["Id"]}">Delete</a>
                 </td>
             `;
-
         }
-
         bodyTable.appendChild(tr);
     }
+    listeners();
 }
 
 
@@ -380,16 +379,18 @@ function displaySelectStatus(status) {
 };
 
 //tooltip
+function listeners() {
+    const td = document.querySelectorAll("td,th");
 
-const td = document.querySelectorAll("td,th");
+    td.forEach(element => {
+        element.addEventListener("mouseenter", tooltipInfo)
+    });
 
-td.forEach(element => {
-    element.addEventListener("mouseenter", tooltipInfo)
-});
-
-td.forEach(element => {
-    element.addEventListener("mouseout", removeToolTip)
-});
+    td.forEach(element => {
+        element.addEventListener("mouseout", removeToolTip)
+    });
+}
+listeners();
 
 
 function tooltipInfo(event) {
