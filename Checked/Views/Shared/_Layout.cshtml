@@ -5,24 +5,6 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 @inject CheckedDbContext Context
-@{
-    var user = await UserManager.GetUserAsync(User);
-    Organization org = new Organization();
-    string name = String.Empty;
-    string OrganizationName = String.Empty;
-    if (user != null)
-    {
-        name = user.Name;
-        if (user.OrganizationId != null)
-        {
-            org = Context.Organizations
-            .Where(c => c.Id == user.OrganizationId)
-            .First();
-            OrganizationName = org.Name;
-        }
-
-    }
-}
 
 <!DOCTYPE html>
 <html lang="en-us">
@@ -40,6 +22,22 @@
 <body>
     @if (SignInManager.IsSignedIn(User))
     {
+        var user = await UserManager.GetUserAsync(User);
+        Organization org = new Organization();
+        string name = String.Empty;
+        string OrganizationName = String.Empty;
+        if (user != null)
+        {
+            name = user.Name;
+            if (user.OrganizationId != null)
+            {
+                org = Context.Organizations
+                .Where(c => c.Id == user.OrganizationId)
+                .First();
+                OrganizationName = org.Name;
+            }
+
+        }
         <div style="height:100%">
             <main style="height:100%" role="main">
                 <div class="sidebar close">
@@ -142,9 +140,10 @@
     }
     @if (!SignInManager.IsSignedIn(User))
     {
-        <partial name="_LoginPartial" />
+        <!--<partial name="_LoginPartial" />-->  
         @RenderBody()
     }
+    
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

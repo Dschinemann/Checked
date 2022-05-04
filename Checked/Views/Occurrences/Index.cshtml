@@ -7,7 +7,7 @@
     ViewData["Title"] = "Index";
     var itens = ViewData["actions"];
     var user = await UserManager.GetUserAsync(User);
-    var numeroDePaginas = (ViewBag.NumeroDePaginas / 5) + 1;
+    var numeroDePaginas = (ViewBag.NumeroDePaginas / 10) + 1;
 }
 <header>
     <link rel="stylesheet" href="~/css/Occurrence.css" />

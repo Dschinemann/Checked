@@ -66,7 +66,7 @@ namespace Checked.Controllers
                 .Include(o => o.Tp_Ocorrencia)
                 .Include(o => o.Status)
                 .OrderByDescending(c => c.CreatedAt)
-                .Take(5);
+                .Take(10);
             ViewBag.NumeroDePaginas = await _context.Occurrences.Where(c => c.OrganizationId == user.OrganizationId).CountAsync();
             return View(await occurrences.ToListAsync());
         }
