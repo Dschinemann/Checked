@@ -378,7 +378,18 @@ namespace Checked.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Login", "Home", new LoginViewModel { Email = model.Email, Password = model.Password });
+                    var role = await _roleManager.FindByNameAsync("Usuário");
+                    var userSaved = await _userManager.FindByEmailAsync(model.Email);
+                    if (userSaved != null)
+                    {
+                        IdentityResult res = await _userManager.AddToRoleAsync(userSaved, role.Name);
+                        if (!res.Succeeded)
+                        {
+                            ModelState.AddModelError(string.Empty, "Não foi possivel adicionar um papel para usuario, adicionar manualmente");
+                        }
+                    }
+
+                    return RedirectToAction("Index", "Home");
                 }
                 foreach (var error in result.Errors)
                 {

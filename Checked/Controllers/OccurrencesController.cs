@@ -42,8 +42,8 @@ namespace Checked.Controllers
                 .Include(o => o.Tp_Ocorrencia)
                 .Include(o => o.Status)
                 .OrderByDescending(c => c.CreatedAt)
-                .Skip(5 * pagina)
-                .Take(5);
+                .Skip(10 * pagina)
+                .Take(10);
             JsonSerializerOptions options = new()
             {
                 ReferenceHandler = ReferenceHandler.IgnoreCycles,
@@ -472,8 +472,7 @@ namespace Checked.Controllers
                     .FromSqlRaw($"Select * from dbo.Occurrences where 1=1{String.Join(" ", sqlFilters)}")
                     .Include(o => o.Appraiser)
                     .Include(o => o.Tp_Ocorrencia)
-                    .Include(o => o.Status)
-                    .Include(o => o.Tp_Ocorrencia)
+                    .Include(o => o.Status)                   
                     .OrderByDescending(d => d.CreatedAt)
                     .ToListAsync();
                 JsonSerializerOptions options = new()
