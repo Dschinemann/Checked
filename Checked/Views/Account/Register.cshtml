@@ -27,7 +27,7 @@
         <div class="form-login-register">
             <div>
                 <form method="post" id="register" asp-action="Register">
-                    <div style="margin:25px">
+                    <div style="margin: 25px 25px 0 25px;">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <div class="form-group">
                             <label asp-for="Name"></label>
@@ -41,9 +41,9 @@
                         </div>
                         <div class="form-group">
                             <label asp-for="CountryId"></label>
-                            <select asp-for="CountryId"class="form-control">
-                                 <option>Selecione um País</option>
-                                 <option value="35">Brasil</option>
+                            <select asp-for="CountryId" class="form-control">
+                                <option>Selecione um País</option>
+                                <option value="35">Brasil</option>
                             </select>
                             <span asp-validation-for="CountryId" class="text-danger"></span>
                         </div>
@@ -55,7 +55,7 @@
                             <span asp-validation-for="StateId" class="text-danger"></span>
                         </div>
                     </div>
-                    <div style="margin:25px">
+                    <div style="margin: 25px 25px 0 25px;">
                         <div class="form-group">
                             <label asp-for="CityId"></label>
                             <select asp-for="CityId" class="form-control">
@@ -80,11 +80,12 @@
                         </div>
                     </div>
                 </form>
-                <button form="register" type="submit" class="btn btn-primary">Register</button>
+                <div class="button-submit-register">
+                    <button form="register" type="submit" class="btn btn-primary">Register</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 <script type="text/javascript" src="~/js/RegisterListItems.js"></script>
 
-    

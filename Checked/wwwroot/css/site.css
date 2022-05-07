@@ -33,7 +33,7 @@ html {
 .home {
     background-color: white;
     width: 65vw;
-    height: 80vh;
+    height: 80%;
     margin-top: 80px;
     margin-left: 100px;
     border-radius: 10px;
@@ -53,7 +53,7 @@ html {
     display: flex;
     justify-content: flex-end;
     width: 100%;
-    padding: 16px;
+    padding: 16px;    
 }
 
     .form-login-register div {
@@ -62,8 +62,7 @@ html {
         opacity: 0.9
     }
 
-        .form-login-register div form {
-            padding: 16px;
+        .form-login-register div form {            
             color: white;
             width: 100%;
             display: flex;
@@ -130,4 +129,13 @@ html {
 
 .sticky-top{
     z-index:0;
+}
+
+.button-submit-register {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+.button-submit-register button{
+    margin:5px;
 }
