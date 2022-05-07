@@ -138,11 +138,8 @@
             </main>
         </div>
     }
-    @if (!SignInManager.IsSignedIn(User))
-    {
-        <!--<partial name="_LoginPartial" />-->  
         @RenderBody()
-    }
+
     
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

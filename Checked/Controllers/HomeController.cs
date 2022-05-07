@@ -43,7 +43,7 @@ namespace Checked.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            //return View("Index");           
+            return View("Index");           
         }*/
 
         [AllowAnonymous]
@@ -77,7 +77,7 @@ namespace Checked.Controllers
                
             }
             ModelState.AddModelError(String.Empty, result.ToString() + ": Login invalid");
-            return View(nameof(Index), model);
+            return PartialView("_LoginPartial",model);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
