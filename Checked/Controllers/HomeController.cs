@@ -53,7 +53,7 @@ namespace Checked.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return PartialView("_LoginPartial", model);
             }
             var user = await _userManager.FindByEmailAsync(model.Email);
             if(user != null)
