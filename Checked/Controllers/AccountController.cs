@@ -233,14 +233,14 @@ namespace Checked.Controllers
                 string confirmationLink = Url.Action("ChangePassword", "Account", new { userId = user.Id, token = code }, Request.Scheme) ?? "";
                 try
                 {
+                    string message = $"To change your password <a href='{HtmlEncoder.Default.Encode(confirmationLink)}'>click here</a>.<br/>" +
+                    $"Or copy o link <br/><span style=\"font-weight:bold\"> {HtmlEncoder.Default.Encode(confirmationLink)}</span><br/> and paste into your favorite browser.";
                     await _mailService.SendEmailAsync(new EmailRequest()
                     {
                         ToEmail = model.Email,
                         Subject = "Forgot Password.",
-                        Body = $"To change your password <a href='{HtmlEncoder.Default.Encode(confirmationLink)}'>click here</a>.<br/>" +
-                        $"Or copy o link <br/><span style=\"font-weight:bold\"> {HtmlEncoder.Default.Encode(confirmationLink)}</span><br/> and paste into your favorite browser."
+                        View = AlternateView.CreateAlternateViewFromString(message, null, MediaTypeNames.Text.Html)
                     });
-
                 }
                 catch (Exception)
                 {
@@ -329,7 +329,7 @@ namespace Checked.Controllers
                     {
                         ToEmail = model.Email,
                         Subject = "Faça parte do meu grupo.",
-                        View = Message(inviteLink,@$"Você recebeu um convite de {user.Name} para ingressar no grupo {org.Name}")
+                        View = Message(inviteLink, @$"Você recebeu um convite de {user.Name} para ingressar no grupo {org.Name}")
                     });
                     ModelState.AddModelError(string.Empty, response);
                 }
@@ -588,8 +588,8 @@ namespace Checked.Controllers
             var user = await _userManager.GetUserAsync(User);
             var result = await _context.Users.Where(c => c.OrganizationId.Equals(user.OrganizationId)).Select(c => new ApplicationUser()
             {
-                Id=c.Id,
-                Name=c.Name
+                Id = c.Id,
+                Name = c.Name
             }).ToListAsync();
             return Json(result);
         }
