@@ -139,7 +139,7 @@
                         <td class="tableCell">
                             @Html.DisplayFor(modelItem => item.CorrectiveAction)
                         </td>
-                        <td>
+                        <td data-isToolTip='false'>
                             <a asp-action="Edit" asp-route-idOccurrence="@item.Id">Editar  |</a>
                             <a asp-action="Details" asp-route-idOccurrence="@item.Id">Detalhes |</a>
                             <a asp-action="Delete" asp-route-idOccurrence="@item.Id">Delete</a>

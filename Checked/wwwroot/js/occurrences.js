@@ -60,7 +60,8 @@ const buscarOcorrenciasComFiltro = (query, button) => {
 
 
 function displayDataOccurrences(data, e) {
-    const bodyTable = document.getElementById("body-table-occurrence");
+    const bodyTable = document.getElementById("body-table-occurrence");    
+    const trClone = bodyTable.children.item(0).cloneNode(true);
     bodyTable.innerHTML = "";
     if (data.length <= 0) {
         const tr = document.createElement("tr")
@@ -68,36 +69,34 @@ function displayDataOccurrences(data, e) {
         bodyTable.appendChild(tr)
         return;
     }
-    for (let item in data) {
-
-        const tr = document.createElement("tr")
-
-        for (let element in data[item]) {
-            tr.innerHTML = `
-                <td class="tableCell">${data[item]["Tp_Ocorrencia"]["Name"]}</td>
-                <td class="tableCell">${new Intl.DateTimeFormat('pt-BR').format(new Date(data[item]["CreatedAt"]))}</td>
-                <td class="tableCell">${new Intl.DateTimeFormat('pt-BR').format(new Date(data[item]["DateOccurrence"]))}</td>
-                <td class="tableCell">${data[item]["Description"]}</td>
-                <td class="tableCell">${data[item]["Additional1"] ?? "N/D"}</td>
-                <td class="tableCell">${data[item]["Additional2"] ?? "N/D"}</td>
-                <td class="tableCell">${data[item]["Harmed"]}</td>
-                <td class="tableCell">${data[item]["Document"]}</td>
-                <td class="tableCell">${new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(data[item]["Cost"])}</td>
-                <td class="tableCell">${data[item]["Appraiser"]["Name"]}</td>
-                <td class="tableCell">${data[item]["Origin"]}</td>
-                <td class="tableCell"><a href="Plans/Index/${data[item]["Id"]}">Plano de ação</a></td>
-                <td class="tableCell">${data[item]["StatusActions"]}</td>
-                <td class="tableCell">${data[item]["Status"]["Name"]}</td>
-                <td class="tableCell">${data[item]["CorrectiveAction"] ?? "N/D"}</td>
-                <td class="tableCell">
-                    <a href="Occurrences/Edit?idOccurrence=${data[item]["Id"]}">Editar |</a>
-                    <a href="Occurrences/Details?idOccurrence=${data[item]["Id"]}">Detalhes |</a>
-                    <a href="Occurrences/Delete?idOccurrence=${data[item]["Id"]}">Delete</a>
-                </td>
-            `;
-        }
-        bodyTable.appendChild(tr);
-    }
+    const options = {
+        year: '2-digit', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit',
+        hour12: false        
+    };
+    data.forEach(item => {
+        let newClone = trClone.cloneNode(true)
+        newClone.children.item(0).innerText = item.Tp_Ocorrencia.Name;
+        newClone.children.item(1).innerText = new Intl.DateTimeFormat('pt-BR', options).format(new Date(item.CreatedAt));
+        newClone.children.item(2).innerText = new Intl.DateTimeFormat('pt-BR', options).format(new Date(item.DateOccurrence));
+        newClone.children.item(3).innerText = item.Description;
+        newClone.children.item(4).innerText = item.Additional1 ?? "N/D";
+        newClone.children.item(5).innerText = item.Additional2 ?? "N/D";
+        newClone.children.item(6).innerText = item.Harmed
+        newClone.children.item(7).innerText = item.Document
+        newClone.children.item(8).innerText = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(item.Cost);
+        newClone.children.item(9).innerText = item.Appraiser.Name
+        newClone.children.item(10).innerText = item.Origin
+        newClone.children.item(11).innerHtml = `<a href="Plans/Index/${item.Id}"> Plano de ação</a>`;
+        newClone.children.item(12).innerText = item.StatusActions;
+        newClone.children.item(13).innerText = item.Status.Name;
+        newClone.children.item(14).innerText = item.CorrectiveAction;
+        newClone.children.item(15).innerHtml = `
+                    <a href="Occurrences/Edit?idOccurrence=${item.Id}">Editar |</a>
+                    <a href="Occurrences/Details?idOccurrence=${item.Id}">Detalhes |</a>
+                    <a href="Occurrences/Delete?idOccurrence=${item.Id}">Delete</a>`
+        bodyTable.appendChild(newClone)
+    })
     listeners();
 }
 
@@ -394,11 +393,13 @@ listeners();
 
 
 function tooltipInfo(event) {
+    if (event.target.dataset.istooltip === 'false') {
+        return;
+    }
     let windowWidth = window.innerWidth;
     let LeftOrRight = event.clientX > (windowWidth - 200) ? "right" : "left";
     let position = event.clientX > (windowWidth - 200) ? 16 : event.clientX;
-    //console.log("cliente"+event.clientX)
-    //console.log("teste" + (windowWidth - 100) )
+
     let text = event.target.innerText;
     const div = document.createElement("div");
     div.setAttribute("id", "infoTip")
