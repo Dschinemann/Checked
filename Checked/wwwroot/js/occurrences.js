@@ -60,6 +60,7 @@ const buscarOcorrenciasComFiltro = (query, button) => {
 
 
 function displayDataOccurrences(data, e) {
+    console.log(data)
     const bodyTable = document.getElementById("body-table-occurrence");    
     const trClone = bodyTable.children.item(0).cloneNode(true);
     bodyTable.innerHTML = "";
@@ -75,7 +76,27 @@ function displayDataOccurrences(data, e) {
         hour12: false        
     };
     data.forEach(item => {
-        let newClone = trClone.cloneNode(true)
+        let newClone = trClone.cloneNode(true);
+        newClone.children.item(15).remove();
+
+        let linkEdit = document.createElement("a");
+        linkEdit.href = `Occurrences/Edit?idOccurrence=${item.Id}`;
+        linkEdit.innerText = "Editar | "
+
+        let linkDelete = document.createElement("a");
+        linkDelete.href = `Occurrences/Delete?idOccurrence=${item.Id}`;
+        linkDelete.innerText = "Delete";
+
+        let linkDetail = document.createElement("a");
+        linkDetail.href = `Occurrences/Details?idOccurrence=${item.Id}`;
+        linkDetail.innerText = "Detalhes | ";
+
+        let tdLinks = document.createElement("td");
+        tdLinks.setAttribute("data-istooltip", "false")
+        tdLinks.appendChild(linkEdit);
+        tdLinks.appendChild(linkDetail);
+        tdLinks.appendChild(linkDelete);
+
         newClone.children.item(0).innerText = item.Tp_Ocorrencia.Name;
         newClone.children.item(1).innerText = new Intl.DateTimeFormat('pt-BR', options).format(new Date(item.CreatedAt));
         newClone.children.item(2).innerText = new Intl.DateTimeFormat('pt-BR', options).format(new Date(item.DateOccurrence));
@@ -91,10 +112,12 @@ function displayDataOccurrences(data, e) {
         newClone.children.item(12).innerText = item.StatusActions;
         newClone.children.item(13).innerText = item.Status.Name;
         newClone.children.item(14).innerText = item.CorrectiveAction;
-        newClone.children.item(15).innerHtml = `
-                    <a href="Occurrences/Edit?idOccurrence=${item.Id}">Editar |</a>
-                    <a href="Occurrences/Details?idOccurrence=${item.Id}">Detalhes |</a>
-                    <a href="Occurrences/Delete?idOccurrence=${item.Id}">Delete</a>`
+
+        newClone.appendChild(tdLinks)
+
+        /*newClone.children.item(15).appendChild(linkEdit);
+        newClone.children.item(15).appendChild(linkDetail);
+        newClone.children.item(15).appendChild(linkDelete);*/
         bodyTable.appendChild(newClone)
     })
     listeners();

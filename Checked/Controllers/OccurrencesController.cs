@@ -180,7 +180,7 @@ namespace Checked.Controllers
                 .FirstOrDefaultAsync();
             if (occurrence != null)
             {
-                bool permitEdit = occurrence.AppraiserId.Equals(User.Identity.GetUserId()) | occurrence.CreatedById.Equals(User.Identity.GetUserId());
+                bool permitEdit = occurrence.AppraiserId.Equals(User.Identity.GetUserId()) | occurrence.CreatedById.Equals(User.Identity.GetUserId()) | User.IsInRole("Administrador");
                 if (!permitEdit)
                 {
                     ViewBag.Message = "Você não tem permissão para alterar o registro";
@@ -334,7 +334,7 @@ namespace Checked.Controllers
 
             if (occurrence != null)
             {
-                bool permitEdit = occurrence.AppraiserId.Equals(User.Identity.GetUserId()) | occurrence.CreatedById.Equals(User.Identity.GetUserId());
+                bool permitEdit = occurrence.AppraiserId.Equals(User.Identity.GetUserId()) | occurrence.CreatedById.Equals(User.Identity.GetUserId()) | User.IsInRole("Administrador");
                 if (!permitEdit)
                 {
                     ViewBag.Message = "Você não tem permissão para alterar o registro";
@@ -354,12 +354,20 @@ namespace Checked.Controllers
         // POST: Occurrences/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Occurrence occurrence)
+        public async Task<IActionResult> DeleteConfirmed([Bind("Id")]Occurrence occurrence)
         {
-            //var occurrence = await _context.Occurrences.FindAsync(idOccurrence);
-            _context.Occurrences.Remove(occurrence);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            //var deleteOccurrence = await _context.Occurrences.FindAsync(occurrence.Id);
+            try
+            {
+                _context.Occurrences.Remove(occurrence);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception e)
+            {
+                return View(nameof(Error), new ErrorViewModel() { Message = $"Não foi possível deletar essa ocorrência \n {e.Message}" });
+            }            
+            
         }
 
         private bool OccurrenceExists(string id)
