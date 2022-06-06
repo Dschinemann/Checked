@@ -25,6 +25,8 @@ namespace Checked.Controllers
         private readonly InviteService _inviteservice;
         private readonly CheckedDbContext _context;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly string Ip = "http://192.168.0.228:8088";  //http://179.220.52.155:8080 - http://192.168.0.228:8088
+
 
         public AccountController(
             ILogger<HomeController> logger,
@@ -121,14 +123,15 @@ namespace Checked.Controllers
                         }
                     }
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    string confirmationLink = Url.Action("ConfirmAccount", "Account", new { userId = user.Id, token = code }, Request.Scheme) ?? "";
+                    string confirmationLink = Url.Action("ConfirmAccount", "Account", new { userId = user.Id, token = code }, Request.Scheme) ?? "";//$"{Ip}/Account/ConfirmAccount?userId={user.Id}&token={code}";//Url.Action("ConfirmAccount", "Account", new { userId = user.Id, token = code }, Request.Scheme) ?? "";
                     try
                     {
                         await _mailService.SendEmailAsync(new EmailRequest()
                         {
                             ToEmail = model.Email,
                             Subject = "Email Confirm",
-                            Body = @$"Clique no <a href='{HtmlEncoder.Default.Encode(confirmationLink)}'>Link</a> para confirmar"
+                            View = AlternateView.CreateAlternateViewFromString(@$"Clique no <a href='{HtmlEncoder.Default.Encode(confirmationLink)}'>Link</a> para confirmar", null, MediaTypeNames.Text.Html),
+                            //Body = @$"Clique no <a href='{HtmlEncoder.Default.Encode(confirmationLink)}'>Link</a> para confirmar"
                         });
                     }
                     catch (Exception e)
@@ -230,7 +233,7 @@ namespace Checked.Controllers
                     return View(model);
                 }
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                string confirmationLink = Url.Action("ChangePassword", "Account", new { userId = user.Id, token = code }, Request.Scheme) ?? "";
+                string confirmationLink = Url.Action("ChangePassword", "Account", new { userId = user.Id, token = code }, Request.Scheme) ?? "";  //$"{Ip}/Account/ChangePassword?userId={user.Id}&token={code}";//Url.Action("ChangePassword", "Account", new { userId = user.Id, token = code }, Request.Scheme) ?? "";
                 try
                 {
                     string message = $"To change your password <a href='{HtmlEncoder.Default.Encode(confirmationLink)}'>click here</a>.<br/>" +
@@ -324,7 +327,7 @@ namespace Checked.Controllers
                             Name = model.Name
                         });
                     var org = await _context.Organizations.FirstAsync(c => c.Id.Equals(user.OrganizationId));
-                    string inviteLink = Url.Action("CreateUser", "Account", new { organizationId = model.OrganizationId }, Request.Scheme) ?? "";
+                    string inviteLink = Url.Action("CreateUser", "Account", new { organizationId = model.OrganizationId }, Request.Scheme) ?? ""; //$"{Ip}/Account/CreateUser?organizationId={model.OrganizationId}"; //Url.Action("CreateUser", "Account", new { organizationId = model.OrganizationId }, Request.Scheme) ?? "";
                     await _mailService.SendEmailAsync(new EmailRequest()
                     {
                         ToEmail = model.Email,
