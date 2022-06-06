@@ -263,7 +263,7 @@ namespace Checked.Controllers
                 occurrence.Additional1 = model.Additional1;
                 occurrence.Additional2 = model.Additional2;
                 occurrence.DateOccurrence = model.DataOccurrence;
-                string linkOccurrence = Url.Action("Details", "Occurrences", new { idOccurrence = }, Request.Scheme) ?? ""; //$"{Ip}/Occurrences/Details?idOccurrence={occurrence.Id}";   //Url.Action ("Details", "Occurrences", new { idOccurrence = }, Request.Scheme) ?? ""; 
+                string linkOccurrence = Url.Action("Details", "Occurrences", new { idOccurrence = occurrence.Id }, Request.Scheme) ?? ""; //$"{Ip}/Occurrences/Details?idOccurrence={occurrence.Id}";   //Url.Action ("Details", "Occurrences", new { idOccurrence = }, Request.Scheme) ?? ""; 
                 try
                 {
                     _context.Update(occurrence);
