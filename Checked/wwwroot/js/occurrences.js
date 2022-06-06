@@ -115,9 +115,6 @@ function displayDataOccurrences(data, e) {
 
         newClone.appendChild(tdLinks)
 
-        /*newClone.children.item(15).appendChild(linkEdit);
-        newClone.children.item(15).appendChild(linkDetail);
-        newClone.children.item(15).appendChild(linkDelete);*/
         bodyTable.appendChild(newClone)
     })
     listeners();
