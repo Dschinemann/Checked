@@ -25,7 +25,7 @@ namespace Checked.Controllers
         private readonly CheckedDbContext _context;
         private readonly Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> _userManager;
         private readonly IMailService _mailService;
-        private readonly string Ip = "http://179.220.52.155:8080";
+        private readonly string Ip = "http://192.168.0.228:8088";//http://179.220.52.155:8080 - http://192.168.0.228:8088
         public OccurrencesController(CheckedDbContext context, Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager, IMailService mailService)
         {
             _context = context;
@@ -141,7 +141,7 @@ namespace Checked.Controllers
                 occurrence.DateOccurrence = model.DataOccurrence;
                 var typeName = await _context.TP_Ocorrencias.FindAsync(model.TypeOccurrence);
                 _context.Occurrences.Add(occurrence);
-                string linkOccurrence = $"{Ip}/Occurrences/Details?idOccurrence={occurrence.Id}";//Url.Action("Details", "Occurrences", new { idOccurrence = model.Id }, Request.Scheme) ?? "";
+                string linkOccurrence = Url.Action("Details", "Occurrences", new { idOccurrence = model.Id }, Request.Scheme) ?? "";// $"{Ip}/Occurrences/Details?idOccurrence={occurrence.Id}";//Url.Action("Details", "Occurrences", new { idOccurrence = model.Id }, Request.Scheme) ?? "";
                 try
                 {
                     await _context.SaveChangesAsync();
@@ -263,7 +263,7 @@ namespace Checked.Controllers
                 occurrence.Additional1 = model.Additional1;
                 occurrence.Additional2 = model.Additional2;
                 occurrence.DateOccurrence = model.DataOccurrence;
-                string linkOccurrence = $"{Ip}/Occurrences/Details?idOccurrence={occurrence.Id}";   //Url.Action ("Details", "Occurrences", new { idOccurrence = }, Request.Scheme) ?? ""; 
+                string linkOccurrence = Url.Action("Details", "Occurrences", new { idOccurrence = }, Request.Scheme) ?? ""; //$"{Ip}/Occurrences/Details?idOccurrence={occurrence.Id}";   //Url.Action ("Details", "Occurrences", new { idOccurrence = }, Request.Scheme) ?? ""; 
                 try
                 {
                     _context.Update(occurrence);
