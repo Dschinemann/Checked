@@ -38,6 +38,16 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <div style="display:flex;align-items: end;">
+                                <div>
+                                    <label asp-for="Appraiser" class="control-label"></label>
+                                    <select asp-for="Appraiser" class="form-control" asp-items="@ViewBag.AppraiserId"></select>
+                                    <span asp-validation-for="Appraiser" class="text-danger"></span>
+                                </div>
+                                <a style="background-color:green; font-weight:bold" class="btn" asp-action="InviteUser" asp-controller="Account">+</a>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label asp-for="DataOccurrence" class="control-label"></label>
                             <input asp-for="DataOccurrence" class="form-control" />
                             <span asp-validation-for="DataOccurrence" class="text-danger"></span>
@@ -80,14 +90,9 @@
                             <span asp-validation-for="Cost" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <div style="display:flex;align-items: end;">
-                                <div>
-                                    <label asp-for="Appraiser" class="control-label"></label>
-                                    <select asp-for="Appraiser" class="form-control" asp-items="@ViewBag.AppraiserId"></select>
-                                    <span asp-validation-for="Appraiser" class="text-danger"></span>
-                                </div>
-                                <a style="background-color:green; font-weight:bold" class="btn" asp-action="InviteUser" asp-controller="Account">+</a>
-                            </div>
+                            <label asp-for="CorretiveAction" class="control-label"></label>
+                            <input asp-for="CorretiveAction" class="form-control" />
+                            <span asp-validation-for="CorretiveAction" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
@@ -98,6 +103,6 @@
 
 @section Scripts {
     @{
-    await Html.RenderPartialAsync("_ValidationScriptsPartial");
-}
-}
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

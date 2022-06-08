@@ -111,7 +111,7 @@ namespace Checked.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Description,Harmed,Document,Cost,Appraiser,Origin,Id,TypeOccurrence,Additional2,Additional1,CreatedById,DataOccurrence")] CreateOccurrenceModel model)
+        public async Task<IActionResult> Create([Bind("Description,Harmed,Document,Cost,Appraiser,Origin,Id,TypeOccurrence,Additional2,Additional1,CreatedById,DataOccurrence,CorretiveAction")] CreateOccurrenceModel model)
         {
             if (ModelState.IsValid)
             {
@@ -139,6 +139,7 @@ namespace Checked.Controllers
                 occurrence.Additional2 = model.Additional2;
                 occurrence.CreatedById = user.Id;
                 occurrence.DateOccurrence = model.DataOccurrence;
+                occurrence.CorrectiveAction = model.CorretiveAction;
                 var typeName = await _context.TP_Ocorrencias.FindAsync(model.TypeOccurrence);
                 _context.Occurrences.Add(occurrence);
                 string linkOccurrence = Url.Action("Details", "Occurrences", new { idOccurrence = model.Id }, Request.Scheme) ?? "";// $"{Ip}/Occurrences/Details?idOccurrence={occurrence.Id}";//Url.Action("Details", "Occurrences", new { idOccurrence = model.Id }, Request.Scheme) ?? "";

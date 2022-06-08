@@ -39,5 +39,8 @@ namespace Checked.Models.ViewModels
 
         [Display(Name = "Data da ocorrência")]
         public DateTime DataOccurrence { get; set; }
+
+        [Display(Name = "Ação corretiva")]
+        public string CorretiveAction { get; set; }
     }
 }
