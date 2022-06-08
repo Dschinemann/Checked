@@ -25,7 +25,7 @@ namespace Checked.Controllers
         private readonly CheckedDbContext _context;
         private readonly Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> _userManager;
         private readonly IMailService _mailService;
-        private readonly string Ip = "http://192.168.0.228:8088";//http://179.220.52.155:8080 - http://192.168.0.228:8088
+
         public OccurrencesController(CheckedDbContext context, Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager, IMailService mailService)
         {
             _context = context;
