@@ -33,7 +33,8 @@ namespace Checked.Servicos.ControllerServices
                        Description = s.Description,
                        OrganizationId = s.OrganizationId,
                        Status = new TP_StatusOccurence() { Name = s.Status.Name},
-                       StatusId = s.StatusId
+                       StatusId = s.StatusId,
+                       AppraiserId = s.AppraiserId
                    })
                    .ToListAsync();
 
