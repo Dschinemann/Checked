@@ -25,8 +25,6 @@ namespace Checked.Controllers
         private readonly InviteService _inviteservice;
         private readonly CheckedDbContext _context;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly string Ip = "http://192.168.0.228:8088";  //http://179.220.52.155:8080 - http://192.168.0.228:8088
-
 
         public AccountController(
             ILogger<HomeController> logger,
