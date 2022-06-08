@@ -9,7 +9,6 @@ using Checked.Servicos.Email;
 using Checked.Servicos;
 using Checked.Servicos.ControllerServices;
 using Checked.Servicos.InviteService;
-using Microsoft.AspNetCore.Mvc.Razor;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 
@@ -35,7 +34,10 @@ builder.Services.AddScoped<TaskService>();
 // CheckedContextConnectionDeveloper
 
 var connectionString = builder.Configuration.GetConnectionString("CheckedContextConnection");
-builder.Services.AddDbContext<CheckedDbContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
+builder.Services.AddDbContext<CheckedDbContext>(options => {
+    options.UseNpgsql(connectionString);
+    AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior",true);
+    });
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<CheckedDbContext>()

@@ -88,7 +88,7 @@ namespace Checked.Controllers
             {
                 task.Id = Guid.NewGuid().ToString();
                 task.UserId = user.Id;
-                task.StatusID = 1;                  
+                task.StatusID = 2; //Pendente                 
                 _context.Tasks.Add(task);
                 await _context.SaveChangesAsync();
 
