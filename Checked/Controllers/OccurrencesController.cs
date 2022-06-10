@@ -477,8 +477,10 @@ namespace Checked.Controllers
             }
             if (sqlFilters.Count > 0)
             {
+                var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
                 List<Occurrence> occurrences = await _context.Occurrences
                     .FromSqlRaw($"Select * from dbo.Occurrences where 1=1{String.Join(" ", sqlFilters)}")
+                    .Where(c => c.OrganizationId == user.OrganizationId)
                     .Include(o => o.Appraiser)
                     .Include(o => o.Tp_Ocorrencia)
                     .Include(o => o.Status)                   
