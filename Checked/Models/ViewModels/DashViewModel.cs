@@ -1,4 +1,5 @@
 ﻿using Checked.Models.Enums;
+using Checked.Models.Models;
 using Checked.Models.Types;
 
 namespace Checked.Models.ViewModels
@@ -13,6 +14,8 @@ namespace Checked.Models.ViewModels
         public List<SummaryPerWeek> WeekSummary { get; set; }
         public List<SummaryOccurrencesPerStatus> SummaryOccurrencesPerStatuses { get; set; }
         public List<SummarryOccurrencePerName> SummarryOccurrencePerNames { get; set; }
+
+        public List<Occurrence> Occurrences { get; set; }
     }
     public class ActionsSummary
     {

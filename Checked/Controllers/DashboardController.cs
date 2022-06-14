@@ -51,6 +51,7 @@ namespace Checked.Controllers
                     SummaryOccurrencesPerStatuses = summaryOccurrencesPerStatus,
                     SummarryOccurrencePerNames = summarryOccurrencePerName
                 };
+                model.Occurrences = await _service.GetOccurrencesAsync(user.OrganizationId);
             }
             return View(model);
         }

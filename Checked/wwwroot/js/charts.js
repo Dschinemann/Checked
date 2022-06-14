@@ -1,182 +1,410 @@
-﻿google.charts.load('current', { 'packages': ['corechart'] });
-google.charts.load('current', { 'packages': ['corechart', 'bar'] });
-google.charts.setOnLoadCallback(drawChartPie);
-google.charts.setOnLoadCallback(drawChartArea);
-google.charts.setOnLoadCallback(drawChartComboChart);
+﻿let screenWidth = window.screen.width;
+let screenHeight = window.screen.height;
 
-const windowWidth = window.screen.availWidth;
-const windowHeight = window.screen.availHeight;
+let selectTipo = document.querySelector("#options");
+let selectCusto = document.querySelector("#optionsCost");
 
-function drawChartPie() {
+selectTipo.addEventListener("change", (e) => {
+    drawColumnCharts(e.target.value, selectCusto.value);
+    drawDonutChart(e.target.value, selectCusto.value);
+})
 
-    let arrayChart = [['Status', 'Ocorrencias por Status']];
-    chartOccurrencePerStatus.forEach(c => {
-        arrayChart.push([c.status, c.Quantidade])
-    });
+selectCusto.addEventListener("change", (e) => {
+    drawColumnCharts(selectTipo.value, e.target.value);
+    drawDonutChart(selectTipo.value, e.target.value);
+})
 
-    var data = google.visualization.arrayToDataTable(arrayChart);
+let selectDate = document.querySelector("#options-date");
+let selectCustoPorMes = document.querySelector("#optionsSumMonth");
 
-    var options = {
-        title: 'Ocorrências por Status',
-        legend: {
-            position: 'bottom',
-            textStyle: {
-                fontSize: 10,
-                bold: true
+selectDate.addEventListener("change", (e) => {
+    drawColumnChartMonth(e.target.value, selectCustoPorMes.value)
+})
+
+selectCustoPorMes.addEventListener("change", (e) => {
+    drawColumnChartMonth(selectDate.value, e.target.value)
+})
+
+/***
+ * 
+ * Column chart Custo mensal
+ * /
+ * */
+
+
+
+drawColumnChartMonth()
+function drawColumnChartMonth(tipoData = "CreatedAt", tipoCalculo = "Somar") {    
+    let custoPorMes = []
+    dataCharts.forEach(ocorrencia => {
+        if (tipoCalculo === "Somar") {
+            if (custoPorMes[new Date(ocorrencia[tipoData]).getMonth()]) {
+                custoPorMes[new Date(ocorrencia[tipoData]).getMonth()] = custoPorMes[new Date(ocorrencia[tipoData]).getMonth()] + ocorrencia.Cost;
+            } else {
+                custoPorMes[new Date(ocorrencia[tipoData]).getMonth()] = ocorrencia.Cost;
             }
-        },
-        backgroundColor: "#e5e5e5",
-        is3D: true,
-        width: (windowWidth * 18) / 100,
-        chartArea: {
-            left: 20, top: 0, width: '90%', height: '75%'
+        } else {
+            if (custoPorMes[new Date(ocorrencia[tipoData]).getMonth()]) {
+                custoPorMes[new Date(ocorrencia[tipoData]).getMonth()] = custoPorMes[new Date(ocorrencia[tipoData]).getMonth()] + 1;
+            } else {
+                custoPorMes[new Date(ocorrencia[tipoData]).getMonth()] = 1;
+            }
         }
-    };
-
-    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-    chart.draw(data, options);
-}
-
-function drawChartArea() {
-    const costPerWeek = [
-        ["Semana", "Custo"]
-    ];
-    chartCostPerWeek.forEach(c => {
-        costPerWeek.push([c.Week, c.Cost]);
+        //
     })
-
-    var data = google.visualization.arrayToDataTable(costPerWeek);
-
-    var options = {
-        title: 'Total de gastos com ocorrencias',
-        //hAxis: { title: 'Year', titleTextStyle: { color: '#333' } },
-        vAxis: { minValue: 0 },        
-        chartArea: {
-            //width: '0%'
-        },
-        height: `${(windowHeight * 40) / 100}`
-    };
-    var chart = new google.visualization.AreaChart(document.getElementById('chartArea'));
-    chart.draw(data, options);
-}
-
-function drawChartComboChart() {
-    var data = google.visualization.arrayToDataTable(arrayForComboChart())
-    var materialOptions = {
-        width: (windowWidth * 50) / 100,        
-        chart: {
-            title: 'Ocorrências',
-            subtitle: 'Custo das Ocorrências dos últimos seis meses'
-        },
-        titleTextStyle: {
-            color: "#d95f02"
-        },
-        series: {
-            0: { axis: 'distance' }, // Bind series 0 to an axis named 'distance'.
-            1: { axis: 'brightness' } // Bind series 1 to an axis named 'brightness'.
-        },
-        axes: {
-            y: {
-                distance: { label: 'Prejuízo em R$' }, // Left y-axis.                
-            }
-        },
-        bar: { groupWidth: "95%" },
-        legend: {
-            position: 'bottom',
-            textStyle: { color: 'blue', fontSize: 10 },
+    for (let index = 0; index < 12; index++) {
+        const element = custoPorMes[index];
+        if (!element) {
+            custoPorMes[index] = 0;
         }
     }
-    var chart = new google.charts.Bar(document.getElementById('columnChart'));
+    atualizarColumnChartMonth(custoPorMes)
+}
 
-    google.visualization.events.addListener(chart, 'ready', function () {
-        var labels = document.getElementsByTagName('text');
-        for (var i = 0; i < labels.length; i++) {
-            if (labels[i].innerHTML === materialOptions.chart.subtitle) {
-                labels[i].style.fill = '#333c46';
-                //labels[i].style.fontFamily = 'Courier';
-                break;
+function atualizarColumnChartMonth(custoPorMes) {
+    let ehContagem = selectCustoPorMes.value === "Somar" ? "R$" : "";
+
+    let columnData = {
+        "graphset": [{
+            "type": "bar3d",
+            "title": {
+                "text": "Mensal de ocorrências"
+            },
+            tooltip: {
+                text: `${ehContagem} %node-value`
+            },
+            "3d-aspect": {
+                "true3d": false,
+                depth: "15px"
+            },
+            plot: {
+                decimals: 2,
+                facets: {
+                    front: {
+                        'background-color': "#3EA4F9 #0055BF"
+                    },
+                    right: {
+                        'background-color': "#3EA4F9 #0055BF"
+                    },
+                    left: {
+                        'background-color': "#3EA4F9 #0055BF"
+                    },
+                    top: {
+                        'background-color': "white"
+                    },
+                    bottom: {
+                        'background-color': "white"
+                    }
+                }
+            },
+            'scale-x': {
+                labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"] /* Scale Labels */
+            },
+            "series": [{
+                "values": custoPorMes
             }
-        }
+            ]
+        }]
+    };
+
+    zingchart.render({
+        id: 'myChart3',
+        data: columnData,
+        height: "90%",
+        width: "100%"
     });
-    chart.draw(data, google.charts.Bar.convertOptions(materialOptions))
-};
+}
 
-
-const arrayWithOccurrencesPerName = [];
-function arrayForComboChart() {
-    const occurrenceName = ['Mês'];
-
-    chartOccurrencePerNames.forEach(e => {
-        if (occurrenceName.length == 0) {
-            occurrenceName.push(e.Name)
-        } else {
-            if (occurrenceName.findIndex(ele => ele == e.Name) == -1) {
-                occurrenceName.push(e.Name)
-            }
-        }
-    });
-    arrayWithOccurrencesPerName.push(occurrenceName);
-
-    chartOccurrencePerNames.forEach((e) => {
-        const occurrenceDetail = [];
-        const typeIndex = arrayWithOccurrencesPerName[0].findIndex(ele => ele == e.Name)
-        const indexMonth = searchIndeMonth(month(e.Month));
-
-
-        if (indexMonth != -1) {
-            arrayWithOccurrencesPerName[indexMonth][typeIndex] = e.Cost;
-        } else {
-            occurrenceDetail[0] = month(e.Month);
-            for (i = 1; i < arrayWithOccurrencesPerName[0].length; i++) {
-                if (i != typeIndex) {
-                    occurrenceDetail[i] = 0;
+/***
+ * 
+ * Donut chart
+ * 
+ */
+drawDonutChart();
+function drawDonutChart(tipoFiltro = "Tp_Ocorrencia", somarOuContar = "Somar") {
+    let arrayDeTiposDeOcorrencia = [];
+    dataCharts.forEach(ocorrencia => {
+        if (tipoFiltro === "Tp_Ocorrencia" || tipoFiltro === "Status") {
+            if (arrayDeTiposDeOcorrencia.length <= 0) {
+                arrayDeTiposDeOcorrencia.push({
+                    values: [ocorrencia.Cost],
+                    text: ocorrencia[tipoFiltro].Name
+                })
+            } else {
+                let index = arrayDeTiposDeOcorrencia.findIndex(ele => {
+                    return ele.text === ocorrencia[tipoFiltro].Name;
+                })
+                if (index !== -1) {
+                    arrayDeTiposDeOcorrencia[index].values = [parseFloat(arrayDeTiposDeOcorrencia[index].values) + ocorrencia.Cost]
                 } else {
-                    occurrenceDetail[i] = e.Cost
+                    arrayDeTiposDeOcorrencia.push({
+                        values: [ocorrencia.Cost],
+                        text: ocorrencia[tipoFiltro].Name
+                    })
                 }
             }
-            arrayWithOccurrencesPerName.push(occurrenceDetail);
+        }
+        if (tipoFiltro === "Harmed" || tipoFiltro === "Origin") {
+            if (arrayDeTiposDeOcorrencia.length <= 0) {
+                if (somarOuContar === "Somar") {
+                    arrayDeTiposDeOcorrencia.push({
+                        values: [ocorrencia.Cost],
+                        text: ocorrencia[tipoFiltro]
+                    })
+                } else {
+                    arrayDeTiposDeOcorrencia.push({
+                        values: [1],
+                        text: ocorrencia[tipoFiltro]
+                    })
+                }
+
+            } else {
+                let index = arrayDeTiposDeOcorrencia.findIndex(ele => {
+                    return ele.text === ocorrencia[tipoFiltro];
+                })
+                if (index !== -1) {
+                    if (somarOuContar === "Somar") {
+                        arrayDeTiposDeOcorrencia[index].values = [parseFloat(arrayDeTiposDeOcorrencia[index].values) + ocorrencia.Cost]
+                    } else {
+                        arrayDeTiposDeOcorrencia[index].values = [parseFloat(arrayDeTiposDeOcorrencia[index].values) + 1]
+                    }
+                } else {
+                    if (somarOuContar === "Somar") {
+                        arrayDeTiposDeOcorrencia.push({
+                            values: [ocorrencia.Cost],
+                            text: ocorrencia[tipoFiltro]
+                        })
+                    } else {
+                        arrayDeTiposDeOcorrencia.push({
+                            values: [1],
+                            text: ocorrencia[tipoFiltro]
+                        })
+                    }
+                }
+            }
         }
     })
-    return arrayWithOccurrencesPerName;
+    atualizarDonutChart(arrayDeTiposDeOcorrencia);
 }
-function searchIndeMonth(month) {
-    let index = -1;
-    arrayWithOccurrencesPerName.forEach((e, ind) => {
-        if (e.findIndex(c => c == month) != -1) {
-            index = ind;
+function atualizarDonutChart(arrayDeTiposDeOcorrencia) {
+    let dataDonut = {
+        type: "ring3d",
+        plot: {
+            "value-box": {
+                "font-size": 10,
+                "font-weight": "normal",
+                "placement": "out"
+            },
+            tooltip: {
+                fontSize: '10',
+                fontFamily: "Open Sans",
+                padding: "5 10",
+                text: "%plot-text%t %node-percent-value%"
+            },
+            animation: {
+                effect: 2,
+                method: 5,
+                speed: 900,
+                sequence: 1,
+                delay: 3000
+            }
+        },
+        scale: {
+            "size-factor": 0.5
+        },
+        plotarea: {
+            margin: "20 20 20 20"
+        },
+        series: arrayDeTiposDeOcorrencia
+    };
+
+    zingchart.render({
+        id: 'myChart2',
+        data: dataDonut,
+        height: "90%",
+        width: "100%"
+    });
+}
+
+drawTreemapChart()
+function drawTreemapChart() {
+    let tiposDeOcorrencia = [];
+
+    dataCharts.forEach(ocorrencia => {
+        if (tiposDeOcorrencia.length === 0) {
+            tiposDeOcorrencia.push({
+                text: ocorrencia.Tp_Ocorrencia.Name,
+                children: [{
+                    text: ocorrencia.Harmed,
+                    value: 1
+                }]
+            })
+        } else {
+            let index = tiposDeOcorrencia.findIndex(ele => ele.text === ocorrencia.Tp_Ocorrencia.Name)
+            if (index === -1) {
+                tiposDeOcorrencia.push({
+                    text: ocorrencia.Tp_Ocorrencia.Name,
+                    children: [{
+                        text: ocorrencia.Harmed,
+                        value: 1
+                    }]
+                })
+            } else {
+                let childIndex = tiposDeOcorrencia[index].children.findIndex(ele => ele.text === ocorrencia.Harmed)
+                if (childIndex === -1) {
+                    tiposDeOcorrencia[index].children.push({
+                        text: ocorrencia.Harmed,
+                        value: 1
+                    });
+                } else {
+                    tiposDeOcorrencia[index].children[childIndex].value = tiposDeOcorrencia[index].children[childIndex].value + 1;
+                }
+            }
         }
     })
-    return index;
-}
 
-function month(intMonth) {
-    switch (intMonth) {
-        case 1:
-            return 'Jan'
-        case 2:
-            return 'Fev'
-        case 3:
-            return 'Mar'
-        case 4:
-            return 'Abr'
-        case 5:
-            return 'Mai'
-        case 6:
-            return 'Jun'
-        case 7:
-            return 'Jul'
-        case 8:
-            return 'Ago'
-        case 9:
-            return 'Set'
-        case 10:
-            return 'Out'
-        case 11:
-            return 'Nov'
-        case 12:
-            return 'Dex'
-
-        default:
-            break;
+    let treemapChart = {
+        graphset: [{
+            type: "treemap",
+            plotarea: {
+                margin: "0 0 30 0"
+            },
+            options: {
+                "aspect-type": "transition",
+                "color-start": "#c00",
+                "color-end": "#300"
+            },
+            series: tiposDeOcorrencia
+        }]
     }
-};
+
+    zingchart.render({
+        id: 'myChart5',
+        data: treemapChart,
+        height: ((screenHeight * 100) / 100),
+        width: "100%"
+    });
+}
+
+/********************
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
+
+
+drawColumnCharts("Tp_Ocorrencia", "Somar")
+
+function drawColumnCharts(tipoFiltro, somarOuContar) {
+    let arrayDeTiposDeOcorrencia = [];
+    let series = [];
+    dataCharts.forEach(ocorrencia => {
+        if (tipoFiltro === "Status" || tipoFiltro === "Tp_Ocorrencia") {
+            if (arrayDeTiposDeOcorrencia.length === 0) {
+                arrayDeTiposDeOcorrencia.push(ocorrencia[tipoFiltro].Name)
+                if (somarOuContar === "Somar") {
+                    series.push({ "values": [ocorrencia.Cost] })
+                } else {
+                    series.push({ "values": [1] })
+                }
+
+            } else {
+                let existeEsteTipo = arrayDeTiposDeOcorrencia.findIndex(tipo => tipo === ocorrencia[tipoFiltro].Name)
+                if (existeEsteTipo !== -1) {
+                    if (somarOuContar === "Somar") {
+                        series[0].values[existeEsteTipo] = (series[0].values[existeEsteTipo] + ocorrencia.Cost)
+                    } else {
+                        series[0].values[existeEsteTipo] = (series[0].values[existeEsteTipo] + 1)
+                    }
+                } else {
+                    arrayDeTiposDeOcorrencia.push(ocorrencia[tipoFiltro].Name)
+                    if (somarOuContar === "Somar") {
+                        series[0].values.push(ocorrencia.Cost)
+                    } else {
+                        series[0].values.push(1)
+                    }
+                }
+            }
+            return;
+        };
+        if (tipoFiltro === "Harmed" || tipoFiltro === "Origin") {
+            if (arrayDeTiposDeOcorrencia.length === 0) {
+                arrayDeTiposDeOcorrencia.push(ocorrencia[tipoFiltro])
+                if (somarOuContar === "Somar") {
+                    series.push({ "values": [ocorrencia.Cost] })
+                } else {
+                    series.push({ "values": [1] })
+                }
+            } else {
+                let existeEsteTipo = arrayDeTiposDeOcorrencia.findIndex(tipo => tipo === ocorrencia[tipoFiltro])
+                if (existeEsteTipo !== -1) {
+                    if (somarOuContar === "Somar") {
+                        series[0].values[existeEsteTipo] = (series[0].values[existeEsteTipo] + ocorrencia.Cost)
+                    } else {
+                        series[0].values[existeEsteTipo] = (series[0].values[existeEsteTipo] + 1)
+                    }
+                } else {
+                    arrayDeTiposDeOcorrencia.push(ocorrencia[tipoFiltro])
+                    if (somarOuContar === "Somar") {
+                        series[0].values.push(ocorrencia.Cost)
+                    } else {
+                        series[0].values.push(1)
+                    }
+                }
+            }
+        };
+    })
+    atualizarChart(arrayDeTiposDeOcorrencia, series)
+}
+
+
+function atualizarChart(arrayDeTiposDeOcorrencia, series) {
+    let ehContagem = selectCusto.value === "Somar" ? "R$" : "";
+    let data = {
+        "graphset": [{
+            "type": "bar3d",
+            "title": {
+                "text": "Custo de Ocorrências"
+            },
+            "3d-aspect": {
+                "true3d": false,
+                depth: "15px"
+            },
+            tooltip: {
+                text: `${ehContagem} %node-value`
+            },
+            plot: {
+                decimals: 2,
+                facets: {
+                    front: {
+                        'background-color': "#3EA4F9 #0055BF"
+                    },
+                    right: {
+                        'background-color': "#3EA4F9 #0055BF"
+                    },
+                    left: {
+                        'background-color': "#3EA4F9 #0055BF"
+                    },
+                    top: {
+                        'background-color': "white"
+                    },
+                    bottom: {
+                        'background-color': "white"
+                    }
+                }
+            },
+            'scale-x': {
+                labels: arrayDeTiposDeOcorrencia// [ "Jan", "Feb", "March", "April" ] /* Scale Labels */
+            },
+            "series": series
+        }]
+    };
+    zingchart.render({
+        id: 'myChart',
+        data: data,
+        height: "90%",
+        width: "100%"
+    });
+}

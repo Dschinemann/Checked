@@ -164,6 +164,25 @@ namespace Checked.Servicos
                 })
                 .ToListAsync();
         }
+
+        public async Task<List<Occurrence>> GetOccurrencesAsync(string id)
+        {
+            return await _context.Occurrences
+                .Where(c => c.OrganizationId == id)
+                .Include(o => o.Status)
+                .Include(o => o.Tp_Ocorrencia)
+                .Select( x => new Occurrence
+                {
+                    Tp_Ocorrencia = x.Tp_Ocorrencia,
+                    Harmed = x.Harmed,
+                    Origin = x.Origin,
+                    Status = x.Status,
+                    Cost   = x.Cost,
+                    CreatedAt = x.CreatedAt,
+                    DateOccurrence = x.DateOccurrence
+                })
+                .ToListAsync();
+        }
     }
 
 }
