@@ -43,6 +43,11 @@
 /*
 selects
 */
-.selects{
-    width:30%;
+.selects {
+    display: flex;
+    align-items: center;
 }
+
+    .selects div {
+        margin-left: 20px;
+    }

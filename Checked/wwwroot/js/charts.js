@@ -34,9 +34,9 @@ selectCustoPorMes.addEventListener("change", (e) => {
 
 
 drawColumnChartMonth()
-function drawColumnChartMonth(tipoData = "CreatedAt", tipoCalculo = "Somar") {    
+function drawColumnChartMonth(tipoData = "CreatedAt", tipoCalculo = "Somar", listaDeOcorrencias = dataCharts) {    
     let custoPorMes = []
-    dataCharts.forEach(ocorrencia => {
+    listaDeOcorrencias.forEach(ocorrencia => {
         if (tipoCalculo === "Somar") {
             if (custoPorMes[new Date(ocorrencia[tipoData]).getMonth()]) {
                 custoPorMes[new Date(ocorrencia[tipoData]).getMonth()] = custoPorMes[new Date(ocorrencia[tipoData]).getMonth()] + ocorrencia.Cost;
@@ -121,9 +121,9 @@ function atualizarColumnChartMonth(custoPorMes) {
  * 
  */
 drawDonutChart();
-function drawDonutChart(tipoFiltro = "Tp_Ocorrencia", somarOuContar = "Somar") {
+function drawDonutChart(tipoFiltro = "Tp_Ocorrencia", somarOuContar = "Somar", listaDeOcorrencias = dataCharts) {
     let arrayDeTiposDeOcorrencia = [];
-    dataCharts.forEach(ocorrencia => {
+    listaDeOcorrencias.forEach(ocorrencia => {
         if (tipoFiltro === "Tp_Ocorrencia" || tipoFiltro === "Status") {
             if (arrayDeTiposDeOcorrencia.length <= 0) {
                 arrayDeTiposDeOcorrencia.push({
@@ -227,10 +227,10 @@ function atualizarDonutChart(arrayDeTiposDeOcorrencia) {
 }
 
 drawTreemapChart()
-function drawTreemapChart() {
+function drawTreemapChart(listaDeOcorrencias = dataCharts) {
     let tiposDeOcorrencia = [];
 
-    dataCharts.forEach(ocorrencia => {
+    listaDeOcorrencias.forEach(ocorrencia => {
         if (tiposDeOcorrencia.length === 0) {
             tiposDeOcorrencia.push({
                 text: ocorrencia.Tp_Ocorrencia.Name,
@@ -297,10 +297,10 @@ function drawTreemapChart() {
 
 drawColumnCharts("Tp_Ocorrencia", "Somar")
 
-function drawColumnCharts(tipoFiltro, somarOuContar) {
+function drawColumnCharts(tipoFiltro = "Tp_Ocorrencia", somarOuContar = "Somar", listaDeOcorrencias = dataCharts) {
     let arrayDeTiposDeOcorrencia = [];
     let series = [];
-    dataCharts.forEach(ocorrencia => {
+    listaDeOcorrencias.forEach(ocorrencia => {
         if (tipoFiltro === "Status" || tipoFiltro === "Tp_Ocorrencia") {
             if (arrayDeTiposDeOcorrencia.length === 0) {
                 arrayDeTiposDeOcorrencia.push(ocorrencia[tipoFiltro].Name)
