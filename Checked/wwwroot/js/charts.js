@@ -5,13 +5,29 @@ let selectTipo = document.querySelector("#options");
 let selectCusto = document.querySelector("#optionsCost");
 
 selectTipo.addEventListener("change", (e) => {
-    drawColumnCharts(e.target.value, selectCusto.value);
-    drawDonutChart(e.target.value, selectCusto.value);
+    let inputStartDate = document.querySelector("#start-date")
+    let inputEndDate = document.querySelector("#end-date");
+
+    if (inputStartDate.value === "" || inputEndDate.value === "") {
+        drawColumnCharts(e.target.value, selectCusto.value);
+        drawDonutChart(e.target.value, selectCusto.value);
+    } else {
+        verificaData()
+    }
+
 })
 
 selectCusto.addEventListener("change", (e) => {
-    drawColumnCharts(selectTipo.value, e.target.value);
-    drawDonutChart(selectTipo.value, e.target.value);
+    let inputStartDate = document.querySelector("#start-date")
+    let inputEndDate = document.querySelector("#end-date");
+
+    if (inputStartDate.value === "" || inputEndDate.value === "") {
+        drawColumnCharts(selectTipo.value, e.target.value);
+        drawDonutChart(selectTipo.value, e.target.value);
+    } else {
+        verificaData()
+    }
+
 })
 
 let selectDate = document.querySelector("#options-date");
@@ -34,7 +50,7 @@ selectCustoPorMes.addEventListener("change", (e) => {
 
 
 drawColumnChartMonth()
-function drawColumnChartMonth(tipoData = "CreatedAt", tipoCalculo = "Somar", listaDeOcorrencias = dataCharts) {    
+function drawColumnChartMonth(tipoData = "CreatedAt", tipoCalculo = "Somar", listaDeOcorrencias = dataCharts) {
     let custoPorMes = []
     listaDeOcorrencias.forEach(ocorrencia => {
         if (tipoCalculo === "Somar") {
