@@ -79,12 +79,12 @@ function drawColumnChartMonth(tipoData = "CreatedAt", tipoCalculo = "Somar", lis
 
 function atualizarColumnChartMonth(custoPorMes) {
     let ehContagem = selectCustoPorMes.value === "Somar" ? "R$" : "";
-
+    let tituloDoGrafico = selectCustoPorMes.value === "Somar" ? "Soma" : "Contagem";
     let columnData = {
         "graphset": [{
             "type": "bar3d",
             "title": {
-                "text": "Mensal de ocorrências"
+                "text": `${tituloDoGrafico} Mensal de ocorrências`
             },
             tooltip: {
                 text: `${ehContagem} %node-value`
@@ -378,11 +378,12 @@ function drawColumnCharts(tipoFiltro = "Tp_Ocorrencia", somarOuContar = "Somar",
 
 function atualizarChart(arrayDeTiposDeOcorrencia, series) {
     let ehContagem = selectCusto.value === "Somar" ? "R$" : "";
+    let tituloDoGrafico = selectCusto.value === "Somar" ? "Soma de Custo": "Contagem"
     let data = {
         "graphset": [{
             "type": "bar3d",
             "title": {
-                "text": "Custo de Ocorrências"
+                "text": `${tituloDoGrafico} de Ocorrências`
             },
             "3d-aspect": {
                 "true3d": false,
@@ -412,7 +413,7 @@ function atualizarChart(arrayDeTiposDeOcorrencia, series) {
                 }
             },
             'scale-x': {
-                labels: arrayDeTiposDeOcorrencia// [ "Jan", "Feb", "March", "April" ] /* Scale Labels */
+                labels: arrayDeTiposDeOcorrencia
             },
             "series": series
         }]

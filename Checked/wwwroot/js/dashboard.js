@@ -41,7 +41,7 @@
     }
 
     function atualizaDashboard() {
-        let tipoFiltro = checkDataOcorrencia.checked ? "CreatedAt" : "DateOccurrence";
+        let tipoFiltro = checkDataCadastro.checked ? "CreatedAt" : "DateOccurrence";
         let selectTipo = document.querySelector("#options");
         let selectCusto = document.querySelector("#optionsCost");
         let novoArray = dataCharts.filter(ele => {
@@ -50,7 +50,7 @@
             } else {
                 return false;
             }
-        })        
+        }) 
         drawColumnCharts(selectTipo.value, selectCusto.value, novoArray);
         drawTreemapChart(novoArray);
         drawDonutChart(selectTipo.value, selectCusto.value, novoArray)
