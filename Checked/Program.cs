@@ -31,6 +31,7 @@ builder.Services.AddScoped<PlansService>();
 builder.Services.AddScoped<TaskService>();
 
 
+
 // CheckedContextConnectionDeveloper
 
 var connectionString = builder.Configuration.GetConnectionString("CheckedContextConnection");

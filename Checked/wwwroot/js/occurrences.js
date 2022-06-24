@@ -60,8 +60,7 @@ const buscarOcorrenciasComFiltro = (query, button) => {
 
 
 function displayDataOccurrences(data, e) {
-    console.log(data)
-    const bodyTable = document.getElementById("body-table-occurrence");    
+    const bodyTable = document.getElementById("body-table-occurrence");
     const trClone = bodyTable.children.item(0).cloneNode(true);
     bodyTable.innerHTML = "";
     if (data.length <= 0) {
@@ -73,7 +72,7 @@ function displayDataOccurrences(data, e) {
     const options = {
         year: '2-digit', month: '2-digit', day: '2-digit',
         hour: '2-digit', minute: '2-digit',
-        hour12: false        
+        hour12: false
     };
     data.forEach(item => {
         let newClone = trClone.cloneNode(true);
@@ -434,4 +433,125 @@ function removeToolTip(event) {
     if (document.querySelector("#infoTip")) {
         document.querySelector("#infoTip").remove();
     }
+}
+
+/**
+ *
+ * ocultar e expandir colunas
+ * 
+ */
+
+const buttonExpandirOuReduzir = document.querySelectorAll(".arrow")
+buttonExpandirOuReduzir.forEach((element, index) => {
+    element.addEventListener("click", (elementI) => {       
+        let armLocal = localStorage.getItem('tabelaOcorrencia');
+
+        let arrayDeColunasDaTabela = [];
+
+        if (armLocal) {
+            arrayDeColunasDaTabela = armLocal.split(',')
+        }
+
+        let containerColuna = document.querySelector("#colunas-ocultas");
+
+        let newDiv = document.createElement("div");
+        newDiv.classList.add("btn", "btn-outline-primary", "coluna-oculta");        
+        
+
+
+        let icon = document.createElement("i");
+        icon.classList.add("bx", "bx-x", "bx-sm");
+        icon.dataset.position = elementI.target.dataset.position;
+        icon.addEventListener("click", elementDiv => {            
+            mostrarColuna(elementDiv, elementDiv.target.dataset.position)
+        })
+
+        let span = document.createElement("span");
+        span.innerText = elementI.target.parentElement.innerText;
+
+        newDiv.appendChild(icon);
+        newDiv.appendChild(span);
+
+        let coluna = document.querySelector(`.col${elementI.target.dataset.position}`)
+        coluna.style.visibility = 'collapse';
+
+        arrayDeColunasDaTabela[elementI.target.dataset.position] = 0;
+        containerColuna.appendChild(newDiv);
+
+        salvarColunasOcultasLocalStorage(arrayDeColunasDaTabela);
+
+    })
+})
+
+function mostrarColuna(e, index) {
+    
+    let armLocal = localStorage.getItem('tabelaOcorrencia');
+    let arrayDeColunasDaTabela = [];
+
+    if (armLocal) {
+        arrayDeColunasDaTabela = armLocal.split(',');
+    }
+    arrayDeColunasDaTabela[index] = 1;
+    
+    let coluna = document.querySelector(`.col${index}`)
+    coluna.style.visibility = 'visible';
+    e.target.parentElement.remove();
+
+    localStorage.setItem('tabelaOcorrencia', arrayDeColunasDaTabela.toString())
+}
+
+function salvarColunasOcultasLocalStorage(arrayDecolunas) {
+    let arrayParaSalvar = [];
+
+    for (let x = 0; x < arrayDecolunas.length; x++) {
+        if (arrayDecolunas[x]) {
+            arrayParaSalvar[x] = arrayDecolunas[x];
+        } else {
+            arrayParaSalvar[x] = 0;
+        }
+    }
+    localStorage.setItem('tabelaOcorrencia', arrayParaSalvar.toString())
+}
+
+window.addEventListener("load", () => {
+    let arrayDeColunasDaTabela = [];
+    let cabecalhoTabela = document.querySelectorAll('th'); 
+
+    let armLocal = localStorage.getItem('tabelaOcorrencia');
+    if (armLocal) {
+        arrayDeColunasDaTabela = armLocal.split(',')
+    }
+
+    let cols = document.querySelectorAll("col");
+    cols.forEach((ele, index) => {
+        if (arrayDeColunasDaTabela[index] === '0') {
+            ele.style.visibility = 'collapse'
+            adicionarEtiquetaDaColunaOculta(cabecalhoTabela.item(index).innerText, index)
+        }
+    })
+
+       
+})
+
+function adicionarEtiquetaDaColunaOculta(texto,index) {
+    let containerColuna = document.querySelector("#colunas-ocultas");
+
+    let newDiv = document.createElement("div");
+    newDiv.classList.add("btn", "btn-outline-primary", "coluna-oculta");
+
+
+    let icon = document.createElement("i");
+    icon.classList.add("bx", "bx-x", "bx-sm");
+    icon.dataset.position = index
+    icon.addEventListener("click", e => {
+        mostrarColuna(e, index)
+    })
+
+    let span = document.createElement("span");
+    span.innerText = texto;
+
+    newDiv.appendChild(icon);
+    newDiv.appendChild(span);
+
+    containerColuna.appendChild(newDiv);
 }

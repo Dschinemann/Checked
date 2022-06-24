@@ -3,6 +3,9 @@
 @model IEnumerable<Checked.Models.Models.Occurrence>
 @inject UserManager<ApplicationUser> UserManager
 
+
+
+
 @{
     ViewData["Title"] = "Index";
     var itens = ViewData["actions"];
@@ -19,6 +22,8 @@
 <div class="cntr">
     <div class="cntr-navegation">
         <a class="btn btn-primary" role="button" asp-action="Create">Criar nova Ocorrência</a>
+        <div id="colunas-ocultas">
+        </div>
         <div>
             <i id="filterOccurrence" class='bx bx-filter-alt'></i>
             <nav id="page-navigation" aria-label="Page navigation">
@@ -38,56 +43,88 @@
             </nav>
         </div>
     </div>
-    <div class="scrollbar" id="style-2">
+    <div class="scrollbar-occurrence" id="style-2">
         <table style="font-size:13px;font-weight: 600;" class="table table-hover table-sm align-middle">
+            <colgroup>
+                <col class="col0">
+                <col class="col1">
+                <col class="col2">
+                <col class="col3">
+                <col class="col4">
+                <col class="col5">
+                <col class="col6">
+                <col class="col7">
+                <col class="col8">
+                <col class="col9">
+                <col class="col10">
+                <col class="col11">
+                <col class="col12">
+                <col class="col13">
+                <col class="col14">
+                <col class="col15">
+            </colgroup>
             <thead class="table-dark sticky-top">
                 <tr>
-                    <th class="tableCell">
+                    <th data-isToolTip='false' class="tableCell">
+                        <i data-position='0' class='bx bx-minus-circle arrow'></i>
                         @Html.DisplayNameFor(model => model.Tp_Ocorrencia.Name)
                     </th>
-                    <th class="tableCell">
+                    <th data-isToolTip='false' class="tableCell">
+                        <i data-position='1' class='bx bx-minus-circle arrow'></i>
                         @Html.DisplayNameFor(model => model.CreatedAt)
                     </th>
-                    <th class="tableCell">
+                    <th data-isToolTip='false' class="tableCell">
+                        <i data-position='2' class='bx bx-minus-circle arrow'></i>
                         @Html.DisplayNameFor(model => model.DateOccurrence)
                     </th>
-                    <th class="tableCell">
+                    <th data-isToolTip='false' class="tableCell">
+                        <i data-position='3' class='bx bx-minus-circle arrow'></i>
                         @Html.DisplayNameFor(model => model.Description)
                     </th>
-                    <th class="tableCell">
+                    <th data-isToolTip='false' class="tableCell">
+                        <i data-position='4' class='bx bx-minus-circle arrow'></i>
                         @Html.DisplayNameFor(model => model.Additional1)
                     </th>
-                    <th class="tableCell">
+                    <th data-isToolTip='false' class="tableCell">
+                        <i data-position='5' class='bx bx-minus-circle arrow'></i>
                         @Html.DisplayNameFor(model => model.Additional2)
                     </th>
-                    <th class="tableCell">
+                    <th data-isToolTip='false' class="tableCell">
+                        <i data-position='6' class='bx bx-minus-circle arrow'></i>
                         @Html.DisplayNameFor(model => model.Harmed)
                     </th>
-                    <th class="tableCell">
+                    <th data-isToolTip='false' class="tableCell">
+                        <i data-position='7' class='bx bx-minus-circle arrow'></i>
                         @Html.DisplayNameFor(model => model.Document)
                     </th>
-                    <th class="tableCell">
+                    <th data-isToolTip='false' class="tableCell">
+                        <i data-position='8' class='bx bx-minus-circle arrow'></i>
                         @Html.DisplayNameFor(model => model.Cost)
                     </th>
-                    <th class="tableCell">
+                    <th data-isToolTip='false' class="tableCell">
+                        <i data-position='9' class='bx bx-minus-circle arrow'></i>
                         @Html.DisplayNameFor(model => model.Appraiser)
                     </th>
-                    <th class="tableCell">
+                    <th data-isToolTip='false' class="tableCell">
+                        <i data-position='10' class='bx bx-minus-circle arrow'></i>
                         @Html.DisplayNameFor(model => model.Origin)
                     </th>
-                    <th class="tableCell">
+                    <th data-isToolTip='false' class="tableCell">
                         Plano de Ação
                     </th>
-                    <th class="tableCell">
+                    <th data-isToolTip='false' class="tableCell">
+                        <i data-position='12' class='bx bx-minus-circle arrow'></i>
                         @Html.DisplayNameFor(model => model.StatusActions)
                     </th>
-                    <th class="tableCell">
+                    <th data-isToolTip='false' class="tableCell">
+                        <i data-position='13' class='bx bx-minus-circle arrow'></i>
                         @Html.DisplayNameFor(model => model.Status)
                     </th>
-                    <th class="tableCell">
+                    <th data-isToolTip='false' class="tableCell">
+                        <i data-position='14' class='bx bx-minus-circle arrow'></i>
                         @Html.DisplayNameFor(model => model.CorrectiveAction)
                     </th>
-                    <th class="tableCell"></th>
+                    <th data-isToolTip='false' class="tableCell"></th>
                 </tr>
             </thead>
             <tbody id=body-table-occurrence>

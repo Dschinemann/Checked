@@ -35,7 +35,7 @@
 
 .cntr-navegation {
     display: flex;
-    align-items: center;    
+    align-items: center;
     justify-content: space-between;
 }
 
@@ -132,3 +132,30 @@
     border-radius: 7px;
     width: 200px;
 }
+
+.scrollbar-occurrence {
+    float: left;
+    height: 80vh;
+    overflow-y: scroll;
+    width: 95vw;
+}
+/**
+    reduzir e expandir colunas
+*/
+
+.arrow {
+    margin: 0 5px 0 5px;
+    cursor: pointer
+}
+
+.coluna-oculta {
+    margin: 5px;
+}
+
+    .coluna-oculta i {
+        color: white;
+        background-color: red;
+        border-radius: 50%;
+        margin-right: 7px;
+        font-size: 1.5rem;
+    }
