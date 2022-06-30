@@ -18,28 +18,6 @@ html {
     min-height: 100%;
 }
 
-
-.img-background {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-image: url(/css/Images/61766.jpg);
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    display: flex;
-}
-
-.home {
-    background-color: white;
-    width: 65vw;
-    height: 80%;
-    margin-top: 80px;
-    margin-left: 100px;
-    border-radius: 10px;
-    background-image: url(/css/Images/womanOffice.jpg);
-}
-
 .text-align {
     display: flex;
     justify-content: space-between;

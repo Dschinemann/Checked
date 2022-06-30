@@ -30,13 +30,13 @@ builder.Services.AddScoped<InviteService>();
 builder.Services.AddScoped<PlansService>();
 builder.Services.AddScoped<TaskService>();
 
-
+builder.Services.AddWebOptimizer();
 
 // CheckedContextConnectionDeveloper
 
 var connectionString = builder.Configuration.GetConnectionString("CheckedContextConnection");
-builder.Services.AddDbContext<CheckedDbContext>(options => 
-    options.UseSqlServer(connectionString),ServiceLifetime.Transient
+builder.Services.AddDbContext<CheckedDbContext>(options =>
+    options.UseSqlServer(connectionString), ServiceLifetime.Transient
     //options.UseNpgsql(connectionString);
     //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior",true);
     );
@@ -93,11 +93,14 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
+    app.UseForwardedHeaders(new ForwardedHeadersOptions
+    {
+        ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto
+    });
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
 
 app.UseHttpsRedirection();
 
@@ -113,7 +116,7 @@ var requestLocalizationOptions = new RequestLocalizationOptions()
 
 app.UseRequestLocalization(requestLocalizationOptions);
 
-
+app.UseWebOptimizer();
 app.UseStaticFiles();
 
 app.UseRouting();
