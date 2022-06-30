@@ -35,8 +35,8 @@ builder.Services.AddWebOptimizer();
 // CheckedContextConnectionDeveloper
 
 var connectionString = builder.Configuration.GetConnectionString("CheckedContextConnection");
-builder.Services.AddDbContext<CheckedDbContext>(options =>
-    options.UseSqlServer(connectionString), ServiceLifetime.Transient
+builder.Services.AddDbContext<CheckedDbContext>(options => 
+    options.UseSqlServer(connectionString),ServiceLifetime.Transient
     //options.UseNpgsql(connectionString);
     //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior",true);
     );
