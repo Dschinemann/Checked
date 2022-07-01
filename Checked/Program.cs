@@ -11,6 +11,7 @@ using Checked.Servicos.ControllerServices;
 using Checked.Servicos.InviteService;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,9 @@ builder.Services.AddControllersWithViews(config =>
 })
     .AddViewLocalization();
 
+builder.Services.AddMvc(options =>
+options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
+
 builder.Services.AddScoped<ActionsService>();
 builder.Services.AddScoped<DashService>();
 builder.Services.AddScoped<InviteService>();
@@ -35,8 +39,8 @@ builder.Services.AddWebOptimizer();
 // CheckedContextConnectionDeveloper
 
 var connectionString = builder.Configuration.GetConnectionString("CheckedContextConnection");
-builder.Services.AddDbContext<CheckedDbContext>(options => 
-    options.UseSqlServer(connectionString),ServiceLifetime.Transient
+builder.Services.AddDbContext<CheckedDbContext>(options =>
+    options.UseSqlServer(connectionString), ServiceLifetime.Transient
     //options.UseNpgsql(connectionString);
     //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior",true);
     );
