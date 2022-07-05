@@ -12,6 +12,7 @@ using Checked.Servicos.InviteService;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +27,18 @@ builder.Services.AddControllersWithViews(config =>
     .AddViewLocalization();
 
 builder.Services.AddMvc(options =>
-options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
+{
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+});
+
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion   = new ApiVersion(1, 0);
+    options.ApiVersionReader = new MediaTypeApiVersionReader();
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+    options.ApiVersionSelector = new CurrentImplementationApiVersionSelector(options);
+});
 
 builder.Services.AddScoped<ActionsService>();
 builder.Services.AddScoped<DashService>();
@@ -40,10 +52,11 @@ builder.Services.AddWebOptimizer();
 
 var connectionString = builder.Configuration.GetConnectionString("CheckedContextConnection");
 builder.Services.AddDbContext<CheckedDbContext>(options =>
-    options.UseSqlServer(connectionString), ServiceLifetime.Transient
-    //options.UseNpgsql(connectionString);
-    //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior",true);
-    );
+{
+    //options.UseSqlServer(connectionString), ServiceLifetime.Transient
+    options.UseNpgsql(connectionString);
+    AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+});
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<CheckedDbContext>()

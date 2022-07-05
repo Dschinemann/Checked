@@ -24,27 +24,27 @@ namespace Checked.Controllers
         [AllowAnonymous]
         public IActionResult Index()
         {
+            if (_signInManager.IsSignedIn(User))
+            {
+                return RedirectToAction("Index","Dashboard");
+            }
             return new PartialViewResult()
             {
-                ViewName = "_LoginPartial"
-            };
-            
+                ViewName = "_HomePartial"
+            };            
         }
 
+        [AllowAnonymous]
         public IActionResult Privacy()
         {
             return View();
         }
 
-        /*
-        * Login
-        *
         [AllowAnonymous]
-        [HttpGet]
-        public IActionResult Login()
+        public IActionResult Terms()
         {
-            return View("Index");           
-        }*/
+            return View();
+        }
 
         [AllowAnonymous]
         [HttpPost]
@@ -53,7 +53,7 @@ namespace Checked.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return PartialView("_LoginPartial", model);
+                return PartialView("_HomePartial", model);
             }
             var user = await _userManager.FindByEmailAsync(model.Email);
             if(user != null)
@@ -77,7 +77,8 @@ namespace Checked.Controllers
                
             }
             ModelState.AddModelError(String.Empty, result.ToString() + ": Login invalid");
-            return PartialView("_LoginPartial",model);
+            return PartialView("_HomePartial",model);
+            
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
