@@ -1,18 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
-using Checked.Models.ViewModels;
-using Checked.Models.Models;
-using Checked.Servicos.Email;
+﻿using Checked.Data;
 using Checked.Models;
+using Checked.Models.Models;
+using Checked.Models.ViewModels;
+using Checked.Servicos.Email;
 using Checked.Servicos.InviteService;
-using System.Diagnostics;
-using System.Text.Encodings.Web;
-using Checked.Data;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using System.Net.Mail;
 using System.Net.Mime;
+using System.Text.Encodings.Web;
 
 namespace Checked.Controllers
 {
@@ -121,7 +121,7 @@ namespace Checked.Controllers
                         }
                     }
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    string confirmationLink = Url.Action("ConfirmAccount", "Account", new { userId = user.Id, token = code }, Request.Scheme) ?? "";//$"{Ip}/Account/ConfirmAccount?userId={user.Id}&token={code}";//Url.Action("ConfirmAccount", "Account", new { userId = user.Id, token = code }, Request.Scheme) ?? "";
+                    string confirmationLink = Url.Action("ConfirmAccount", "Account", new { userId = user.Id, token = code }, Request.Scheme) ?? "";
                     try
                     {
                         await _mailService.SendEmailAsync(new EmailRequest()
@@ -129,7 +129,7 @@ namespace Checked.Controllers
                             ToEmail = model.Email,
                             Subject = "Email Confirm",
                             View = AlternateView.CreateAlternateViewFromString(@$"Clique no <a href='{HtmlEncoder.Default.Encode(confirmationLink)}'>Link</a> para confirmar", null, MediaTypeNames.Text.Html),
-                            //Body = @$"Clique no <a href='{HtmlEncoder.Default.Encode(confirmationLink)}'>Link</a> para confirmar"
+
                         });
                     }
                     catch (Exception e)

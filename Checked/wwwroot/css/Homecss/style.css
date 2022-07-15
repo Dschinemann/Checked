@@ -10304,3 +10304,6 @@ footer a:hover {
   display: flex;
   align-items: center;
 }
+.stretched-link{
+    text-decoration:underline;
+}
