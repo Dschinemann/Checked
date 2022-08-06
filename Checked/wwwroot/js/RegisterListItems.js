@@ -60,3 +60,8 @@ function clearSelectItens(id) {
     node.options.length = 0;    
 }
 
+const closeRegister = document.querySelector("#closeRegister");
+closeRegister.addEventListener("click", () => {
+    window.history.back();
+})
+

@@ -28,20 +28,20 @@ html {
 }
 
 .form-login-register {
+    background-color: white;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+    align-items: center;
     width: 100%;
-    padding: 16px;    
+    padding: 16px;
+    border-radius: 1px;
 }
 
     .form-login-register div {
-        background-color: black;
         border-radius: 5px;
-        opacity: 0.9
     }
 
-        .form-login-register div form {            
-            color: white;
+        .form-login-register div form {  
             width: 100%;
             display: flex;
             margin-right: 25px;
@@ -116,4 +116,19 @@ html {
 }
 .button-submit-register button{
     margin:5px;
+}
+
+.fomr-register {
+    background-color: #21252947;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-light {
+    background-color: #fc7341;
+    border-color: #fc7341;
+    color:white;
 }
