@@ -19,6 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\css\createUser.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="LigerShark.WebOptimizer.Core" Version="3.0.365" />
     <PackageReference Include="Microsoft.AspNet.Identity.Core" Version="2.2.3" />

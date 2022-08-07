@@ -128,8 +128,7 @@ namespace Checked.Controllers
                         {
                             ToEmail = model.Email,
                             Subject = "Email Confirm",
-                            View = AlternateView.CreateAlternateViewFromString(@$"Clique no <a href='{HtmlEncoder.Default.Encode(confirmationLink)}'>Link</a> para confirmar", null, MediaTypeNames.Text.Html),
-
+                            View = Message(HtmlEncoder.Default.Encode(confirmationLink), @$"Ficamos felizes por ter você conosco, mas agora precisamos que entre pelo link abaixo para confirmar seu cadastro")
                         });
                     }
                     catch (Exception e)
@@ -570,7 +569,7 @@ namespace Checked.Controllers
                     <tr style='margin-top: 20px;'>
                         <td
                             style='font-size: 20px; font-family:Verdana, Geneva, Tahoma, sans-serif; color: #048162;text-align: center;padding: 16px;'>
-                            Clique no <a href='{link}'>Link</a> para se cadastrar.
+                            Clique no <a href='{link}'>Link</a> para continuar.
                         </td>
                     </tr>
                 </table>
@@ -583,6 +582,7 @@ namespace Checked.Controllers
             alternateView.LinkedResources.Add(pic1);
             return alternateView;
         }
+
 
         public async Task<JsonResult> GetUsersPerOrganization(string organizationId)
         {
