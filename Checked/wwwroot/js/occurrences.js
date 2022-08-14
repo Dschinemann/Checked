@@ -443,7 +443,7 @@ function removeToolTip(event) {
 
 const buttonExpandirOuReduzir = document.querySelectorAll(".arrow")
 buttonExpandirOuReduzir.forEach((element, index) => {
-    element.addEventListener("click", (elementI) => {       
+    element.addEventListener("click", (elementI) => {
         let armLocal = localStorage.getItem('tabelaOcorrencia');
 
         let arrayDeColunasDaTabela = [];
@@ -455,14 +455,14 @@ buttonExpandirOuReduzir.forEach((element, index) => {
         let containerColuna = document.querySelector("#colunas-ocultas");
 
         let newDiv = document.createElement("div");
-        newDiv.classList.add("btn", "btn-outline-primary", "coluna-oculta");        
-        
+        newDiv.classList.add("btn", "btn-outline-primary", "coluna-oculta");
+
 
 
         let icon = document.createElement("i");
         icon.classList.add("bx", "bx-x", "bx-sm");
         icon.dataset.position = elementI.target.dataset.position;
-        icon.addEventListener("click", elementDiv => {            
+        icon.addEventListener("click", elementDiv => {
             mostrarColuna(elementDiv, elementDiv.target.dataset.position)
         })
 
@@ -484,7 +484,7 @@ buttonExpandirOuReduzir.forEach((element, index) => {
 })
 
 function mostrarColuna(e, index) {
-    
+
     let armLocal = localStorage.getItem('tabelaOcorrencia');
     let arrayDeColunasDaTabela = [];
 
@@ -492,7 +492,7 @@ function mostrarColuna(e, index) {
         arrayDeColunasDaTabela = armLocal.split(',');
     }
     arrayDeColunasDaTabela[index] = 1;
-    
+
     let coluna = document.querySelector(`.col${index}`)
     coluna.style.visibility = 'visible';
     e.target.parentElement.remove();
@@ -515,7 +515,7 @@ function salvarColunasOcultasLocalStorage(arrayDecolunas) {
 
 window.addEventListener("load", () => {
     let arrayDeColunasDaTabela = [];
-    let cabecalhoTabela = document.querySelectorAll('th'); 
+    let cabecalhoTabela = document.querySelectorAll('th');
 
     let armLocal = localStorage.getItem('tabelaOcorrencia');
     if (armLocal) {
@@ -530,10 +530,10 @@ window.addEventListener("load", () => {
         }
     })
 
-       
+
 })
 
-function adicionarEtiquetaDaColunaOculta(texto,index) {
+function adicionarEtiquetaDaColunaOculta(texto, index) {
     let containerColuna = document.querySelector("#colunas-ocultas");
 
     let newDiv = document.createElement("div");
@@ -555,3 +555,40 @@ function adicionarEtiquetaDaColunaOculta(texto,index) {
 
     containerColuna.appendChild(newDiv);
 }
+
+/**
+ * adicionar coluna 
+ **/
+
+const addComplement = document.querySelector(".addComplement");
+
+addComplement.addEventListener("click", () => {
+    let modal = document.querySelector(".modal-complement");
+    modal.classList.toggle("display-off")
+})
+
+const closemodal = document.querySelector(".close-modal");
+closemodal.addEventListener("click", (e) => {
+    console.log(e.target.id)
+    let modal = document.querySelector(".modal-complement");
+    modal.classList.toggle("display-off")
+})
+
+
+/**
+ * Adicionar informação condicional
+ * */
+
+const addComplementValue = document.querySelectorAll(".addComplement-value");
+addComplementValue.forEach((buttonPlus) => {
+    buttonPlus.addEventListener("click", () => {
+        let modal = document.querySelector("#cell-complement")
+        modal.classList.toggle("display-off")
+    })
+})
+
+const closeCellModal = document.querySelector(".close-modal-cell");
+closeCellModal.addEventListener("click", () => {
+    let modal = document.querySelector("#cell-complement")
+    modal.classList.toggle("display-off")
+})

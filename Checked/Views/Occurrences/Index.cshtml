@@ -124,6 +124,9 @@
                         <i data-position='14' class='bx bx-minus-circle arrow'></i>
                         @Html.DisplayNameFor(model => model.CorrectiveAction)
                     </th>
+                    <th data-isToolTip='false' class="tableCell">
+                        <i style="font-size:1rem" class='bx bx-plus-circle addComplement'></i>
+                    </th>
                     <th data-isToolTip='false' class="tableCell"></th>
                 </tr>
             </thead>
@@ -177,6 +180,9 @@
                             @Html.DisplayFor(modelItem => item.CorrectiveAction)
                         </td>
                         <td data-isToolTip='false'>
+                            <i style="font-size:1rem" class='bx bx-plus-circle addComplement addComplement-value'></i>
+                        </td>
+                        <td data-isToolTip='false'>
                             <a asp-action="Edit" asp-route-idOccurrence="@item.Id">Editar  |</a>
                             <a asp-action="Details" asp-route-idOccurrence="@item.Id">Detalhes |</a>
                             <a asp-action="Delete" asp-route-idOccurrence="@item.Id">Delete</a>
@@ -185,6 +191,50 @@
                 }
             </tbody>
         </table>
+    </div>
+</div>
+<div class="modal-complement display-off" id="column-complement" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalLabel">Adicionar nova coluna</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="Name">Nome</label>
+                        <input type="text" class="form-control" id="Name" placeholder="Nome">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="close-column-complement" class="btn btn-light close-modal">Fechar</button>
+                <button type="button" class="btn btn-success">Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-complement display-off" id="cell-complement" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" >Nova informação</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="value">Nome</label>
+                        <input type="text" class="form-control" id="value" placeholder="valor">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="close-column-value" class="btn btn-light close-modal-cell">Fechar</button>
+                <button type="button" class="btn btn-success">Enviar</button>
+            </div>
+        </div>
     </div>
 </div>
 
