@@ -1,4 +1,5 @@
-﻿using Checked.Models.Types;
+﻿using Checked.Models.Models.Complement;
+using Checked.Models.Types;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -80,6 +81,10 @@ namespace Checked.Models.Models
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
         public DateTime DateOccurrence{ get; set; } = DateTime.Now;
 
+        /*
+            Informação complementar da ocorrencia
+         */
+        public ICollection<OcurrenceComplement> OcurrenceComplementList { get; set; }
 
         public Occurrence()
         {

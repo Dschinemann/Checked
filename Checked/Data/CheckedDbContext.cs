@@ -4,6 +4,7 @@ using Checked.Models.Models;
 using Checked.Models.Types;
 using Checked.Models.ViewModels;
 using Checked.Models.Statics;
+using Checked.Models.Models.Complement;
 
 namespace Checked.Data
 {
@@ -18,7 +19,7 @@ namespace Checked.Data
         {
             base.OnModelCreating(builder);
             builder.Entity<Organization>()
-                .HasMany(b => b.Users);                                
+                .HasMany(b => b.Users);
 
             builder.Entity<Organization>()
                 .HasOne(o => o.CreatedBy)
@@ -30,11 +31,13 @@ namespace Checked.Data
 
             builder.Entity<Occurrence>()
                 .HasOne(o => o.Plan);
-             
-        }   
 
-        public DbSet<Organization> Organizations{ get; set; }
-        public DbSet<Occurrence> Occurrences { get; set;}
+            builder.Entity<Occurrence>()
+                .HasMany(o => o.OcurrenceComplementList);
+        }
+
+        public DbSet<Organization> Organizations { get; set; }
+        public DbSet<Occurrence> Occurrences { get; set; }
         public DbSet<Models.Models.Action> Actions { get; set; }
         public DbSet<Plan> Plans { get; set; }
         public DbSet<Invite> Invites { get; set; }
@@ -43,14 +46,17 @@ namespace Checked.Data
         public DbSet<TP_Status> TP_Status { get; set; }
         public DbSet<TP_StatusOccurence> TP_StatusOccurences { get; set; }
 
-        public DbSet<State> States { get; set; } 
+        public DbSet<State> States { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<Country> Countries { get; set; }
-        
+
         public DbSet<HelpDesk> HelpDesks { get; set; }
 
         public DbSet<TP_TaskStatus> TP_TaskStatus { get; set; }
         public DbSet<Models.Models.Task> Tasks { get; set; }
+
+        public DbSet<OcurrenceComplement> OcurrenceComplements { get; set; }
+        public DbSet<OccurrenceColumnComplement> occurrenceColumnComplements { get; set; }
 
     }
 }

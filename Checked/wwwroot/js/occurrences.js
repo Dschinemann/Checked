@@ -1,54 +1,12 @@
-﻿const buttonIncrement = document.querySelector("#increment");
-const buttonDecrement = document.querySelector("#decrement");
-const elements = document.querySelectorAll(".number-page");
-const buttonFiltro = document.querySelector("#filterOccurrence");
+﻿const buttonFiltro = document.querySelector("#filterOccurrence");
 import getDataFromAPI from "./modules/network.js";
 
 
-elements.forEach((element, index) => {
-    element.addEventListener("click", element => {
-        buscarOcorrencias(element);
-    })
-})
-
-buttonIncrement.addEventListener("click", e => {
-    e.preventDefault();
-    if (elements[0].innerText > 1) {
-        elements.forEach((element, index) => {
-            const page = Number(elements[index].innerText) - 3;
-            element.innerText = page
-            element.setAttribute("data-page", page)
-
-        })
-    }
-})
-
-buttonDecrement.addEventListener("click", e => {
-    e.preventDefault();
-    if (numeroDePaginas < 3) return;
-    elements.forEach((element, index) => {
-        if (elements[2].innerText >= numeroDePaginas) return
-        const page = Number(elements[index].innerHTML) + 3;
-        element.innerHTML = page;
-        element.setAttribute("data-page", page)
-    })
-})
-
-function buscarOcorrencias(e) {
-    if (numeroDePaginas <= 2) {
-        return;
-    }
-    fetch(`Occurrences/GetOccurrencesPerPage?pagina=${e.target.getAttribute("data-page")}`)
-        .then(response => response.json())
-        .then(data => displayDataOccurrences(data, e))
-        .catch(error => console.log(error))
-}
 
 const buscarOcorrenciasComFiltro = (query, button) => {
     fetch(`Occurrences/Filters${query}`)
         .then(response => response.json())
-        .then(data => {
-            displayDataOccurrences(data);
+        .then(data => {            
             closeForm(button)
         })
         .catch(error => console.log(error))
@@ -56,67 +14,6 @@ const buscarOcorrenciasComFiltro = (query, button) => {
     if (navigationPages) {
         navigationPages.remove();
     }
-}
-
-
-function displayDataOccurrences(data, e) {
-    const bodyTable = document.getElementById("body-table-occurrence");
-    const trClone = bodyTable.children.item(0).cloneNode(true);
-    bodyTable.innerHTML = "";
-    if (data.length <= 0) {
-        const tr = document.createElement("tr")
-        tr.innerText = `Não existe ocorrencias para este filtro`
-        bodyTable.appendChild(tr)
-        return;
-    }
-    const options = {
-        year: '2-digit', month: '2-digit', day: '2-digit',
-        hour: '2-digit', minute: '2-digit',
-        hour12: false
-    };
-    data.forEach(item => {
-        let newClone = trClone.cloneNode(true);
-        newClone.children.item(15).remove();
-
-        let linkEdit = document.createElement("a");
-        linkEdit.href = `Occurrences/Edit?idOccurrence=${item.Id}`;
-        linkEdit.innerText = "Editar | "
-
-        let linkDelete = document.createElement("a");
-        linkDelete.href = `Occurrences/Delete?idOccurrence=${item.Id}`;
-        linkDelete.innerText = "Delete";
-
-        let linkDetail = document.createElement("a");
-        linkDetail.href = `Occurrences/Details?idOccurrence=${item.Id}`;
-        linkDetail.innerText = "Detalhes | ";
-
-        let tdLinks = document.createElement("td");
-        tdLinks.setAttribute("data-istooltip", "false")
-        tdLinks.appendChild(linkEdit);
-        tdLinks.appendChild(linkDetail);
-        tdLinks.appendChild(linkDelete);
-
-        newClone.children.item(0).innerText = item.Tp_Ocorrencia.Name;
-        newClone.children.item(1).innerText = new Intl.DateTimeFormat('pt-BR', options).format(new Date(item.CreatedAt));
-        newClone.children.item(2).innerText = new Intl.DateTimeFormat('pt-BR', options).format(new Date(item.DateOccurrence));
-        newClone.children.item(3).innerText = item.Description;
-        newClone.children.item(4).innerText = item.Additional1 ?? "N/D";
-        newClone.children.item(5).innerText = item.Additional2 ?? "N/D";
-        newClone.children.item(6).innerText = item.Harmed
-        newClone.children.item(7).innerText = item.Document
-        newClone.children.item(8).innerText = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(item.Cost);
-        newClone.children.item(9).innerText = item.Appraiser.Name
-        newClone.children.item(10).innerText = item.Origin
-        newClone.children.item(11).innerHtml = `<a href="Plans/Index/${item.Id}"> Plano de ação</a>`;
-        newClone.children.item(12).innerText = item.StatusActions;
-        newClone.children.item(13).innerText = item.Status.Name;
-        newClone.children.item(14).innerText = item.CorrectiveAction;
-
-        newClone.appendChild(tdLinks)
-
-        bodyTable.appendChild(newClone)
-    })
-    listeners();
 }
 
 
@@ -158,8 +55,11 @@ buttonFiltro.addEventListener("click", (e) => {
                     }
             }
         }
-        buttonFilter.innerHTML = "<span class=\"spinner-grow spinner-grow-sm\" role=\"status\" aria-hidden=\"true\"></span>  Carregando..."
-        buscarOcorrenciasComFiltro(query, e.target);
+        buttonFilter.innerHTML = "<span class=\"spinner-grow spinner-grow-sm\" role=\"status\" aria-hidden=\"true\"></span>  Carregando...";
+        var link = document.createElement("a")
+        link.href = `Occurrences/Filters${query}`
+        link.click();
+        //buscarOcorrenciasComFiltro(query, e.target);
     })
 
     const buttonCLoseFormPesquisa = document.querySelector("#closeForm");
@@ -569,7 +469,6 @@ addComplement.addEventListener("click", () => {
 
 const closemodal = document.querySelector(".close-modal");
 closemodal.addEventListener("click", (e) => {
-    console.log(e.target.id)
     let modal = document.querySelector(".modal-complement");
     modal.classList.toggle("display-off")
 })
@@ -581,9 +480,12 @@ closemodal.addEventListener("click", (e) => {
 
 const addComplementValue = document.querySelectorAll(".addComplement-value");
 addComplementValue.forEach((buttonPlus) => {
-    buttonPlus.addEventListener("click", () => {
+    buttonPlus.addEventListener("click", (element) => {
         let modal = document.querySelector("#cell-complement")
         modal.classList.toggle("display-off")
+        document.querySelector("#name-column").innerHTML = element.target.dataset.coluna;
+        document.querySelector("#occurrenceId").value = element.target.dataset.occurrenceid;
+        document.querySelector("#columnId").value = element.target.dataset.columnid;
     })
 })
 
@@ -592,3 +494,4 @@ closeCellModal.addEventListener("click", () => {
     let modal = document.querySelector("#cell-complement")
     modal.classList.toggle("display-off")
 })
+

@@ -16,6 +16,21 @@
     width: 23%;
 }
 
+#filterOccurrence {
+    margin: 0 10px 0 10px;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+
+.buttons-pagination{
+    display:flex;
+    align-items:center;
+    font-size: 1rem;
+    margin-left:25px;
+    margin-bottom:25px;
+}
+
 .create-box-occurrence {
     width: 100%;
     display: flex;
@@ -44,11 +59,6 @@
         align-items: center;
     }
 
-#filterOccurrence {
-    font-size: 30px;
-    margin: 10px;
-    cursor: pointer;
-}
 
 
 /*Filtro*/
@@ -135,9 +145,7 @@
 
 .scrollbar-occurrence {
     float: left;
-    height: 80vh;
     overflow-y: scroll;
-    width: 95vw;
 }
 /**
     reduzir e expandir colunas
@@ -180,5 +188,27 @@
     align-items: center;
 }
 .display-off{
-    display:none;
+    display:none !important;
+}
+
+/*
+    modal page Edit
+*/
+
+.modal-complement-edit {
+    position: fixed;
+    background-color: rgba(95,158,160,0.4);
+    width:100%;
+    height:100%;
+    top:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+.cntr-info {
+    background-color: white;
+    padding: 16px;
+    border-radius: 5%;
+    max-height: 50vh;
+    overflow:auto;
 }

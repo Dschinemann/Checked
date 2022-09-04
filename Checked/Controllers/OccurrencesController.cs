@@ -11,12 +11,12 @@ using System.Diagnostics;
 using Checked.Servicos.Email;
 using System.Net.Mail;
 using System.Net.Mime;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Checked.Models.Types;
 using Checked.Models.FilterModels;
-using System;
-using System.Globalization;
+using Checked.Servicos.ControllerServices;
+using Checked.Servicos;
+using System.Text;
+using Microsoft.Extensions.Primitives;
 
 namespace Checked.Controllers
 {
@@ -25,50 +25,69 @@ namespace Checked.Controllers
         private readonly CheckedDbContext _context;
         private readonly Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> _userManager;
         private readonly IMailService _mailService;
+        private readonly OccurrenceService _service;
 
-        public OccurrencesController(CheckedDbContext context, Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager, IMailService mailService)
+        public OccurrencesController(CheckedDbContext context, Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager, IMailService mailService, OccurrenceService service)
         {
             _context = context;
             _userManager = userManager;
             _mailService = mailService;
-        }
-
-        public async Task<IActionResult> GetOccurrencesPerPage(int pagina)
-        {
-            var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
-            var occurrences = _context.Occurrences
-                .Where(c => c.OrganizationId == user.OrganizationId)
-                .Include(o => o.Appraiser)
-                .Include(o => o.Tp_Ocorrencia)
-                .Include(o => o.Status)
-                .OrderByDescending(c => c.CreatedAt)
-                .Skip(10 * pagina)
-                .Take(10);
-            JsonSerializerOptions options = new()
-            {
-                ReferenceHandler = ReferenceHandler.IgnoreCycles,
-                WriteIndented = false
-            };
-            return Json(await occurrences.ToListAsync(), options);
+            _service = service;
         }
 
         // GET: Occurrences
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber, string stringQuery)
         {
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+
+            StringBuilder sql;
+            string stringFilter;
+
+            var urlParams = HttpContext.Request.Query;
+            Dictionary<string, string> values = urlParams.ToDictionary(x => x.Key, x => x.Value.ToString());
+                sql = _service.SqlConsult(values);
+                stringFilter = _service.UrlCurrentFilter(values);
+                       
+            ViewData["CurrentFilter"] = stringFilter;
+
             var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
             if (user.OrganizationId == null)
             {
                 return RedirectToAction("Create", "Organizations");
             }
             var occurrences = _context.Occurrences
+                .FromSqlRaw($"SELECT * FROM \"Occurrences\" AS A where 1=1 {sql}")
                 .Where(c => c.OrganizationId == user.OrganizationId)
                 .Include(o => o.Appraiser)
                 .Include(o => o.Tp_Ocorrencia)
                 .Include(o => o.Status)
+                .Include(o => o.OcurrenceComplementList)
                 .OrderByDescending(c => c.CreatedAt)
-                .Take(10);
-            ViewBag.NumeroDePaginas = await _context.Occurrences.Where(c => c.OrganizationId == user.OrganizationId).CountAsync();
-            return View(await occurrences.ToListAsync());
+                .Select(o => new Occurrence()
+                {
+                    CreatedAt = o.CreatedAt,
+                    DateOccurrence = o.DateOccurrence,
+                    Description = o.Description,
+                    Additional1 = o.Additional1,
+                    Additional2 = o.Additional2,
+                    Harmed = o.Harmed,
+                    Document = o.Document,
+                    Cost = o.Cost,
+                    Appraiser = o.Appraiser,
+                    Origin = o.Origin,
+                    Id = o.Id,
+                    OcurrenceComplementList = o.OcurrenceComplementList,
+                    Tp_Ocorrencia = o.Tp_Ocorrencia,
+                    Status = o.Status,
+                    StatusActions = o.StatusActions,
+                    CorrectiveAction = o.CorrectiveAction
+                });
+
+            int pageSize = 10;
+            return View(await PaginatedList<Occurrence>.CreateAsync(occurrences.AsNoTracking(), pageNumber ?? 1, pageSize));
+
         }
 
         // GET: Occurrences/Details/5
@@ -355,7 +374,7 @@ namespace Checked.Controllers
         // POST: Occurrences/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed([Bind("Id")]Occurrence occurrence)
+        public async Task<IActionResult> DeleteConfirmed([Bind("Id")] Occurrence occurrence)
         {
             //var deleteOccurrence = await _context.Occurrences.FindAsync(occurrence.Id);
             try
@@ -367,8 +386,8 @@ namespace Checked.Controllers
             catch (Exception e)
             {
                 return View(nameof(Error), new ErrorViewModel() { Message = $"Não foi possível deletar essa ocorrência \n {e.Message}" });
-            }            
-            
+            }
+
         }
 
         private bool OccurrenceExists(string id)
@@ -426,75 +445,6 @@ namespace Checked.Controllers
             return alternateView;
         }
 
-        public async Task<IActionResult> Filters([Bind("TP_OcorrenciaId,Description,Harmed,Document,Additional1,Additional2,Cost,AppraiserId,Origin,StatusId,StatusActions,CorrectiveAction,StartDate,EndDate,TipoFiltroData")] OccurrencesFilter model)
-        {
-            List<string> sqlFilters = new List<string>();
-            var props = model.GetType().GetProperties();
-            CultureInfo culture = new CultureInfo("en-US");
-            foreach (var prop in props)
-            {
-                if (prop.GetValue(model, null) != null)
-                {
-                    if (!prop.Name.Equals("UpdatedAt"))
-                    {
-                        if (prop.Name.Equals("TipoFiltroData"))
-                        {
-                            if ((int)prop.GetValue(model, null) == 1)
-                            {
-                                DateTime starDate = model.StartDate??new DateTime();
-                                DateTime endDate = (DateTime)model.EndDate;
-                                sqlFilters.Add($"and CreatedAt between '{starDate.ToString(culture)}' and '{endDate.ToString(culture)}'");
-                            }
-                            else
-                            {
-                                DateTime starDate = (DateTime)model.StartDate;
-                                DateTime endDate = (DateTime)model.EndDate;
-                                sqlFilters.Add($"and DateOccurrence between '{starDate.ToString(culture)}' and '{endDate.ToString(culture)}'");
-                            }
-                            continue;
-                        }
-
-                        if (prop.Name.Equals("StatusId") || prop.Name.Equals("TP_OcorrenciaId"))
-                        {
-                            sqlFilters.Add($"and {prop.Name} = '{prop.GetValue(model, null)}'");
-                        }
-                        else if (prop.Name.Equals("Cost"))
-                        {
-                            var value = (double)prop.GetValue(model, null);
-                            sqlFilters.Add($"and {prop.Name} = '{value.ToString(CultureInfo.InvariantCulture)}'");
-                            continue;
-                        }
-                        if(prop.Name.Equals("StartDate") || prop.Name.Equals("EndDate"))
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            sqlFilters.Add($"and {prop.Name}  like '%{prop.GetValue(model, null)}%'");
-                        }
-                    }
-                }
-            }
-            if (sqlFilters.Count > 0)
-            {
-                var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
-                List<Occurrence> occurrences = await _context.Occurrences
-                    .FromSqlRaw($"Select * from dbo.Occurrences where 1=1{String.Join(" ", sqlFilters)}")
-                    .Where(c => c.OrganizationId == user.OrganizationId)
-                    .Include(o => o.Appraiser)
-                    .Include(o => o.Tp_Ocorrencia)
-                    .Include(o => o.Status)                   
-                    .OrderByDescending(d => d.CreatedAt)
-                    .ToListAsync();
-                JsonSerializerOptions options = new()
-                {
-                    ReferenceHandler = ReferenceHandler.IgnoreCycles,
-                    WriteIndented = false
-                };
-                return Json(occurrences, options);
-            }
-            return Json("");
-        }
         public async Task<JsonResult> GetTypesOccurrencesPerOrganization(string organizationId)
         {
             var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
@@ -513,6 +463,51 @@ namespace Checked.Controllers
         {
             var result = await _context.TP_StatusOccurences.ToListAsync();
             return Json(result);
+        }
+
+
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateColumn(string title)
+        {
+            if (string.IsNullOrEmpty(title))
+            {
+                return Json("Titulo não pode ser vazio");
+            }
+            var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
+            await _service.AddColumn(user.OrganizationId ?? "", title);
+
+            return RedirectToAction("Index");
+        }
+
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddInfoComplement(string occurrenceId, string value, int columnId)
+        {
+            if (string.IsNullOrEmpty(occurrenceId) || string.IsNullOrEmpty(value) || columnId == 0)
+            {
+                return Json("Não é possivel adicionar a informação complementar");
+            }
+            await _service.AddOccurrenceValueComplement(columnId, occurrenceId, value);
+            return RedirectToAction("Index");
+        }
+
+
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditComplement()//int id,string value, string occurrenceId
+        {
+            string[] values = HttpContext.Request.Form["value"];
+            string[] ids = HttpContext.Request.Form["id"];
+            string[] occurrenceId = HttpContext.Request.Form["occurrenceId"];
+
+            if (ids.Length > 0)
+            {
+                bool[] result = await _service.EditValueComplement(ids, values, occurrenceId[1]);
+                if (result[1])
+                {
+                    return RedirectToAction(nameof(Edit), new { idOccurrence = occurrenceId[1] });
+                }
+                ModelState.AddModelError(String.Empty, "Não foi possivel atualizar!");
+            }
+            return RedirectToAction(nameof(Edit), new { idOccurrence = occurrenceId[1] });
         }
     }
 }

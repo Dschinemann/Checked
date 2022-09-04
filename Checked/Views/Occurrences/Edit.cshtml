@@ -1,12 +1,14 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
-
+@using Checked.Servicos.ControllerServices
 @model Checked.Models.ViewModels.EditOccurrenceViewModel;
-@inject IViewLocalizer Localizer
+@inject IViewLocalizer Localizer;
+@inject OccurrenceService ComplementService;
 
 @{
     ViewData["Title"] = "Edit";
 }
 <link rel="stylesheet" href="~/css/Occurrence.css" />
+<script src="~/js/editOccurrence.js" defer></script>
 <div class="cntr">
     <div style="display:flex;justify-content:space-between">
         <div>
@@ -99,10 +101,52 @@
             </form>
         </div>
     </div>
+    <div>
+        <button id="open-modal" class="btn btn-primary">Informações adicionais</button>
+    </div>
+</div>
+<div class="modal-complement-edit display-off">
+    <div class="cntr-info">
+        <h1>Informação Adicional</h1>
+        <form id="EditComplement" asp-action="EditComplement" method="post">
+            @{
+                var columns = await ComplementService.GetColumnsAsync(Model.OrganizationId);
+                var titles = columns.DistinctBy(c => c.ColumnTitle);
+                var infoComplements = await ComplementService.GetInfoComplementOccurrence(Model.Id);
+
+                foreach (var title in titles)
+                {
+                    var result = @infoComplements.Where(c => c.OccurrenceColumnComplementId == title.Id).FirstOrDefault();
+                    if (result != null)
+                    {
+                        <div class="form-group">
+                            <label for="value" class="control-label">@result.OccurrenceColumnComplement.ColumnTitle</label>
+                            <input name="value" value="@result.Value" class="form-control" />
+                            <input type="hidden" name="id" value="@result.Id" />
+                            <input type="hidden" name="occurrenceId" value="@Model.Id" />
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            <label for="@title.Id" class="control-label">@title.ColumnTitle</label>
+                            <input name="value" class="form-control" />
+                            <input type="hidden" name="id" value="@title.Id" />
+                            <input type="hidden" name="occurrenceId" value="@Model.Id" />
+                        </div>
+                    }
+                }
+            }
+        </form>
+        <div>
+            <input type="submit" form="EditComplement" value="Salvar alterações" class="btn btn-primary" />
+            <input type="button" id="close-form" value="Fechar" class="btn btn-primary" />
+        </div>
+    </div>
 </div>
 
 @section Scripts {
     @{
-    await Html.RenderPartialAsync("_ValidationScriptsPartial");
-}
-}
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

@@ -45,6 +45,7 @@ builder.Services.AddScoped<DashService>();
 builder.Services.AddScoped<InviteService>();
 builder.Services.AddScoped<PlansService>();
 builder.Services.AddScoped<TaskService>();
+builder.Services.AddScoped<OccurrenceService>();
 
 builder.Services.AddWebOptimizer();
 

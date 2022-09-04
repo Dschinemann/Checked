@@ -1,46 +1,30 @@
 ﻿@using Checked.Models.Models
+@using Checked.Servicos
 @using Microsoft.AspNetCore.Identity
-@model IEnumerable<Checked.Models.Models.Occurrence>
+@using Checked.Servicos.ControllerServices
+@model PaginatedList<Checked.Models.Models.Occurrence>
 @inject UserManager<ApplicationUser> UserManager
-
-
-
+@inject OccurrenceService ComplementService
 
 @{
     ViewData["Title"] = "Index";
     var itens = ViewData["actions"];
     var user = await UserManager.GetUserAsync(User);
-    var numeroDePaginas = (ViewBag.NumeroDePaginas / 10) + 1;
+
+    var columns = await ComplementService.GetColumnsAsync(user.OrganizationId);
+    var titles = columns.DistinctBy(c => c.ColumnTitle);
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
 }
 <header>
-    <link rel="stylesheet" href="~/css/Occurrence.css" />
-    <script>const numeroDePaginas = @numeroDePaginas</script>
+    <link rel="stylesheet" href="~/css/Occurrence.css" />    
     <script type="module" src="~/js/occurrences.js" async></script>
     <script type="module" src="~/js/modules/network.js"></script>
-
 </header>
 <div class="cntr">
     <div class="cntr-navegation">
         <a class="btn btn-primary" role="button" asp-action="Create">Criar nova Ocorrência</a>
         <div id="colunas-ocultas">
-        </div>
-        <div>
-            <i id="filterOccurrence" class='bx bx-filter-alt'></i>
-            <nav id="page-navigation" aria-label="Page navigation">
-                <ul style="margin:0" class="pagination">
-                    <li class="page-item"><button id="increment" class="page-link">Anterior</button></li>
-                    <li class="page-item">
-                        <a class="page-link number-page" data-page="0" href="#">1</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link number-page" data-page="1" href="#">2</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link number-page" data-page="2" href="#">3</a>
-                    </li>
-                    <li class="page-item"><button id="decrement" class="page-link">Próximo</button></li>
-                </ul>
-            </nav>
         </div>
     </div>
     <div class="scrollbar-occurrence" id="style-2">
@@ -67,63 +51,73 @@
                 <tr>
                     <th data-isToolTip='false' class="tableCell">
                         <i data-position='0' class='bx bx-minus-circle arrow'></i>
-                        @Html.DisplayNameFor(model => model.Tp_Ocorrencia.Name)
+                        @Html.DisplayNameFor(model => model.First().Tp_Ocorrencia.Name)
                     </th>
                     <th data-isToolTip='false' class="tableCell">
                         <i data-position='1' class='bx bx-minus-circle arrow'></i>
-                        @Html.DisplayNameFor(model => model.CreatedAt)
+                        @Html.DisplayNameFor(model => model.First().CreatedAt)
                     </th>
                     <th data-isToolTip='false' class="tableCell">
                         <i data-position='2' class='bx bx-minus-circle arrow'></i>
-                        @Html.DisplayNameFor(model => model.DateOccurrence)
+                        @Html.DisplayNameFor(model => model.First().DateOccurrence)
                     </th>
                     <th data-isToolTip='false' class="tableCell">
                         <i data-position='3' class='bx bx-minus-circle arrow'></i>
-                        @Html.DisplayNameFor(model => model.Description)
+                        @Html.DisplayNameFor(model => model.First().Description)
                     </th>
                     <th data-isToolTip='false' class="tableCell">
                         <i data-position='4' class='bx bx-minus-circle arrow'></i>
-                        @Html.DisplayNameFor(model => model.Additional1)
+                        @Html.DisplayNameFor(model => model.First().Additional1)
                     </th>
                     <th data-isToolTip='false' class="tableCell">
                         <i data-position='5' class='bx bx-minus-circle arrow'></i>
-                        @Html.DisplayNameFor(model => model.Additional2)
+                        @Html.DisplayNameFor(model => model.First().Additional2)
                     </th>
                     <th data-isToolTip='false' class="tableCell">
                         <i data-position='6' class='bx bx-minus-circle arrow'></i>
-                        @Html.DisplayNameFor(model => model.Harmed)
+                        @Html.DisplayNameFor(model => model.First().Harmed)
                     </th>
                     <th data-isToolTip='false' class="tableCell">
                         <i data-position='7' class='bx bx-minus-circle arrow'></i>
-                        @Html.DisplayNameFor(model => model.Document)
+                        @Html.DisplayNameFor(model => model.First().Document)
                     </th>
                     <th data-isToolTip='false' class="tableCell">
                         <i data-position='8' class='bx bx-minus-circle arrow'></i>
-                        @Html.DisplayNameFor(model => model.Cost)
+                        @Html.DisplayNameFor(model => model.First().Cost)
                     </th>
                     <th data-isToolTip='false' class="tableCell">
                         <i data-position='9' class='bx bx-minus-circle arrow'></i>
-                        @Html.DisplayNameFor(model => model.Appraiser)
+                        @Html.DisplayNameFor(model => model.First().Appraiser)
                     </th>
                     <th data-isToolTip='false' class="tableCell">
                         <i data-position='10' class='bx bx-minus-circle arrow'></i>
-                        @Html.DisplayNameFor(model => model.Origin)
+                        @Html.DisplayNameFor(model => model.First().Origin)
                     </th>
                     <th data-isToolTip='false' class="tableCell">
                         Plano de Ação
                     </th>
                     <th data-isToolTip='false' class="tableCell">
                         <i data-position='12' class='bx bx-minus-circle arrow'></i>
-                        @Html.DisplayNameFor(model => model.StatusActions)
+                        @Html.DisplayNameFor(model => model.First().StatusActions)
                     </th>
                     <th data-isToolTip='false' class="tableCell">
                         <i data-position='13' class='bx bx-minus-circle arrow'></i>
-                        @Html.DisplayNameFor(model => model.Status)
+                        @Html.DisplayNameFor(model => model.First().Status)
                     </th>
                     <th data-isToolTip='false' class="tableCell">
                         <i data-position='14' class='bx bx-minus-circle arrow'></i>
-                        @Html.DisplayNameFor(model => model.CorrectiveAction)
+                        @Html.DisplayNameFor(model => model.First().CorrectiveAction)
                     </th>
+
+                    @if (!string.IsNullOrEmpty(user.OrganizationId))
+                    {
+
+                        foreach (var title in titles)
+                        {
+                            <th data-isToolTip='false' class="tableCell">@title.ColumnTitle</th>
+                        }
+
+                    }
                     <th data-isToolTip='false' class="tableCell">
                         <i style="font-size:1rem" class='bx bx-plus-circle addComplement'></i>
                     </th>
@@ -179,8 +173,25 @@
                         <td class="tableCell">
                             @Html.DisplayFor(modelItem => item.CorrectiveAction)
                         </td>
+                        @{
+                            var infoComplements = await ComplementService.GetInfoComplementOccurrence(item.Id);
+
+                            foreach (var title in titles)
+                            {
+                                var result = @infoComplements.Where(c => c.OccurrenceColumnComplementId == title.Id).FirstOrDefault();
+                                if (result != null && result.Value != string.Empty)
+                                {
+                                    <td class="tableCell">@result.Value</td>
+                                }
+                                else
+                                {
+                                    <td data-isToolTip='false' class="tableCell">
+                                        <i data-occurrenceId="@item.Id" data-coluna=@title.ColumnTitle data-columnId=@title.Id style="font-size:1rem" class='bx bx-plus-circle addComplement addComplement-value'></i>
+                                    </td>
+                                }
+                            }
+                        }
                         <td data-isToolTip='false'>
-                            <i style="font-size:1rem" class='bx bx-plus-circle addComplement addComplement-value'></i>
                         </td>
                         <td data-isToolTip='false'>
                             <a asp-action="Edit" asp-route-idOccurrence="@item.Id">Editar  |</a>
@@ -191,6 +202,23 @@
                 }
             </tbody>
         </table>
+        <div class="buttons-pagination">
+            <a asp-action="Index"
+               asp-route-sortOrder="@ViewData["CurrentSort"]"
+               asp-route-pageNumber="@(Model.PageIndex - 1)"
+               asp-route-currentFilter="@ViewData["CurrentFilter"]"
+               class="btn btn-default @prevDisabled">
+                Previous
+            </a>
+            <a asp-action="Index"
+               asp-route-sortOrder="@ViewData["CurrentSort"]"
+               asp-route-pageNumber="@(Model.PageIndex + 1)"
+               asp-route-currentFilter="@ViewData["CurrentFilter"]"
+               class="btn btn-default @nextDisabled">
+                Next
+            </a>
+            <i id="filterOccurrence" class='bx bx-filter-alt'></i>
+        </div>
     </div>
 </div>
 <div class="modal-complement display-off" id="column-complement" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -201,16 +229,16 @@
                 <h4 class="modal-title" id="exampleModalLabel">Adicionar nova coluna</h4>
             </div>
             <div class="modal-body">
-                <form>
+                <form asp-action="CreateColumn" method="post" id="form-column">
                     <div class="form-group">
-                        <label for="Name">Nome</label>
-                        <input type="text" class="form-control" id="Name" placeholder="Nome">
+                        <label for="title">Nome</label>
+                        <input type="text" class="form-control" id="title" name="title" placeholder="Nome">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" id="close-column-complement" class="btn btn-light close-modal">Fechar</button>
-                <button type="button" class="btn btn-success">Enviar</button>
+                <input type="submit" form="form-column" class="btn btn-success" value="Enviar" />
             </div>
         </div>
     </div>
@@ -220,21 +248,25 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" >Nova informação</h4>
+                <h4 class="modal-title">Nova informação</h4>
             </div>
             <div class="modal-body">
-                <form>
+                <form asp-action="AddInfoComplement" method="post" id="form-infoComplement">
                     <div class="form-group">
-                        <label for="value">Nome</label>
-                        <input type="text" class="form-control" id="value" placeholder="valor">
+                        <label id="name-column" for="value">Nome</label>
+                        <input type="text" class="form-control" id="value" name="value" placeholder="valor">
+                        <input type="hidden" name="occurrenceId" id="occurrenceId" />
+                        <input type="hidden" name="columnId" id="columnId" />
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" id="close-column-value" class="btn btn-light close-modal-cell">Fechar</button>
-                <button type="button" class="btn btn-success">Enviar</button>
+                <input type="submit" form="form-infoComplement" class="btn btn-success" value="Enviar" />
             </div>
         </div>
     </div>
 </div>
+
+
 
